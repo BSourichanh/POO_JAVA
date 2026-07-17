@@ -1,11 +1,11 @@
-public class Ennemies {
+public class Ennemy {
     private int id;
     private String name;
     private EnnemiesType type;
     private int hp;
     private int dmg;
 
-    Ennemies(EnnemiesType type, String name, int id) {
+    Ennemy(EnnemiesType type, String name, int id) {
         this.id = id;
         switch (type) {
             case Goblin:
