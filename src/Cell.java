@@ -3,14 +3,33 @@ import java.util.List;
 
 public class Cell {
     private int id = 0;
-    private List<Player> players =  new ArrayList<Player>();
-    private List<Ennemy> ennemies =  new ArrayList<Ennemy>();
+    public List<Entity> players =  new ArrayList<Entity>();
+    public List<Entity> ennemies =  new ArrayList<Entity>();
 
-    void addPlayer(Player player) {
+    void addPlayer(Entity player) {
         this.players.add(player);
     }
 
-    void removePlayer(Player player){
+    void removePlayer(Entity player){
         this.players.remove(player);
+    }
+
+    void addEnnemy(Entity ennemy) {
+        this.ennemies.add(ennemy);
+    }
+
+    boolean isEmpty(){
+        if (players.isEmpty() && ennemies.isEmpty())
+            return true;
+        return false;
+    }
+
+    boolean isEnnemiesEmpty()
+    {
+        if (!ennemies.isEmpty())
+        {
+            return true;
+        }
+        return false;
     }
 }
