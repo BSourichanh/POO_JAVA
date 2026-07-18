@@ -11,16 +11,14 @@ Cell[] cellTable =  new Cell[maxCell];
 
 Random random = new Random();
 
-Enums.EntityType randomEnnemyType()
-{
+Enums.EntityType randomEnemyType() {
     Enums.EntityType[] types = { Enums.EntityType.Goblin, Enums.EntityType.Sorcier, Enums.EntityType.Dragon };
     return types[random.nextInt(types.length)];
 }
 
-
 void initCells() {
     for (int i = 0; i < maxCell; i++)
-        cellTable[i] = new Cell();
+        cellTable[i] = new Cell(i);
 }
 
 void initPlayers(){
@@ -28,24 +26,22 @@ void initPlayers(){
         cellTable[0].addPlayer(playerTable[i]);
 }
 
-void initEnnemies() {
+void initEnemies() {
     for (int i = 0; i < maxEnnemies; i++)
     {
         int cellIndex = random.nextInt(cellTable.length);
-        Entity tmp = new Entity(randomEnnemyType(), null, i, cellTable[cellIndex]);
+        Entity tmp = new Entity(randomEnemyType(), null, i, cellTable[cellIndex]);
         cellTable[cellIndex].addEnnemy(tmp);
         ennemyTable[i] = tmp;
     }
 }
 
 void showData() {
-    for(int i = 0; i < playerTable.length; i++)
-    {
-        playerTable[i].getInfo();
+    for (Entity entity : playerTable) {
+        entity.getInfo();
     }
-    for(int i = 0; i < ennemyTable.length; i++)
-    {
-        ennemyTable[i].getInfo();
+    for (Entity entity : ennemyTable) {
+        entity.getInfo();
     }
 }
 
@@ -78,7 +74,10 @@ void main() {
     playerTable[0] = new Entity(Enums.EntityType.Warrior, "toto", 0, cellTable[0]);
     playerTable[1] = new Entity(Enums.EntityType.Wizard, "tata", 1, cellTable[0]);
     initPlayers();
-    initEnnemies();
+    initEnemies();
     showData();
     showCellsData();
+    Scanner sc = new Scanner(System.in);
+    String text = sc.nextLine(); // Reads full line
+    sc.close();
 }

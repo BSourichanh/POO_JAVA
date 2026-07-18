@@ -6,6 +6,10 @@ public class Cell {
     public List<Entity> players =  new ArrayList<Entity>();
     public List<Entity> ennemies =  new ArrayList<Entity>();
 
+    Cell(int id) {
+        this.id = id;
+    }
+
     void addPlayer(Entity player) {
         this.players.add(player);
     }
@@ -24,12 +28,15 @@ public class Cell {
         return false;
     }
 
-    boolean isEnnemiesEmpty()
-    {
+    boolean isEnnemiesEmpty() {
         if (!ennemies.isEmpty())
         {
             return true;
         }
         return false;
+    }
+
+    int getPos() {
+        return this.id;
     }
 }
