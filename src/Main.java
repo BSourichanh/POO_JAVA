@@ -1,9 +1,10 @@
 import java.util.List;
 import java.util.Random;
 
-int maxPlayer = 2;
-int maxCell = 63;
-int maxEnnemies = 5;
+public int maxPlayer = 2;
+public int maxCell = 63;
+public static int maxEnnemies = 5;
+public static int textOffset = 4;
 
 Entity[] playerTable = new Entity[maxPlayer];
 Entity[] enemyTable = new Entity[maxEnnemies];
@@ -55,7 +56,7 @@ void showCellsData(){
         {
             if (p > 0)
                 System.out.print("|");
-            System.out.print(players.get(p).getType().toString().substring(0, 3));
+            System.out.print(players.get(p).getName().substring(0, textOffset));
         }
         if (!players.isEmpty() && !ennemies.isEmpty())
             System.out.print("|");
@@ -63,7 +64,7 @@ void showCellsData(){
         {
             if (e > 0)
                 System.out.print("|");
-            System.out.print(ennemies.get(e).getType().toString().substring(0, 3));
+            System.out.print(ennemies.get(e).getType().toString().substring(0, textOffset));
         }
         System.out.print("]");
     }
@@ -73,11 +74,11 @@ void showCellsData(){
 void main() {
     GameManager gameManager = new GameManager();
     initCells();
-    playerTable[0] = new Entity(Enums.EntityType.Warrior, "toto", 0, cellTable[0]);
-    playerTable[1] = new Entity(Enums.EntityType.Wizard, "tata", 1, cellTable[0]);
+    playerTable[0] = new Entity(Enums.EntityType.Guerrier, "toto", 0, cellTable[0]);
+    playerTable[1] = new Entity(Enums.EntityType.Mage, "tata", 1, cellTable[0]);
     initPlayers();
     initEnemies();
-    while (gameManager.gameState != Enums.GameState.End)
+    while (gameManager.gameState != Enums.GameState.Finish)
     {
         showData();
         showCellsData();

@@ -11,15 +11,15 @@ public class Entity {
     public Entity(Enums.EntityType type, String name, int id, Cell cell) {
         this.id = id;
         this.type = type;
-        this.name = type.toString();
+        this.name = name;
         this.currentCell = cell;
         this.pos = cell.getPos();
         switch (type) {
-            case Warrior:
+            case Guerrier:
                 this.hp = 10;
                 this.dmg = 5;
                 break;
-            case Wizard:
+            case Mage:
                 this.hp = 7;
                 this.dmg = 7;
                 break;
@@ -36,6 +36,9 @@ public class Entity {
                 this.dmg = 8;
                 break;
         }
+        if (type != Enums.EntityType.Guerrier && type != Enums.EntityType.Mage) {
+            this.name = type.toString();
+        }
     }
 
     void moveEntityToCell(Cell cell) {
@@ -49,6 +52,18 @@ public class Entity {
 
     int getPos() {
         return this.pos;
+    }
+
+    int getId() {
+        return this.id;
+    }
+
+    Enums.EntityType getEntityType() {
+        return this.type;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     Enums.EntityType getType() {

@@ -1,6 +1,6 @@
 public class Enums {
     public enum EntityType {
-        Warrior, Wizard, Goblin, Sorcier, Dragon
+        Guerrier, Mage, Goblin, Sorcier, Dragon
     }
     public enum ItemType{
         Weapon, Spell, Potion
@@ -16,6 +16,6 @@ public class Enums {
     }
 
     public enum GameState{
-        Idle, Moving, InBattle, End
+        Idle, Moving, InBattle, End, Finish
     }
 }
