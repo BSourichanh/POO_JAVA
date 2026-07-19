@@ -14,4 +14,8 @@ public class Enums {
     public  enum  Potion{
         PotionPV, GrandPotionPV
     }
+
+    public enum GameState{
+        Idle, Moving, InBattle, End
+    }
 }

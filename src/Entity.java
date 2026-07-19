@@ -6,10 +6,12 @@ public class Entity {
     private int dmg = 0;
     private Cell currentCell;
     private int pos = 0;
+    public  int moveAvaible = 0;
+
     public Entity(Enums.EntityType type, String name, int id, Cell cell) {
         this.id = id;
         this.type = type;
-        this.name = (name != null) ? name : type.toString();
+        this.name = type.toString();
         this.currentCell = cell;
         this.pos = cell.getPos();
         switch (type) {
@@ -36,9 +38,17 @@ public class Entity {
         }
     }
 
-    void getInfo()
-    {
+    void moveEntityToCell(Cell cell) {
+        this.currentCell = cell;
+        this.pos = cell.getPos();
+    }
+
+    void getInfo() {
         System.out.println("ID : " + this.id +" | Pos : "+ this.pos +" | Name : " + this.name + " | Type : " + this.type + " | HP : " + this.hp + " | DMG : " + this.dmg);
+    }
+
+    int getPos() {
+        return this.pos;
     }
 
     Enums.EntityType getType() {

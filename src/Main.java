@@ -6,7 +6,7 @@ int maxCell = 63;
 int maxEnnemies = 5;
 
 Entity[] playerTable = new Entity[maxPlayer];
-Entity[] ennemyTable = new Entity[maxEnnemies];
+Entity[] enemyTable = new Entity[maxEnnemies];
 Cell[] cellTable =  new Cell[maxCell];
 
 Random random = new Random();
@@ -32,7 +32,7 @@ void initEnemies() {
         int cellIndex = random.nextInt(cellTable.length);
         Entity tmp = new Entity(randomEnemyType(), null, i, cellTable[cellIndex]);
         cellTable[cellIndex].addEnnemy(tmp);
-        ennemyTable[i] = tmp;
+        enemyTable[i] = tmp;
     }
 }
 
@@ -40,7 +40,7 @@ void showData() {
     for (Entity entity : playerTable) {
         entity.getInfo();
     }
-    for (Entity entity : ennemyTable) {
+    for (Entity entity : enemyTable) {
         entity.getInfo();
     }
 }
@@ -67,17 +67,20 @@ void showCellsData(){
         }
         System.out.print("]");
     }
+    System.out.println("");
 }
 
 void main() {
+    GameManager gameManager = new GameManager();
     initCells();
     playerTable[0] = new Entity(Enums.EntityType.Warrior, "toto", 0, cellTable[0]);
     playerTable[1] = new Entity(Enums.EntityType.Wizard, "tata", 1, cellTable[0]);
     initPlayers();
     initEnemies();
-    showData();
-    showCellsData();
-    Scanner sc = new Scanner(System.in);
-    String text = sc.nextLine(); // Reads full line
-    sc.close();
+    while (gameManager.gameState != Enums.GameState.End)
+    {
+        showData();
+        showCellsData();
+        gameManager.updateGame(playerTable, cellTable);
+    }
 }
