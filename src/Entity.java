@@ -41,9 +41,11 @@ public class Entity {
         }
     }
 
-    void moveEntityToCell(Cell cell) {
-        this.currentCell = cell;
-        this.pos = cell.getPos();
+    void moveEntityToCell(Cell startCell, Cell nextCell) {
+        nextCell.addPlayer(this);
+        startCell.removePlayer(this);
+        currentCell = nextCell;
+        this.pos = nextCell.getPos();
     }
 
     void getInfo() {

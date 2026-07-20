@@ -83,5 +83,6 @@ void main() {
         showData();
         showCellsData();
         gameManager.updateGame(playerTable, cellTable);
+        System.out.println(gameManager.gameState);
     }
 }

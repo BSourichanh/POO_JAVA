@@ -12,6 +12,7 @@ public class GameManager {
         int diceValue = random.nextInt(6) + 1;
         return diceValue;
     }
+
     public String requestInput() {
         String text = sc.nextLine();
 
@@ -20,8 +21,10 @@ public class GameManager {
 
     public void updateGame(Entity[] playerTable, Cell[] cellTable) {
         Entity player = playerTable[currentPlayer];
-        if (player.getPos() == 62)
+        if (player.getPos() == 62) {
             gameState = Enums.GameState.Finish;
+            System.out.println("Joueur " + player.getName() + " le "+ player.getType() + " à atteinds la dernière case");
+        }
         else
             System.out.println("Tour de " + player.getName());
         switch (gameState) {
@@ -37,7 +40,7 @@ public class GameManager {
                     player.usePotion();
                     gameState = Enums.GameState.Idle;
                 }*/
-                if (inputText.equals("42")) {
+                else if (inputText.equals("42")) {
                     player.moveAvaible = 63;
                     gameState = Enums.GameState.Moving;
                 }
@@ -47,19 +50,26 @@ public class GameManager {
                 }
                 break;
             case Moving:
-                System.out.println("Entrer) Déplacement disponible: " + playerTable[currentPlayer].moveAvaible);
+                System.out.println("Entrer) Avance de " + playerTable[currentPlayer].moveAvaible + " case");
+                int pPos = player.getPos();
                 if (requestInput().equals("")) {
-                    if (player.moveAvaible > 0 && player.getPos() < 62) {
-                        cellTable[player.getPos()].removePlayer(player);
-                        cellTable[player.getPos() + 1].addPlayer(player);
-                        player.moveEntityToCell(cellTable[player.getPos() + 1]);
+                    if (player.moveAvaible > 0 && pPos + player.moveAvaible < 62) {
+                        player.moveEntityToCell(cellTable[pPos], cellTable[pPos + 1]);
                         player.moveAvaible--;
-                        if (player.moveAvaible == 0)
+                        if (!cellTable[player.getPos()].isEnnemiesEmpty())
+                            gameState = Enums.GameState.InBattle;
+                        else if (player.moveAvaible == 0)
                             gameState = Enums.GameState.End;
+                    }
+                    else if (pPos + player.moveAvaible > 62) {
+                        player.moveEntityToCell(cellTable[pPos], cellTable[62]);
                     }
                 }
                 break;
             case InBattle:
+                Entity ennemy = cellTable[player.getPos()].ennemies.get(0);
+                System.out.println("Joueur " + player.getName() + " le " + player.getType() + " tombe sur " + ennemy.getName());
+                requestInput();
                 break;
             case End:
                 System.out.println("Enter) Fin de tour du joueur : " + player.getName() + " le " + player.getEntityType());

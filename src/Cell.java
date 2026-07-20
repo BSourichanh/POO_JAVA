@@ -29,11 +29,7 @@ public class Cell {
     }
 
     boolean isEnnemiesEmpty() {
-        if (!ennemies.isEmpty())
-        {
-            return true;
-        }
-        return false;
+        return ennemies.isEmpty();
     }
 
     int getPos() {
