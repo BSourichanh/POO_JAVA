@@ -1,24 +1,29 @@
+package fr.campus.poo_java;
+
+import fr.campus.poo_java.entity.Character;
+import fr.campus.poo_java.entity.Enemy;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Cell {
     private int id = 0;
-    public List<Entity> players =  new ArrayList<Entity>();
-    public List<Entity> ennemies =  new ArrayList<Entity>();
+    public List<Character> players =  new ArrayList<Character>();
+    public List<Enemy> ennemies =  new ArrayList<>();
 
     Cell(int id) {
         this.id = id;
     }
 
-    void addPlayer(Entity player) {
+    public void addPlayer(Character player) {
         this.players.add(player);
     }
 
-    void removePlayer(Entity player){
+    public void removePlayer(Character player){
         this.players.remove(player);
     }
 
-    void addEnnemy(Entity ennemy) {
+    void addEnnemy(Enemy ennemy) {
         this.ennemies.add(ennemy);
     }
 
@@ -32,7 +37,7 @@ public class Cell {
         return ennemies.isEmpty();
     }
 
-    int getPos() {
+    public int getPos() {
         return this.id;
     }
 }

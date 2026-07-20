@@ -1,3 +1,5 @@
+package fr.campus.poo_java;
+
 public class Enums {
     public enum EntityType {
         Guerrier, Mage, Goblin, Sorcier, Dragon
