@@ -7,8 +7,8 @@ import fr.campus.poo_java.entity.character.Wizard;
 import fr.campus.poo_java.entity.enemies.Dragon;
 import fr.campus.poo_java.entity.enemies.Goblin;
 import fr.campus.poo_java.entity.enemies.Sorcier;
+import fr.campus.poo_java.equipement.defensive_equipement.Potion;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -122,8 +122,8 @@ public class Game {
         return types[random.nextInt(types.length)];
     }
 
-    Enums.Potion randomPotion() {
-        Enums.Potion[] types = {Enums.Potion.PotionPV, Enums.Potion.GrandPotionPV};
+    Enums.Potion randomPotionType() {
+        Enums.Potion[] types = {Enums.Potion.PotionPV, Enums.Potion.GrandePotionPV};
         return types[random.nextInt(types.length)];
     }
 
@@ -132,19 +132,14 @@ public class Game {
         for (int i = 0; i < maxPotion; i++)
         {
             int cellIndex = 1;
-            Enemy tmp = null;
-            switch (randomEnemyType()) {
-                case Enums.EntityType.Goblin:
-                    tmp = new Goblin();
-                    cellTable[cellIndex].addEnemy(tmp);
+            Potion tmp = null;
+            switch (randomPotionType()) {
+
+                case  Enums.Potion.GrandePotionPV:
+                    tmp = new ;
                     break;
-                case Enums.EntityType.Sorcier:
-                    tmp = new Sorcier();
-                    cellTable[cellIndex].addEnemy(tmp);
-                    break;
-                case Enums.EntityType.Dragon:
-                    tmp = new Dragon();
-                    cellTable[cellIndex].addEnemy(tmp);
+                case  Enums.Potion.PotionPV:
+                    tmp = new Potion();
                     break;
             }
         }
@@ -198,7 +193,7 @@ public class Game {
 
     public void playTurn() {
         Character player = getPlayerById(currentPlayer);
-        if (player.getPos() == 62) {
+        if (player.getPos() == maxCell -1) {
             gameState = Enums.GameState.Finish;
             System.out.println("Joueur " + player.getName() + " le "+ player.getType() + " à atteinds la dernière case.");
         }
@@ -229,8 +224,7 @@ public class Game {
                 }
                 break;
             case Moving:
-                if (player.moveAvailable == 0)
-                {
+                if (player.moveAvailable == 0) {
                     gameState = Enums.GameState.End;
                     break;
                 }
@@ -238,15 +232,15 @@ public class Game {
                 System.out.println("Entrer) Avance de " + player.moveAvailable + " case");
                 int pPos = player.getPos();
                 if (requestInput().equals("")) {
-                    if (player.moveAvailable > 0 && pPos + player.moveAvailable < maxCell - 1) {
+                    if (player.moveAvailable > 0 && pPos + player.moveAvailable < maxCell) {
                         player.moveEntityToCell(cellTable[pPos], cellTable[pPos + 1]);
                         player.moveAvailable--;
                         if (!cellTable[player.getPos()].isEnemiesEmpty())
                             gameState = Enums.GameState.InBattle;
 
                     }
-                    else if (pPos + player.moveAvailable > maxCell - 1) {
-                        player.moveEntityToCell(cellTable[pPos], cellTable[maxCell - 1]);
+                    else if (pPos + player.moveAvailable > maxCell) {
+                        player.moveEntityToCell(cellTable[pPos], cellTable[maxCell]);
                     }
                 }
                 break;

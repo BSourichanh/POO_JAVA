@@ -14,7 +14,7 @@ public class Enums {
         Eclair, Boule_de_feu
     }
     public  enum  Potion{
-        PotionPV, GrandPotionPV
+        PotionPV, GrandePotionPV
     }
 
     public enum GameState{
