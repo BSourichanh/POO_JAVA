@@ -13,11 +13,12 @@ public class Menu {
     }
 
     public String requestInput() {
+        System.out.print(">");
         return sc.nextLine();
     }
 
     public int chooseClass() {
-        System.out.println("1) Guerrier, 2) Mage");
+        System.out.println("1) Guerrier\n2) Mage");
         int tmp = Integer.parseInt(requestInput());
         tmp = checkInput(1,2, tmp);
         if (tmp != -1)
@@ -26,9 +27,8 @@ public class Menu {
         return -1;
     }
 
-    public String requestName()
-    {
-        System.out.println("Entrer votre nom");
+    public String requestName() {
+        System.out.println("Entrer votre nom.");
         return requestInput();
     }
 

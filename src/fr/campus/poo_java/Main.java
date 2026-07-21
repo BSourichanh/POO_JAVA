@@ -1,8 +1,5 @@
 package fr.campus.poo_java;
 
-import fr.campus.poo_java.entity.character.Warrior;
-import fr.campus.poo_java.entity.character.Wizard;
-
 public  class  Main {
     void main() {
         Game game = new Game();
@@ -15,7 +12,7 @@ public  class  Main {
         {
             game.showData();
             game.showCellsData();
-            game.updateGame();
+            game.playTurn();
             System.out.println(game.gameState);
         }
     }

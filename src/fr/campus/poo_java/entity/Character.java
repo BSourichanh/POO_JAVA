@@ -39,7 +39,7 @@ public class Character {
         return this.pos;
     }
 
-    int getId() {
+    public int getId() {
         return this.id;
     }
 
@@ -64,6 +64,7 @@ public class Character {
     public int getDmg (){
         return this.strength;
     }
+
 
     @Override
     public String toString() {
