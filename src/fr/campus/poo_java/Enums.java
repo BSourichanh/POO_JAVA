@@ -4,16 +4,12 @@ public class Enums {
     public enum EntityType {
         Guerrier, Mage, Goblin, Sorcier, Dragon
     }
-    public enum ItemType{
-        Weapon, Spell, Potion
+
+    public enum OffEquip{
+    Massue, Epée, Eclair, Boule_de_feu
     }
-    public enum Weapon{
-    Massue, Epée
-    }
-    public enum Spell{
-        Eclair, Boule_de_feu
-    }
-    public  enum  Potion{
+
+    public  enum DefEquip {
         PotionPV, GrandePotionPV
     }
 

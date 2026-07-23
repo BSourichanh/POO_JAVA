@@ -27,21 +27,25 @@ public class Cell {
         this.players.remove(player);
     }
 
-    void addEnemy(Enemy enemy) {
+    public void addPotion(DefensiveEquipement potion){
+        this.defEquip.add(potion);
+    }
+
+    public void removePotion(DefensiveEquipement potion){
+        defEquip.remove(potion);
+    }
+
+    public void addEnemy(Enemy enemy) {
         this.enemies.add(enemy);
     }
 
     public void removeEnemy(Enemy enemy){this.enemies.remove(enemy);}
 
-    boolean isEmpty(){
-        if (players.isEmpty() && enemies.isEmpty())
-            return true;
-        return false;
-    }
-
     boolean isEnemiesEmpty() {
         return enemies.isEmpty();
     }
+
+    boolean isDefEquipEmpty(){return defEquip.isEmpty();}
 
     public int getPos() {
         return this.id;

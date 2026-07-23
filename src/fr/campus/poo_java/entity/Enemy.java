@@ -18,6 +18,10 @@ public class Enemy {
         System.out.println("ID : " + this.id +" | Pos : "+ this.pos +" | Name : " + this.name + " | Type : " + this.type + " | HP : " + this.lifePoints + " | DMG : " + this.strength);
     }
 
+    public int getId(){
+        return this.id;
+    }
+
     public Enums.EntityType getType() {
         return this.type;
     }
@@ -29,6 +33,8 @@ public class Enemy {
     public  void setHp (int hp){this.lifePoints = hp;}
 
     public int getDmg (){return this.strength;}
+
+    public int getPos(){return this.pos;}
 
     @Override
     public String toString() {
