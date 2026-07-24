@@ -4,14 +4,12 @@ import fr.campus.poo_java.db.Database;
 
 public  class  Main {
     void main() {
-        Database db = new Database();
+        /*Database db = new Database();
         db.clearHeroes();
         db.pingSQL();
-        db.getHeroes();
+        db.getHeroes();*/
         Game game = new Game();
         game.initGame();
         game.startGame();
-
     }
-
 }

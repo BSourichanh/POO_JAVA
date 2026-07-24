@@ -15,7 +15,6 @@ public class DefensiveEquipement {
         return this.name;
     }
 
-
     public int getHp() {
         return this.hp;
     }

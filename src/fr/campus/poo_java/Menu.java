@@ -11,134 +11,14 @@ import java.util.Scanner;
 public class Menu {
     protected Scanner sc = new Scanner(System.in);
     public static int textOffset = 3;
+    private int currentId;
 
     public void showSeperator() {
         System.out.println("=============================================================" +
                 "=============================================================");
     }
-    public int requestPotion(Character player) {
-        System.out.println("Entrer votre choix :");
-        return Integer.parseInt(requestInput());
-    }
-    public boolean showPlayerPotion(Character player){
-        if (player.getDefensiveEquipement().isEmpty()) {
-            System.out.println("Pas de potion.");
-            requestInput();
-            return false;
-        }
-        System.out.println("Potion : ");
-        for (int i = 0; i < player.getDefensiveEquipement().size(); i++) {
-            System.out.println((i+1) + ") " + player.getDefensiveEquipement().get(i).getType());
-        }
-        return true;
-    }
-    public void showPickDefEquip(Character player, DefensiveEquipement defEquip) {
-        System.out.println(player.getName()
-                + " le " + player.getType()
-                + " ramasse " + defEquip.getType()
-        );
-        requestInput();
-    }
-    public void showPlayerEndTurn(Character player){
-        System.out.println("Enter) Fin de tour de " + player.getName() + " le " + player.getEntityType());
-    }
-    public void showEndGame() {
-        System.out.println("Fin du jeu");
-    }
-    public void showWrongChoice() {
-        System.out.println("Choix invalide");
-    }
-    public void showDiceThrow(Character player){
-        System.out.println(player.getName() + " à fait un lancer de dée de " + player.moveAvailable);
-    }
-    public void showPlayerIdleAction() {
-        System.out.println("1) Lancer de dée\n2) Utiliser potion");
-    }
-    public void showPlayerFinish(Character player){
-        System.out.println("Joueur " + player.getName() + " le "+ player.getType() + " à atteinds la dernière case.");
-    }
-    public void showCurrentPlayerTurn(Character player){
-        System.out.println("Tour de " + player.getName() + " le " + player.getType() + ".");
-    }
-    public void requestInputToMove(Character player){
-        System.out.println("Entrer) Avance de " + player.moveAvailable + " case");
-        requestInput();
-    }
-    public void showMoveAvailable(Character player){
-        System.out.println("Déplacement disponible : " + player.moveAvailable + ".\n");
-    }
-    public void showCellsData(Cell[] cellTable, int maxCell){
-        for (int i = 0; i < maxCell; i++)
-        {
-            System.out.print("[");
-            List<Character> players = cellTable[i].players;
-            List<Enemy> enemies = cellTable[i].enemies;
-            List<DefensiveEquipement> defEquip = cellTable[i].defEquip;
-            List<OffensiveEquipment> offEquip = cellTable[i].offEquip;
-            for (int p = 0; p < players.size(); p++)
-            {
-                if (p > 0)
-                    System.out.print("|");
-                Character tmp = players.get(p);
-                if (tmp.getName().length() < textOffset)
-                    System.out.print(players.get(p).getName());
-                else
-                    System.out.print(players.get(p).getName().substring(0, textOffset));
-            }
-            if (!players.isEmpty() && (!enemies.isEmpty() || !defEquip.isEmpty() || !offEquip.isEmpty()))
-                System.out.print("|");
-            for (int e = 0; e < enemies.size(); e++)
-            {
-                if (e > 0)
-                    System.out.print("|");
-                System.out.print(enemies.get(e).getType().toString().substring(0, textOffset));
-            }
-            for (int e = 0; e < defEquip.size(); e++)
-            {
-                if (e > 0)
-                    System.out.print("|");
-                System.out.print(defEquip.get(e).getName());
-            }
-            System.out.print("]");
-        }
-        System.out.println("\n");
-    }
-    public void showBattleResult(Character player, Enemy enemy){
-        if (enemy.getHp() < 0) {
-            System.out.println(enemy.getName() + " est mort.\n");
-        }
-        else
-        {
-            System.out.println(enemy.getName() + " atttaque !");
-            System.out.println(enemy.getName() + " inflige " + enemy.getDmg() + " à " + player.getName() + " PV restant " + player.getHp());
-            System.out.println(enemy.getName() + " s'enfuit !\n");
-        }
-        System.out.println("Entrer) Fin de combat");
-        requestInput();
-    }
-    public void showDmg(Character player, Enemy enemy){
-        System.out.println(player.getName() + " attaque " + enemy.getName());
-        System.out.println(player.getName() + " inflige " + player.getDmg() + " à " + enemy.getName() + " PV restant " + enemy.getHp());
-    }
-    public void showBattleInfo(Character player, Enemy enemy) {
-        System.out.println(player.getName() + " le " + player.getType() + " tombe sur " + enemy.getName()+ "\n");
-        System.out.println("Joueur  : " + player.getName() + " le " + player.getType() + " PV : " + player.getHp() + " Dégats : " + player.getDmg());
-        System.out.println("Ennemie : " + enemy.getName() + " PV : " + player.getHp() + " Dégats : " + player.getDmg() + "\n");
-        System.out.println("Entrer) Pour attaquer.");
-        requestInput();
-    }
-    protected int checkInput(int start, int end, int input) {
-        if (input >= start && input <=end)
-            return input;
-        else
-            return -1;
-    }
-    public String requestInput() {
-        System.out.print(">");
-        String input = sc.nextLine();
-        System.out.print("\n");
-        return input;
-    }
+
+    // Choix joueurs
     public int chooseClass() {
         System.out.println("1) Guerrier\n2) Mage");
         int tmp = Integer.parseInt(requestInput());
@@ -163,24 +43,190 @@ public class Menu {
         }
         return -1;
     }
+    public int requestPotion(Character player) {
+        System.out.println("Entrer votre choix :");
+        return Integer.parseInt(requestInput());
+    }
+
+    //Affichage pendant le tour
+    public void showCurrentPlayerTurn(Character player){
+        System.out.println("Tour de " + player.getName() + " le " + player.getType() + ".");
+    }
+    public void showPlayerIdleAction() {
+        System.out.println("1) Lancer de dée\n2) Utiliser potion");
+    }
+    public void showDiceThrow(Character player){
+        System.out.println(player.getName() + " à fait un lancer de dée de " + player.moveAvailable);
+    }
+    public void showMoveAvailable(Character player){
+        System.out.println("Déplacement disponible : " + player.moveAvailable + ".");
+    }
+    public void requestInputToMove(Character player){
+        System.out.println("Entrer) Avance de " + player.moveAvailable + " case");
+        requestInput();
+    }
+    public void showPickDefEquip(Character player, DefensiveEquipement defEquip) {
+        System.out.println(player.getName()
+                + " le " + player.getType()
+                + " ramasse " + defEquip.getType()
+        );
+        requestInput();
+    }
+    public void showPickOffEquip(Character player, OffensiveEquipment offEquip){
+        System.out.println(player.getName()
+                + " le " + player.getType()
+                + " ramasse " + offEquip.getType()
+        );
+        requestInput();
+    }
+
+    //Affichage Battle
+    public void showBattleInfo(Character player, Enemy enemy) {
+        System.out.println(player.getName() + " le " + player.getType() + " tombe sur " + enemy.getName()+ "\n");
+        System.out.println("Joueur  : " + player.getName() + " le " + player.getType() + " PV : " + player.getHp() + " Dégats : " + player.getDmg());
+        System.out.println("Ennemie : " + enemy.getName() + " PV : " + player.getHp() + " Dégats : " + player.getDmg() + "\n");
+        System.out.println("Entrer) Pour attaquer.");
+        requestInput();
+    }
+    public void showDmg(Character player, Enemy enemy){
+        System.out.println(player.getName() + " attaque " + enemy.getName());
+        System.out.println(player.getName() + " inflige " + player.getDmg() + " à " + enemy.getName() + " PV restant " + enemy.getHp());
+    }
+    public void showBattleResult(Character player, Enemy enemy){
+        if (enemy.getHp() < 0) {
+            System.out.println(enemy.getName() + " est mort.\n");
+        }
+        else
+        {
+            System.out.println(enemy.getName() + " atttaque !");
+            System.out.println(enemy.getName() + " inflige " + enemy.getDmg() + " à " + player.getName() + " PV restant " + player.getHp());
+            System.out.println(enemy.getName() + " s'enfuit !\n");
+        }
+        System.out.println("Entrer) Fin de combat");
+        requestInput();
+    }
+
+    //Affichage fin de tour / jeu
+    public void showPlayerEndTurn(Character player){
+        System.out.println("Enter) Fin de tour de " + player.getName() + " le " + player.getEntityType());
+    }
+    public void showPlayerFinish(Character player){
+        System.out.println("Joueur " + player.getName() + " le "+ player.getType() + " à atteinds la dernière case.");
+    }
+    public void showEndGame() {
+        System.out.println("Fin du jeu");
+    }
+
+    //Requête input
+    protected int checkInput(int start, int end, int input) {
+        if (input >= start && input <=end)
+            return input;
+        else
+            return -1;
+    }
+    public String requestInput() {
+        System.out.print(">");
+        String input = sc.nextLine();
+        System.out.print("\n");
+        return input;
+    }
+    public void showWrongChoice() {
+        System.out.println("Choix invalide");
+    }
+
+    //=================Affichage info
+    public void printSeparatorData(int nbInCell) {
+        if (currentId < nbInCell)
+        {
+            System.out.print("|");
+            currentId++;
+        }
+    }
+    public void printPlayers(List<Character> players, int nbInCell){
+        for (int p = 0; p < players.size(); p++)
+        {
+            Character tmp = players.get(p);
+            if (tmp.getName().length() < textOffset)
+                System.out.print(players.get(p).getName());
+            else
+                System.out.print(players.get(p).getName().substring(0, textOffset));
+            printSeparatorData(nbInCell);
+        }
+    }
+    public void printEnemies(List<Enemy> enemies, int nbInCell){
+        for (int e = 0; e < enemies.size(); e++)
+        {
+            System.out.print(enemies.get(e).getType().toString().substring(0, textOffset));
+            printSeparatorData(nbInCell);
+        }
+    }
+    public void printDefEquip(List<DefensiveEquipement> defEquip, int nbInCell){
+        for (int e = 0; e < defEquip.size(); e++)
+        {
+            System.out.print(defEquip.get(e).getName());
+            printSeparatorData(nbInCell);
+        }
+    }
+    public void printOffEquip(List<OffensiveEquipment> offEquip, int nbInCell){
+        for (int e = 0; e < offEquip.size(); e++)
+        {
+            System.out.print(offEquip.get(e).getName().substring(0, textOffset));
+            printSeparatorData(nbInCell);
+        }
+    }
+
+    public void showCellsData(Cell[] cellTable, int maxCell){
+        for (int i = 0; i < maxCell; i++)
+        {
+            System.out.print("[");
+            List<Character> players = cellTable[i].players;
+            List<Enemy> enemies = cellTable[i].enemies;
+            List<DefensiveEquipement> defEquip = cellTable[i].defEquip;
+            List<OffensiveEquipment> offEquip = cellTable[i].offEquip;
+
+            int tValue = players.size() + enemies.size() + defEquip.size() + offEquip.size() - 1;
+            currentId = 0;
+            printPlayers(players, tValue);
+            printEnemies(enemies, tValue);
+            printDefEquip(defEquip, tValue);
+            printOffEquip(offEquip, tValue);
+
+            System.out.print("]");
+        }
+        System.out.println("\n");
+    }
     public void showData(Cell[] cellsTable) {
         for (Cell cell : cellsTable)
         {
             for (Character character : cell.players) {
-            System.out.print("Character | id : " + character.getId()
-                    + " | pos : " + character.getPos()
-                    + " | name : " + character.getName()
-                    + " | type : " + character.getType()
-                    + " | hp : " + character.getHp()
-                    + " | dmg : " + character.getDmg()
-            );
+                System.out.print("Character | id : " + character.getId()
+                        + " | pos : " + character.getPos()
+                        + " | name : " + character.getName()
+                        + " | type : " + character.getType()
+                        + " | hp : " + character.getHp()
+                        + " | dmg : " + character.getDmg()
+                        + " |"
+                );
                 if (!character.isDefEquipEmpty()) {
-                    System.out.print(" def : ");
-                    for (DefensiveEquipement defEquip : character.getDefensiveEquipement())
+                    System.out.print(" defEquip [ ");
+                    for (DefensiveEquipement defEquip : character.getDefensiveEquipment())
                     {
-                        System.out.print(defEquip.getName() + ", ");
+                        System.out.print(defEquip.getName()
+                                + " type : " + defEquip.getType()
+                                + " hp : " + defEquip.getHp()
+                                + ", ");
                     }
-                    System.out.print("\n");
+                    System.out.print("]\n");
+                } else if (!character.isOffEquipEmpty()) {
+                    System.out.print(" offEquip [");
+                    for (OffensiveEquipment offEquip : character.getOffensiveEquipment())
+                    {
+                        System.out.print(offEquip.getName()
+                                + " type : " + offEquip.getType()
+                                + " dmg : " + offEquip.getDamage()
+                                + ",  ");
+                    }
+                    System.out.print("]\n");
                 }
                 else
                     System.out.print("\n");
@@ -200,7 +246,25 @@ public class Menu {
                         + "\n"
                 );
             }
+            for (OffensiveEquipment offEquip : cell.offEquip){
+                System.out.print("Offensive equipement | name : " + offEquip.getName()
+                        + " | type : " + offEquip.getType()
+                        + " | dmg : " + offEquip.getDamage()
+                        + "\n"
+                );
+            }
         }
     }
-
+    public boolean showPlayerPotion(Character player){
+        if (player.getDefensiveEquipment().isEmpty()) {
+            System.out.println("Pas de potion.");
+            requestInput();
+            return false;
+        }
+        System.out.println("Potion : ");
+        for (int i = 0; i < player.getDefensiveEquipment().size(); i++) {
+            System.out.println((i+1) + ") " + player.getDefensiveEquipment().get(i).getType());
+        }
+        return true;
+    }
 }

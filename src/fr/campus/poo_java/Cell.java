@@ -50,4 +50,16 @@ public class Cell {
     public int getPos() {
         return this.id;
     }
+
+    public boolean isOffEquipEmpty(){
+        return this.offEquip.isEmpty();
+    }
+
+    public void addOffEquip(OffensiveEquipment offEquip){
+        this.offEquip.add(offEquip);
+    }
+
+    public void removeOffEquip(OffensiveEquipment offEquip){
+        this.offEquip.remove(offEquip);
+    }
 }

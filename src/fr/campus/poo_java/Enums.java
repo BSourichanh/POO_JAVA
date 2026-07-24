@@ -9,6 +9,10 @@ public class Enums {
     Massue, Epée, Eclair, Boule_de_feu
     }
 
+    public enum OffEquipType{
+        Weapon, Spell
+    }
+
     public  enum DefEquip {
         PotionPV, GrandePotionPV
     }

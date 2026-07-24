@@ -126,8 +126,8 @@ public class Database {
             if (rs.next()) {
                 int characterId = rs.getInt(1);
 
-                saveOffensiveEquipment(con, characterId, player.getOffensiveEquipement());
-                saveDefensiveEquipment(con, characterId, player.getDefensiveEquipement());
+                saveOffensiveEquipment(con, characterId, player.getOffensiveEquipment());
+                saveDefensiveEquipment(con, characterId, player.getDefensiveEquipment());
             }
 
         } catch (SQLException e) {

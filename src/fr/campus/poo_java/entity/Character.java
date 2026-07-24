@@ -3,7 +3,6 @@ package fr.campus.poo_java.entity;
 import fr.campus.poo_java.Cell;
 import fr.campus.poo_java.Enums;
 import fr.campus.poo_java.equipement.defensive_equipement.DefensiveEquipement;
-import fr.campus.poo_java.equipement.defensive_equipement.Potion;
 import fr.campus.poo_java.equipement.offensive_equipement.OffensiveEquipment;
 
 import java.util.ArrayList;
@@ -69,16 +68,16 @@ public class Character {
         return this.strength;
     }
 
-    public void usePotion(DefensiveEquipement potion) {
+    public void useDefEquip(DefensiveEquipement potion) {
         this.lifePoints += potion.getHp();
-        removeDefensiveEquipement(potion);
+        removeDefensiveEquipment(potion);
     }
 
-    public void addDefensiveEquipement(DefensiveEquipement defEquip){
+    public void addDefensiveEquipment(DefensiveEquipement defEquip){
         this.defensiveEquipement.add(defEquip);
     }
 
-    public void removeDefensiveEquipement(DefensiveEquipement defEquip) {
+    public void removeDefensiveEquipment(DefensiveEquipement defEquip) {
         defensiveEquipement.remove(defEquip);
     }
 
@@ -86,25 +85,29 @@ public class Character {
         return this.defensiveEquipement.isEmpty();
     }
 
-    public List<DefensiveEquipement> getDefensiveEquipement(){
+    public boolean isOffEquipEmpty(){
+        return this.offEquipement.isEmpty();
+    }
+
+    public List<DefensiveEquipement> getDefensiveEquipment(){
         return defensiveEquipement;
     }
 
-    public List<OffensiveEquipment> getOffensiveEquipement(){return offEquipement;}
+    public List<OffensiveEquipment> getOffensiveEquipment(){return offEquipement;}
 
     @Override
     public String toString() {
         return (this.name + " : PV : " + this.lifePoints + " DMG : " + this.strength);
     }
 
-    public void addPotion(DefensiveEquipement defEquip){
-        this.defensiveEquipement.add(defEquip);
-    }
-
-    public DefensiveEquipement getPotion(int id)
-    {
+    public DefensiveEquipement getDefEquipById(int id) {
         if (id > 0)
             return defensiveEquipement.get(id - 1);
         return null;
     }
+
+    public void addOffensiveEquipement(OffensiveEquipment offEquip) {
+        this.offEquipement.add(offEquip);
+    }
+    
 }
