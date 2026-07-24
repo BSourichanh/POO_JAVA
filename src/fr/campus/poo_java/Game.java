@@ -28,9 +28,9 @@ public class Game {
     public int maxPlayer = 2;
     public int maxCell = 63;
 
-    public  static int maxEnemies = 10;
+    public  static int maxEnemies = 20;
     private static int maxPotion = 10;
-    public  static int maxWeapon = 10;
+    public  static int maxWeapon = 50;
     public Cell[] cellTable =  new Cell[maxCell];
     Random random = new Random();
 
@@ -43,11 +43,11 @@ public class Game {
         db = new Database();
     }
 
+    //Init
     public void initCells() {
         for (int i = 0; i < maxCell; i++)
             cellTable[i] = new Cell(i);
     }
-
     public void initPlayers(){
         Character tmp;
         Menu tmpMenu = new Menu();
@@ -71,7 +71,6 @@ public class Game {
             }
         }
     }
-
     public void initEnemies() {
 
         for (int i = 0; i < maxEnemies; i++)
@@ -94,7 +93,6 @@ public class Game {
             }
         }
     }
-
     public void initOffEquip(){
         for (int i = 0; i < maxWeapon; i++)
         {
@@ -120,7 +118,6 @@ public class Game {
             }
         }
     }
-
     public  void initDefEquip() {
         for (int i = 0; i < maxPotion; i++)
         {
@@ -145,16 +142,15 @@ public class Game {
         return null;
     }
 
+    //Random
     Enums.EntityType randomEnemyType() {
         Enums.EntityType[] types = { Enums.EntityType.Goblin, Enums.EntityType.Sorcier, Enums.EntityType.Dragon };
         return types[random.nextInt(types.length)];
     }
-
     Enums.DefEquip randomDefEquipType() {
         Enums.DefEquip[] types = {Enums.DefEquip.PotionPV, Enums.DefEquip.GrandePotionPV};
         return types[random.nextInt(types.length)];
     }
-
     Enums.OffEquip randomOffEquipType(){
         Enums.OffEquip[] types = Enums.OffEquip.values();
         return types[random.nextInt(types.length)];
@@ -163,12 +159,14 @@ public class Game {
     public int throwDice() {
         Random random = new Random();
         int diceValue = random.nextInt(6) + 1;
-        //return diceValue;
-        return 1;
+        return diceValue;
     }
 
     public void checkBattle(Character player, Enemy enemy) {
+        if (player.getCurrentOffEquipement() == null)
         enemy.setHp(enemy.getHp() - player.getDmg());
+        else
+            enemy.setHp(enemy.getHp() - (player.getDmg() + player.getCurrentOffEquipement().getDamage()));
     }
 
     public void setMaxPlayer(int nb) {
@@ -179,14 +177,32 @@ public class Game {
         int input = Integer.parseInt(inputText);
         if (input == 1) {
             player.moveAvailable = throwDice();;
-            menu.showDiceThrow(player);
+            menu.requestInputDiceThrow(player);
             return Enums.GameState.Moving;
         }
         else if (input == 2) {
-            if (menu.showPlayerPotion(player))
-                input = menu.requestPotion(player);
+            if (menu.showDefEquips(player))
+                input = menu.requestNb();
                 player.useDefEquip(player.getDefEquipById(input));
             }
+        else if (input == 3)
+        {
+            if (menu.showOffEquips(player)){
+                input = menu.requestNb();
+                if (input == 0)
+                    return  Enums.GameState.Idle;
+                OffensiveEquipment tmpOffEquip = player.getOffEquipById(input - 1);
+                if (player.getCurrentOffEquipement() == null) {
+                    player.setCurrentOffEquip(tmpOffEquip);
+                    player.removeFromInventoryOffEquipement(tmpOffEquip);
+                }
+                else {
+                    player.moveOffEquipToInventory();
+                    player.setCurrentOffEquip(tmpOffEquip);
+                    player.removeFromInventoryOffEquipement(tmpOffEquip);
+                }
+            }
+        }
         else if (input == 42) {
             player.moveAvailable = 63;
             return Enums.GameState.Moving;
@@ -203,7 +219,6 @@ public class Game {
             return Enums.GameState.End;
         }
         int pPos = player.getPos();
-        //menu.showCellsData(cellTable, maxCell);
         menu.showMoveAvailable(player);
         menu.requestInputToMove(player);
         if (player.moveAvailable > 0 && pPos + player.moveAvailable < maxCell) {
@@ -240,8 +255,9 @@ public class Game {
         menu.showBattleInfo(player, enemy);
         checkBattle(player, enemy);
         menu.showDmg(player, enemy);
-        enemy.setHp(enemy.getHp() - player.getDmg());
         menu.showBattleResult(player, enemy);
+        if (enemy.getHp() > 0)
+            player.setHp(player.getHp() - enemy.getDmg());
         cellTable[player.getPos()].removeEnemy(enemy);
     }
 
@@ -249,7 +265,7 @@ public class Game {
         System.out.println( "//"+ gameState);
         menu.showSeperator();
         Character player = getPlayerById(currentPlayer);
-        menu.showData(cellTable);
+        menu.showCurrentPlayer(player);
         if (player.getPos() == maxCell -1) {
             gameState = Enums.GameState.Finish;
             menu.showPlayerFinish(player);
@@ -271,7 +287,6 @@ public class Game {
                 break;
             case End:
                 menu.showPlayerEndTurn(player);
-                menu.showSeperator();
                 menu.requestInput();
                 if (currentPlayer < maxPlayer - 1)
                     currentPlayer++;

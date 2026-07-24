@@ -14,8 +14,9 @@ public class Character {
     protected Enums.EntityType type;
     protected int strength;
     protected int lifePoints;
-    protected List<OffensiveEquipment> offEquipement = new ArrayList<>();
-    protected List<DefensiveEquipement> defensiveEquipement = new ArrayList<>();
+    protected List<OffensiveEquipment> offEquipements = new ArrayList<>();
+    protected List<DefensiveEquipement> defensiveEquipements = new ArrayList<>();
+    protected OffensiveEquipment currentOffEquip;
     protected Cell currentCell;
     protected int pos = 0;
     public int moveAvailable = 0;
@@ -25,7 +26,6 @@ public class Character {
     this.name = name;
     this.currentCell = cell;
     }
-
 
     public void moveEntityToCell(Cell startCell, Cell nextCell) {
         nextCell.addPlayer(this);
@@ -74,26 +74,26 @@ public class Character {
     }
 
     public void addDefensiveEquipment(DefensiveEquipement defEquip){
-        this.defensiveEquipement.add(defEquip);
+        this.defensiveEquipements.add(defEquip);
     }
 
     public void removeDefensiveEquipment(DefensiveEquipement defEquip) {
-        defensiveEquipement.remove(defEquip);
+        defensiveEquipements.remove(defEquip);
     }
 
     public boolean isDefEquipEmpty(){
-        return this.defensiveEquipement.isEmpty();
+        return this.defensiveEquipements.isEmpty();
     }
 
     public boolean isOffEquipEmpty(){
-        return this.offEquipement.isEmpty();
+        return this.offEquipements.isEmpty();
     }
 
     public List<DefensiveEquipement> getDefensiveEquipment(){
-        return defensiveEquipement;
+        return defensiveEquipements;
     }
 
-    public List<OffensiveEquipment> getOffensiveEquipment(){return offEquipement;}
+    public List<OffensiveEquipment> getOffensiveEquipment(){return offEquipements;}
 
     @Override
     public String toString() {
@@ -102,12 +102,32 @@ public class Character {
 
     public DefensiveEquipement getDefEquipById(int id) {
         if (id > 0)
-            return defensiveEquipement.get(id - 1);
+            return defensiveEquipements.get(id);
         return null;
     }
 
     public void addOffensiveEquipement(OffensiveEquipment offEquip) {
-        this.offEquipement.add(offEquip);
+        this.offEquipements.add(offEquip);
     }
-    
+
+    public OffensiveEquipment getCurrentOffEquipement()
+    {
+        return this.currentOffEquip;
+    }
+    public void setCurrentOffEquip(OffensiveEquipment offEquip){
+        currentOffEquip = offEquip;
+    }
+    public OffensiveEquipment getOffEquipById(int id){
+        if (id >= 0 && !offEquipements.isEmpty())
+            return offEquipements.get(id);
+        return  null;
+    }
+    public void removeFromInventoryOffEquipement(OffensiveEquipment offEquip){
+        offEquipements.remove(offEquip);
+    }
+
+    public void moveOffEquipToInventory() {
+        offEquipements.add(currentOffEquip);
+        currentOffEquip = null;
+    }
 }
