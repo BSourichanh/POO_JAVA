@@ -157,7 +157,18 @@ public class Menu {
         requestInput();
     }
 
+    public void showPlayerDeath(Character player) {
+        System.out.println(player.getName() + " le " + player.getType() + " est mort !");
+        System.out.println("Entrer) Fin du tour");
+        requestInput();
+    }
+
     //Affichage fin de tour / jeu
+    public void showGameOver() {
+        System.out.println("Tous les joueurs sont morts, fin de la partie.");
+        requestInput();
+    }
+
     public void showPlayerEndTurn(Character player) {
         System.out.println("Enter) Fin de tour de " + player.getName() + " le " + player.getEntityType());
     }

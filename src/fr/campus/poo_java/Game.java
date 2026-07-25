@@ -1,6 +1,5 @@
 package fr.campus.poo_java;
 
-import fr.campus.poo_java.db.Database;
 import fr.campus.poo_java.entity.Character;
 import fr.campus.poo_java.entity.Enemy;
 import fr.campus.poo_java.entity.character.Warrior;
@@ -35,12 +34,10 @@ public class Game {
     Random random = new Random();
 
     private Menu menu;
-    private Database db;
 
     public Game(){
         gameState = Enums.GameState.Idle;
         menu = new Menu();
-        db = new Database();
     }
 
     //Init
@@ -60,12 +57,10 @@ public class Game {
                 case 1:
                     tmp = new Warrior(Enums.EntityType.Guerrier, name, i, cellTable[0]);
                     cellTable[0].players.add(tmp);
-                    db.createHeros(tmp);
                     break;
                 case  2:
                     tmp = new Wizard(Enums.EntityType.Mage, name, i, cellTable[0]);
                     cellTable[0].players.add(tmp);
-                    db.createHeros(tmp);
                     break;
             }
         }
@@ -281,7 +276,35 @@ public class Game {
         menu.showBattleResult(player, enemy);
         if (enemy.getHp() > 0)
             player.setHp(player.getHp() - enemy.getDmg());
+        if (player.getHp() <= 0)
+            killPlayer(player);
         cellTable[player.getPos()].removeEnemy(enemy);
+    }
+
+    // Le joueur mort est retiré de sa cellule : il n'apparait plus sur le plateau
+    // et getPlayerById ne le trouve plus.
+    public void killPlayer(Character player) {
+        player.setHp(0);
+        cellTable[player.getPos()].removePlayer(player);
+        menu.showPlayerDeath(player);
+    }
+
+    public int countAlivePlayers() {
+        int count = 0;
+        for (Cell cell : cellTable)
+            count += cell.players.size();
+        return count;
+    }
+
+    // Passe au prochain joueur encore en vie.
+    public void nextPlayer() {
+        for (int i = 1; i <= maxPlayer; i++) {
+            int id = (currentPlayer + i) % maxPlayer;
+            if (getPlayerById(id) != null) {
+                currentPlayer = id;
+                return;
+            }
+        }
     }
 
     public void playTurn() {
@@ -307,16 +330,22 @@ public class Game {
                     break;
                 case InBattle:
                     manageBattle(player);
-                    gameState = Enums.GameState.Moving;
+                    if (player.getHp() <= 0) {
+                        if (countAlivePlayers() == 0) {
+                            menu.showGameOver();
+                            gameState = Enums.GameState.Finish;
+                        } else {
+                            nextPlayer();
+                            gameState = Enums.GameState.Idle;
+                        }
+                    } else
+                        gameState = Enums.GameState.Moving;
                     break;
                 case End:
                     menu.showHeader(player, cellTable, maxCell);
                     menu.showPlayerEndTurn(player);
                     menu.requestInput();
-                    if (currentPlayer < maxPlayer - 1)
-                        currentPlayer++;
-                    else
-                        currentPlayer = 0;
+                    nextPlayer();
                     gameState = Enums.GameState.Idle;
                     break;
                 case Finish:
