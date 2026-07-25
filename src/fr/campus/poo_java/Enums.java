@@ -18,6 +18,6 @@ public class Enums {
     }
 
     public enum GameState{
-        Idle, Moving, InBattle, End, Finish
+        Idle, Moving, Inventory, InBattle, End, Finish
     }
 }

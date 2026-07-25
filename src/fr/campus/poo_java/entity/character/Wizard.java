@@ -8,7 +8,6 @@ public class Wizard extends Character {
     public Wizard(Enums.EntityType type, String name, int id, Cell cell)
     {
         super(type, name, id, cell);
-        this.type = Enums.EntityType.Mage;
         this.lifePoints = 7;
         this.strength = 7;
 

@@ -24,6 +24,7 @@ public class Character {
     public Character(Enums.EntityType type, String name, int id, Cell cell) {
     this.type = type;
     this.name = name;
+    this.id = id;
     this.currentCell = cell;
     }
 
@@ -101,8 +102,8 @@ public class Character {
     }
 
     public DefensiveEquipement getDefEquipById(int id) {
-        if (id > 0)
-            return defensiveEquipements.get(id);
+        if (id > 0 && id <= defensiveEquipements.size())
+            return defensiveEquipements.get(id - 1);
         return null;
     }
 
@@ -114,11 +115,27 @@ public class Character {
     {
         return this.currentOffEquip;
     }
-    public void setCurrentOffEquip(OffensiveEquipment offEquip){
-        currentOffEquip = offEquip;
+    public int  setCurrentOffEquip(OffensiveEquipment offEquip){
+            if (offEquip == null)
+                return -1;
+            switch (offEquip.getType()){
+                case Weapon:
+                    if (this.type != Enums.EntityType.Guerrier)
+                        return -1;
+                    break;
+                case Spell:
+                    if (this.type != Enums.EntityType.Mage)
+                        return -1;
+                    break;
+            }
+            offEquipements.remove(offEquip);
+            if (currentOffEquip != null)
+                offEquipements.add(currentOffEquip);
+            currentOffEquip = offEquip;
+            return 1;
     }
     public OffensiveEquipment getOffEquipById(int id){
-        if (id >= 0 && !offEquipements.isEmpty())
+        if (id >= 0 && id < offEquipements.size())
             return offEquipements.get(id);
         return  null;
     }

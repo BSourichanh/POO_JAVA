@@ -8,7 +8,6 @@ public class Warrior extends Character {
     public Warrior(Enums.EntityType type, String name, int id, Cell cell)
     {
         super(type, name, id, cell);
-        this.type = Enums.EntityType.Mage;
         this.lifePoints = 10;
         this.strength = 5;
     }

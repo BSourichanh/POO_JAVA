@@ -10,7 +10,9 @@ import java.util.Scanner;
 
 public class Menu {
     public static int textOffset = 3;
-    protected Scanner sc = new Scanner(System.in);
+    // Un seul Scanner partagé : un Scanner met System.in en mémoire tampon,
+    // donc plusieurs instances se volent les entrées.
+    protected static final Scanner sc = new Scanner(System.in);
     private int currentId;
 
     public void showSeperator() {
@@ -19,41 +21,56 @@ public class Menu {
     }
 
     // Choix joueurs
-    public int chooseClass() {
-        System.out.println("1) Guerrier\n2) Mage");
-        int tmp = Integer.parseInt(requestInput());
-        tmp = checkInput(1, 2, tmp);
+    public int chooseClass(int maxPlayer, int id) {
+        System.out.println("Joueur " + (id+1) + " de choisir.\n");
+        System.out.println("Classes :\n1) Guerrier\n2) Mage");
+        int tmp = requestNb();
+        tmp = checkInput(1, maxPlayer, tmp);
         if (tmp != -1)
             return tmp;
-        chooseClass();
-        return -1;
+        return chooseClass(maxPlayer, id);
     }
 
     public String requestName() {
         System.out.println("Entrer votre nom.");
-        return requestInput();
+        String inputText = requestInput();
+        if (inputText.isEmpty())
+           return requestName();
+        return inputText;
     }
 
-    public int requestNbPlayer() {
+    public int requestNbPlayer(int maxPlayer) {
         System.out.println("1-2) Combien de joueurs ?");
-        int tmp = Integer.parseInt(requestInput());
-        if (checkInput(1, 2, tmp) != -1)
-            return tmp;
+        String inputText = requestInput();
+        if (inputText.isEmpty())
+            return requestNbPlayer(maxPlayer);
         else {
-            System.out.println("Erreur, 1-2");
-            requestNbPlayer();
+            int tmp;
+            try {
+                tmp = Integer.parseInt(inputText.trim());
+            } catch (NumberFormatException e) {
+                System.out.println("Erreur, 1-2");
+                return requestNbPlayer(maxPlayer);
+            }
+            if (checkInput(1,maxPlayer , tmp) != -1)
+                return tmp;
+            else {
+                System.out.println("Erreur, 1-2");
+                return requestNbPlayer(maxPlayer);
+            }
         }
-        return -1;
     }
 
     public int requestNb() {
         System.out.println("Entrer votre choix :");
         String input = requestInput();
-        if (!input.isEmpty()){
-            int tmp = Integer.parseInt(input);
-            return tmp;
+        if (input.isEmpty())
+            return -1;
+        try {
+            return Integer.parseInt(input.trim());
+        } catch (NumberFormatException e) {
+            return -1;
         }
-        return 0;
     }
 
     //Affichage pendant le tour
@@ -71,34 +88,23 @@ public class Menu {
     }
 
     public void showMoveAvailable(Character player) {
-        System.out.println("Déplacement disponible : " + player.moveAvailable + ".");
+        System.out.println("Déplacement disponible : " + player.moveAvailable + "\n");
     }
 
-    public Enums.GameState requestInputToMove(Character player) {
+    public Enums.GameState requestInputAction(Character player) {
         System.out.println("Entrer) Avance de une case\n" + "1) Inventaire");
             int input = requestNb();
-            if (input != 1 || input == 0)
+            if (input != 1)
                 return Enums.GameState.Moving;
             else {
-                OffensiveEquipment tmpOffEquip = player.getOffEquipById(input - 1);
-                if (tmpOffEquip == null) {
+                 if (player.isOffEquipEmpty()) {
                     System.out.println("Inventaire vide.\nEntrer) avancer d'une case");
                     requestInput();
                     return Enums.GameState.Moving;
-                }else
-                    showOffEquips(player);
-                if (player.getCurrentOffEquipement() == null) {
-                    int nb = requestNb();
-                    tmpOffEquip = player.getOffEquipById(nb - 1);
-                    player.setCurrentOffEquip(tmpOffEquip);
-                    player.removeFromInventoryOffEquipement(tmpOffEquip);
-                } else {
-                    player.moveOffEquipToInventory();
-                    player.setCurrentOffEquip(tmpOffEquip);
-                    player.removeFromInventoryOffEquipement(tmpOffEquip);
+                }else {
+                    return Enums.GameState.Inventory;
                 }
             }
-        return Enums.GameState.Moving;
     }
 
     public void showPickDefEquip(Character player, DefensiveEquipement defEquip) {
@@ -114,6 +120,11 @@ public class Menu {
                 + " le " + player.getType()
                 + " ramasse " + offEquip.getType()
         );
+        requestInput();
+    }
+
+    public void showInvalideItemType(Character player) {
+        System.out.println("Entrer) L'item ne peut pas être équipé pour votre classe");
         requestInput();
     }
 
@@ -311,7 +322,6 @@ public class Menu {
                         + " hp : " + defEquip.getHp()
                         + ", ");
             }
-            //System.out.print("]\n");
         }
         if (player.getCurrentOffEquipement() != null)
             System.out.print(" Equipement : " + player.getCurrentOffEquipement().getName() + " |");
@@ -323,7 +333,6 @@ public class Menu {
                         + " dmg : " + offEquip.getDamage()
                         + ",  ");
             }
-            //System.out.print("]\n");
         }
 
         System.out.print("\n");
@@ -365,5 +374,12 @@ public class Menu {
             val = true;
         }
         return val;
+    }
+
+    public void showHeader(Character player, Cell[] cellTable, int maxCell) {
+        this.showSeperator();
+        this.showCurrentPlayer(player);
+        this.showCellsData(cellTable, maxCell);
+        this.showSeperator();
     }
 }

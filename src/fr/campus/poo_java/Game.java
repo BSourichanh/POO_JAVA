@@ -28,9 +28,9 @@ public class Game {
     public int maxPlayer = 2;
     public int maxCell = 63;
 
-    public  static int maxEnemies = 20;
-    private static int maxPotion = 10;
-    public  static int maxWeapon = 50;
+    public  static int maxEnemies = 24;
+    private static int maxPotion = 8;
+    public  static int maxWeapon = 16;
     public Cell[] cellTable =  new Cell[maxCell];
     Random random = new Random();
 
@@ -50,12 +50,11 @@ public class Game {
     }
     public void initPlayers(){
         Character tmp;
-        Menu tmpMenu = new Menu();
         for (int i = 0; i < maxPlayer; i++)
         {
-            System.out.println("Joueur : " + (i+1) + " de choisir");
-            int idType = tmpMenu.chooseClass();
-            String name = tmpMenu.requestName();
+
+            int idType = menu.chooseClass(maxPlayer, i);
+            String name = menu.requestName();
             switch (idType)
             {
                 case 1:
@@ -77,6 +76,7 @@ public class Game {
         {
             int cellIndex = random.nextInt(1, cellTable.length);
             Enemy tmp = null;
+            if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty())
             switch (randomEnemyType()) {
                 case Enums.EntityType.Goblin:
                     tmp = new Goblin();
@@ -98,6 +98,7 @@ public class Game {
         {
             int cellIndex = random.nextInt(1,cellTable.length);
             OffensiveEquipment tmp = null;
+            if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty())
             switch (randomOffEquipType()) {
                 case Enums.OffEquip.Epée:
                     tmp = new Sword();
@@ -122,6 +123,7 @@ public class Game {
         for (int i = 0; i < maxPotion; i++)
         {
             int cellIndex = random.nextInt(1, cellTable.length);
+            if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty())
             switch (randomDefEquipType()) {
                 case Enums.DefEquip.GrandePotionPV:
                     cellTable[cellIndex].addPotion(new BigPotionHP());
@@ -173,18 +175,25 @@ public class Game {
     this.maxPlayer = nb;
     }
 
-    public Enums.GameState  manageAction(String inputText, Character player) {
-        int input = Integer.parseInt(inputText);
+    public Enums.GameState  manageAction(Character player) {
+        menu.showHeader(player, cellTable, maxCell);
+        menu.showPlayerIdleAction();
+        int input = menu.requestNb();
+        if (input == -1)
+            return manageAction(player);
         if (input == 1) {
             player.moveAvailable = throwDice();;
             menu.requestInputDiceThrow(player);
             return Enums.GameState.Moving;
         }
         else if (input == 2) {
-            if (menu.showDefEquips(player))
+            if (menu.showDefEquips(player)) {
                 input = menu.requestNb();
-                player.useDefEquip(player.getDefEquipById(input));
+                DefensiveEquipement potion = player.getDefEquipById(input);
+                if (potion != null)
+                    player.useDefEquip(potion);
             }
+        }
         else if (input == 3)
         {
             if (menu.showOffEquips(player)){
@@ -192,15 +201,8 @@ public class Game {
                 if (input == 0)
                     return  Enums.GameState.Idle;
                 OffensiveEquipment tmpOffEquip = player.getOffEquipById(input - 1);
-                if (player.getCurrentOffEquipement() == null) {
-                    player.setCurrentOffEquip(tmpOffEquip);
-                    player.removeFromInventoryOffEquipement(tmpOffEquip);
-                }
-                else {
-                    player.moveOffEquipToInventory();
-                    player.setCurrentOffEquip(tmpOffEquip);
-                    player.removeFromInventoryOffEquipement(tmpOffEquip);
-                }
+                player.setCurrentOffEquip(tmpOffEquip);
+                return Enums.GameState.Idle;
             }
         }
         else if (input == 42) {
@@ -215,42 +217,63 @@ public class Game {
     }
 
     public Enums.GameState manageMove(Character player){
+        menu.showHeader(player, cellTable, maxCell);
+        menu.showCurrentPlayerTurn(player);
         if (player.moveAvailable == 0) {
             return Enums.GameState.End;
         }
         int pPos = player.getPos();
         menu.showMoveAvailable(player);
-        menu.requestInputToMove(player);
-        if (player.moveAvailable > 0 && pPos + player.moveAvailable < maxCell) {
-            Cell tmpCell = cellTable[pPos];
-            player.moveEntityToCell(tmpCell, cellTable[pPos + 1]);
-            tmpCell = cellTable[pPos + 1];
-            player.moveAvailable--;
-            menu.showCellsData(cellTable, maxCell);
-            if (!tmpCell.isEnemiesEmpty())
-                return Enums.GameState.InBattle;
-            if (!tmpCell.isDefEquipEmpty()) {
-                DefensiveEquipement tmpDef = tmpCell.defEquip.getFirst();
-                menu.showPickDefEquip(player, tmpDef);
-                player.addDefensiveEquipment(tmpDef);
-                tmpCell.removePotion(tmpDef);
+        Enums.GameState action = menu.requestInputAction(player);
+        if  (action == Enums.GameState.Moving) {
+            if (pPos + 1 < maxCell) {
+                Cell tmpCell = cellTable[pPos];
+                player.moveEntityToCell(tmpCell, cellTable[pPos + 1]);
+                tmpCell = cellTable[pPos + 1];
+                player.moveAvailable--;
+                menu.showCellsData(cellTable, maxCell);
+                if (!tmpCell.isEnemiesEmpty())
+                    return Enums.GameState.InBattle;
+                if (!tmpCell.isDefEquipEmpty()) {
+                    DefensiveEquipement tmpDef = tmpCell.defEquip.getFirst();
+                    menu.showPickDefEquip(player, tmpDef);
+                    player.addDefensiveEquipment(tmpDef);
+                    tmpCell.removePotion(tmpDef);
+                }
+                if (!tmpCell.isOffEquipEmpty()) {
+                    OffensiveEquipment tmpOff = tmpCell.offEquip.getFirst();
+                    menu.showPickOffEquip(player, tmpOff);
+                    player.addOffensiveEquipement(tmpOff);
+                    tmpCell.removeOffEquip(tmpOff);
+                }
+                return Enums.GameState.Moving;
+            } else {
+                player.moveEntityToCell(cellTable[pPos], cellTable[maxCell - 1]);
+                return Enums.GameState.Finish;
             }
-            if (!tmpCell.isOffEquipEmpty()) {
-                OffensiveEquipment tmpOff = tmpCell.offEquip.getFirst();
-                menu.showPickOffEquip(player, tmpOff);
-                player.addOffensiveEquipement(tmpOff);
-                tmpCell.removeOffEquip(tmpOff);
-            }
+        }else if (action == Enums.GameState.Inventory){
+            return Enums.GameState.Inventory;
+        }
+        return Enums.GameState.Moving;
+    }
+
+    public Enums.GameState manageInventory(Character player) {
+        menu.showHeader(player, cellTable, maxCell);
+        if (!menu.showOffEquips(player))
             return Enums.GameState.Moving;
-        }
-        else if (pPos + player.moveAvailable > maxCell) {
-            player.moveEntityToCell(cellTable[pPos], cellTable[maxCell]);
-            return Enums.GameState.Finish;
-        }
-        return null;
+        int nb = menu.requestNb();
+        if (nb <= 0)
+            return Enums.GameState.Moving;
+        OffensiveEquipment tmpOffEquip = player.getOffEquipById(nb - 1);
+        if (player.setCurrentOffEquip(tmpOffEquip) == -1) {
+            menu.showInvalideItemType(player);
+            return manageInventory(player);
+        }else
+            return Enums.GameState.Inventory;
     }
 
     public void manageBattle(Character player) {
+        menu.showHeader(player, cellTable, maxCell);
         Enemy enemy = cellTable[player.getPos()].enemies.getFirst();
         menu.showBattleInfo(player, enemy);
         checkBattle(player, enemy);
@@ -262,48 +285,50 @@ public class Game {
     }
 
     public void playTurn() {
-        System.out.println( "//"+ gameState);
-        menu.showSeperator();
         Character player = getPlayerById(currentPlayer);
-        menu.showCurrentPlayer(player);
-        if (player.getPos() == maxCell -1) {
-            gameState = Enums.GameState.Finish;
-            menu.showPlayerFinish(player);
+        System.out.println("//" + gameState);
+        if (player.moveAvailable == 0 && gameState == Enums.GameState.Moving) {
+            gameState = Enums.GameState.End;
         }
-        menu.showSeperator();
-        menu.showCellsData(cellTable, maxCell);
-        switch (gameState) {
-            case Idle:
-                menu.showCurrentPlayerTurn(player);
-                menu.showPlayerIdleAction();
-                gameState = manageAction(menu.requestInput(), player);
-                break;
-            case Moving:
-                gameState = manageMove(player);
-                break;
-            case InBattle:
-                manageBattle(player);
-                gameState = Enums.GameState.Moving;
-                break;
-            case End:
-                menu.showPlayerEndTurn(player);
-                menu.requestInput();
-                if (currentPlayer < maxPlayer - 1)
-                    currentPlayer++;
-                else
-                    currentPlayer = 0;
-                gameState = Enums.GameState.Idle;
-                break;
-            case Finish:
-                menu.showEndGame();
-                break;
+            if (player.getPos() == maxCell - 1) {
+                gameState = Enums.GameState.Finish;
+                menu.showPlayerFinish(player);
+            }
+
+            switch (gameState) {
+                case Idle:
+                    gameState = manageAction(player);
+                    break;
+                case Moving:
+                    gameState = manageMove(player);
+                    break;
+                case Inventory:
+                    gameState = manageInventory(player);
+                    break;
+                case InBattle:
+                    manageBattle(player);
+                    gameState = Enums.GameState.Moving;
+                    break;
+                case End:
+                    menu.showHeader(player, cellTable, maxCell);
+                    menu.showPlayerEndTurn(player);
+                    menu.requestInput();
+                    if (currentPlayer < maxPlayer - 1)
+                        currentPlayer++;
+                    else
+                        currentPlayer = 0;
+                    gameState = Enums.GameState.Idle;
+                    break;
+                case Finish:
+                    menu.showEndGame();
+                    break;
+            }
         }
-    }
 
     public void initGame() {
         menu = new Menu();
         initCells();
-        setMaxPlayer(menu.requestNbPlayer());
+        setMaxPlayer(menu.requestNbPlayer(maxPlayer));
         initPlayers();
         initEnemies();
         initOffEquip();
@@ -311,6 +336,7 @@ public class Game {
     }
 
     public void startGame() {
+        this.initGame();
         while (gameState != Enums.GameState.Finish)
             playTurn();
     }
