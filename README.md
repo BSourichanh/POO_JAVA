@@ -137,6 +137,285 @@ src/fr/campus/poo_java/
 La boucle de jeu est une machine à états (`Enums.GameState`) : `Idle` → `Moving` →
 `InBattle` / `Inventory` → `End` → tour suivant, jusqu'à `Finish`.
 
+## Diagramme de classes
+
+### Vue d'ensemble
+
+```mermaid
+classDiagram
+    direction LR
+
+    class Main {
+        +main() void
+    }
+
+    class Game {
+        +int currentPlayer
+        +Enums.GameState gameState
+        +int maxPlayer
+        +int maxCell
+        +Cell[] cellTable
+        +static int maxEnemies
+        -static int maxPotion
+        +static int maxWeapon
+        -Menu menu
+        -Random random
+        +Game()
+        +initGame() void
+        +initCells() void
+        +initPlayers() void
+        +initEnemies() void
+        +initOffEquip() void
+        +initDefEquip() void
+        +startGame() void
+        +playTurn() void
+        +manageAction(Character) Enums.GameState
+        +manageMove(Character) Enums.GameState
+        +manageInventory(Character) Enums.GameState
+        +manageBattle(Character) void
+        +checkBattle(Character, Enemy) void
+        +killPlayer(Character) void
+        +countAlivePlayers() int
+        +nextPlayer() void
+        +getPlayerById(int) Character
+        +throwDice() int
+        +setMaxPlayer(int) void
+        ~randomEnemyType() Enums.EntityType
+        ~randomDefEquipType() Enums.DefEquip
+        ~randomOffEquipType() Enums.OffEquip
+    }
+
+    class Menu {
+        +static int textOffset
+        #static final Scanner sc
+        -int currentId
+        +chooseClass(int, int) int
+        +requestName() String
+        +requestNbPlayer(int) int
+        +requestNb() int
+        +requestInput() String
+        +requestInputAction(Character) Enums.GameState
+        +requestInputDiceThrow(Character) void
+        +showHeader(Character, Cell[], int) void
+        +showCellsData(Cell[], int) void
+        +showCurrentPlayer(Character) void
+        +showOffEquips(Character) boolean
+        +showDefEquips(Character) boolean
+        +showBattleInfo(Character, Enemy) void
+        +showDmg(Character, Enemy) void
+        +showBattleResult(Character, Enemy) void
+        +showPlayerDeath(Character) void
+        +showGameOver() void
+        +showEndGame() void
+        #checkInput(int, int, int) int
+    }
+
+    class Cell {
+        -int id
+        +List~Character~ players
+        +List~Enemy~ enemies
+        +List~OffensiveEquipment~ offEquip
+        +List~DefensiveEquipement~ defEquip
+        ~Cell(int)
+        +addPlayer(Character) void
+        +removePlayer(Character) void
+        +addEnemy(Enemy) void
+        +removeEnemy(Enemy) void
+        +addPotion(DefensiveEquipement) void
+        +removePotion(DefensiveEquipement) void
+        +addOffEquip(OffensiveEquipment) void
+        +removeOffEquip(OffensiveEquipment) void
+        +getPos() int
+    }
+
+    class Character {
+        #int id
+        #String name
+        #Enums.EntityType type
+        #int strength
+        #int lifePoints
+        #List~OffensiveEquipment~ offEquipements
+        #List~DefensiveEquipement~ defensiveEquipements
+        #OffensiveEquipment currentOffEquip
+        #Cell currentCell
+        #int pos
+        +int moveAvailable
+        +Character(EntityType, String, int, Cell)
+        +moveEntityToCell(Cell, Cell) void
+        +useDefEquip(DefensiveEquipement) void
+        +setCurrentOffEquip(OffensiveEquipment) int
+        +getOffEquipById(int) OffensiveEquipment
+        +getDefEquipById(int) DefensiveEquipement
+        +moveOffEquipToInventory() void
+        +getHp() int
+        +setHp(int) void
+        +getDmg() int
+    }
+
+    class Enemy {
+        #int id
+        #String name
+        #Enums.EntityType type
+        #int strength
+        #int lifePoints
+        #Cell currentCell
+        #int pos
+        +getHp() int
+        +setHp(int) void
+        +getDmg() int
+        +getInfo() void
+    }
+
+    class OffensiveEquipment {
+        #String name
+        #int dmg
+        #Enums.OffEquipType type
+        +getName() String
+        +getDamage() int
+        +getType() Enums.OffEquipType
+    }
+
+    class DefensiveEquipement {
+        #Enums.DefEquip type
+        #String name
+        #int hp
+        +getName() String
+        +getHp() int
+        +getType() Enums.DefEquip
+    }
+
+    class Database {
+        -static final String URL
+        -static final String USER
+        -static final String PASSWORD
+        +static getConnection() Connection
+        +pingSQL() boolean
+        +getHeroes() void
+        +createHeros(Character) void
+        +removeHero(int) void
+        +clearHeroes() void
+        -saveOffensiveEquipment(Connection, int, List) void
+        -saveDefensiveEquipment(Connection, int, List) void
+    }
+
+    class Enums {
+        <<enumeration holder>>
+        EntityType
+        OffEquip
+        OffEquipType
+        DefEquip
+        GameState
+    }
+
+    Main            ..>  Game        : crée
+    Game            *--  Menu        : composition
+    Game            *--> "63" Cell   : cellTable
+    Cell            o--> "*" Character
+    Cell            o--> "*" Enemy
+    Cell            o--> "*" OffensiveEquipment
+    Cell            o--> "*" DefensiveEquipement
+    Character       o--> "*" OffensiveEquipment : inventaire
+    Character       o--> "0..1" OffensiveEquipment : currentOffEquip
+    Character       o--> "*" DefensiveEquipement : potions
+    Character       -->  "1" Cell    : currentCell
+    Enemy           -->  "0..1" Cell : currentCell
+    Menu            ..>  Character   : affiche
+    Menu            ..>  Cell        : affiche
+    Game            ..>  Enums
+    Database        ..>  Character   : persiste
+```
+
+### Hiérarchie des entités
+
+```mermaid
+classDiagram
+    direction TB
+
+    class Character {
+        #lifePoints
+        #strength
+    }
+    class Warrior {
+        +Warrior(EntityType, String, int, Cell)
+        PV = 10 / DMG = 5
+    }
+    class Wizard {
+        +Wizard(EntityType, String, int, Cell)
+        PV = 7 / DMG = 7
+    }
+    Character <|-- Warrior
+    Character <|-- Wizard
+
+    class Enemy
+    class Goblin {
+        PV = 5 / DMG = 3
+    }
+    class Sorcier {
+        PV = 8 / DMG = 5
+    }
+    class Dragon {
+        PV = 15 / DMG = 8
+    }
+    Enemy <|-- Goblin
+    Enemy <|-- Sorcier
+    Enemy <|-- Dragon
+```
+
+### Hiérarchie des équipements
+
+```mermaid
+classDiagram
+    direction TB
+
+    class OffensiveEquipment {
+        #name
+        #dmg
+        #type
+    }
+    class Weapon
+    class Spell
+    class Sword {
+        "epée" / dmg = 5
+    }
+    class Mace {
+        "massue" / dmg = 3
+    }
+    class FireBall {
+        "boule de feu" / dmg = 7
+    }
+    class ThunderBolt {
+        "eclair" / dmg = 2
+    }
+
+    OffensiveEquipment <|-- Weapon
+    OffensiveEquipment <|-- Spell
+    Weapon <|-- Sword
+    Weapon <|-- Mace
+    Spell  <|-- FireBall
+    Spell  <|-- ThunderBolt
+
+    class DefensiveEquipement {
+        #type
+        #name
+        #hp
+    }
+    class Potion
+    class PotionHP {
+        "P+" / hp = 2
+    }
+    class BigPotionHP {
+        "P++" / hp = 5
+    }
+
+    DefensiveEquipement <|-- Potion
+    DefensiveEquipement <|-- PotionHP
+    DefensiveEquipement <|-- BigPotionHP
+```
+
+`PotionHP` et `BigPotionHP` héritent directement de `DefensiveEquipement` : la classe
+intermédiaire `Potion` n'est pas dans leur chaîne d'héritage, contrairement à `Weapon` et
+`Spell` du côté offensif.
+
 ## Persistance MySQL (désactivée)
 
 `Database.java` contient le code de sauvegarde des personnages, mais le jeu ne l'appelle
@@ -164,5 +443,8 @@ name, damage)`.
   à un joueur, seul « Guerrier » est acceptable.
 - `Potion`, `Spell` et `Weapon` sont des classes intermédiaires vides, et
   `Database.saveDefensiveEquipment()` n'est pas implémentée.
+- `Character` et `Enemy` n'ont pas de classe mère commune alors qu'ils partagent sept
+  attributs (`id`, `name`, `type`, `strength`, `lifePoints`, `pos`, `currentCell`) et
+  leurs accesseurs : une classe `Entity` supprimerait cette duplication.
 - Les identifiants MySQL sont écrits en dur dans `Database.java` ; à externaliser avant
   toute diffusion publique du dépôt.
