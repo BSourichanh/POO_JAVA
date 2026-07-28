@@ -453,13 +453,13 @@ classDiagram
     }
 
     DefensiveEquipement <|-- Potion
-    DefensiveEquipement <|-- PotionHP
-    DefensiveEquipement <|-- BigPotionHP
+    Potion <|-- PotionHP
+    Potion <|-- BigPotionHP
 ```
 
-`PotionHP` et `BigPotionHP` héritent directement de `DefensiveEquipement` : la classe
-intermédiaire `Potion` n'est pas dans leur chaîne d'héritage, contrairement à `Weapon` et
-`Spell` du côté offensif.
+`PotionHP` et `BigPotionHP` héritent de `Potion`, elle-même sous-classe de `DefensiveEquipement`.
+La hiérarchie est donc similaire à celle des équipements offensifs (`Weapon` → `Sword`/`Mace`,
+`Spell` → `FireBall`/`ThunderBolt`).
 
 ## Persistance MySQL (désactivée)
 
