@@ -26,6 +26,7 @@ java -Dstdout.encoding=UTF-8 -cp out fr.campus.poo_java.Main
 ```
 
 Les deux options d'encodage sont nécessaires :
+
 - `-encoding UTF-8` à la compilation, car le code contient des accents jusque dans les
   identifiants (`Enums.OffEquip.Epée`) ;
 - `-Dstdout.encoding=UTF-8` à l'exécution, sans quoi les accents s'affichent en
@@ -66,32 +67,39 @@ L'objet reste dans l'inventaire, mais son bonus de dégâts ne s'applique pas.
 
 ### Équipements
 
-| Objet         | Type   | Effet    | Réservé à |
-|---------------|--------|----------|-----------|
-| Épée          | Arme   | +5 dégâts | Guerrier |
-| Massue        | Arme   | +3 dégâts | Guerrier |
-| Boule de feu  | Sort   | +7 dégâts | Mage     |
-| Éclair        | Sort   | +2 dégâts | Mage     |
-| Potion (`P+`)        | Potion | +2 PV | — |
-| Grande potion (`P++`) | Potion | +5 PV | — |
+| Objet                 | Type   | Effet     | Réservé à |
+|-----------------------|--------|-----------|-----------|
+| Épée                  | Arme   | +5 dégâts | Guerrier  |
+| Massue                | Arme   | +3 dégâts | Guerrier  |
+| Boule de feu          | Sort   | +7 dégâts | Mage      |
+| Éclair                | Sort   | +2 dégâts | Mage      |
+| Potion (`P+`)         | Potion | +2 PV     | —         |
+| Grande potion (`P++`) | Potion | +5 PV     | —         |
 
 ## Commandes
 
 Menu de début de tour :
 
-| Touche | Action |
-|--------|--------|
-| `1`  | Lancer le dé et commencer à se déplacer |
-| `2`  | Boire une potion |
-| `3`  | Changer d'équipement offensif |
-| `42` | *(debug)* accorde 63 déplacements pour traverser le plateau |
+| Touche | Action                                                      |
+|--------|-------------------------------------------------------------|
+| `1`    | Lancer le dé et commencer à se déplacer                     |
+| `2`    | Boire une potion                                            |
+| `3`    | Changer d'équipement offensif                               |
+| `42`   | *(debug)* accorde 63 déplacements pour traverser le plateau |
 
 Pendant un déplacement :
 
-| Touche | Action |
-|--------|--------|
-| `Entrée` | Avancer d'une case |
+| Touche   | Action                                             |
+|----------|----------------------------------------------------|
+| `Entrée` | Avancer d'une case                                 |
 | `1`      | Ouvrir l'inventaire pour changer d'arme ou de sort |
+
+Pendant un combat :
+
+| Touche | Action                      |
+|--------|-----------------------------|
+| `1`    | Attaquer                   |
+| `2`    | Fuir (recule de 1 à 6 cases) |
 
 ## Déroulement d'un combat
 
@@ -100,6 +108,8 @@ Pendant un déplacement :
 3. Si les PV du joueur tombent à 0 ou moins, il meurt : le message de décès s'affiche,
    il disparaît du plateau et le tour passe au joueur suivant encore en vie.
 4. S'il ne reste plus aucun survivant, la partie se termine.
+5. À tout moment pendant le combat, le joueur peut tenter de fuir en reculant de 1 à 6 cases.
+   La fuite met fin au combat et libère la case.
 
 ## Lire le plateau
 
@@ -117,25 +127,28 @@ Une case vide reste `[]`.
 
 ```
 src/fr/campus/poo_java/
-├── Main.java          Point d'entrée
-├── Game.java          Boucle de jeu, initialisation, combats, gestion des tours
-├── Menu.java          Toutes les entrées/sorties console
-├── Cell.java          Une case et son contenu (joueurs, ennemis, objets)
-├── Enums.java         Types d'entités, d'équipements, états du jeu
+├── Main.java                  Point d'entrée
+├── Menu.java                  Toutes les entrées/sorties console
+├── Cell.java                  Une case et son contenu (joueurs, ennemis, objets)
+├── Enums.java                 Types d'entités, d'équipements, états du jeu
+├── game/
+│   ├── Game.java              Boucle de jeu, initialisation, gestion des tours
+│   └── BattleManager.java     Gestion des combats (dégâts, tours, fuite)
 ├── entity/
-│   ├── Character.java     Joueur : PV, force, inventaire, déplacement
-│   ├── Enemy.java         Classe de base des ennemis
-│   ├── character/         Warrior, Wizard
-│   └── enemies/           Goblin, Sorcier, Dragon
+│   ├── Character.java         Joueur : PV, force, inventaire, déplacement
+│   ├── Enemy.java             Classe de base des ennemis
+│   ├── character/             Warrior, Wizard
+│   └── enemies/               Goblin, Sorcier, Dragon
 ├── equipement/
 │   ├── offensive_equipement/   Weapon (Sword, Mace), Spell (FireBall, ThunderBolt)
 │   └── defensive_equipement/   Potion (PotionHP, BigPotionHP)
 └── db/
-    └── Database.java  Persistance MySQL (non utilisée par le jeu)
+    └── Database.java          Persistance MySQL (non utilisée par le jeu)
 ```
 
 La boucle de jeu est une machine à états (`Enums.GameState`) : `Idle` → `Moving` →
-`InBattle` / `Inventory` → `End` → tour suivant, jusqu'à `Finish`.
+`InBattle` / `Inventory` / `Flee` → `End` → tour suivant, jusqu'à `Finish`.
+Les combats utilisent eux-mêmes une machine à états (`Enums.BattleState`) : `PLAYER_TURN` ↔ `ENEMY_TURN`.
 
 ## Diagramme de classes
 
@@ -159,6 +172,7 @@ classDiagram
         -static int maxPotion
         +static int maxWeapon
         -Menu menu
+        -BattleManager battleManager
         -Random random
         +Game()
         +initGame() void
@@ -172,9 +186,9 @@ classDiagram
         +manageAction(Character) Enums.GameState
         +manageMove(Character) Enums.GameState
         +manageInventory(Character) Enums.GameState
-        +manageBattle(Character) void
-        +checkBattle(Character, Enemy) void
-        +killPlayer(Character) void
+        +managePotion(Character) Enums.GameState
+        +flee(Character) Enums.GameState
+        +removePlayer(Character) void
         +countAlivePlayers() int
         +nextPlayer() void
         +getPlayerById(int) Character
@@ -183,6 +197,15 @@ classDiagram
         ~randomEnemyType() Enums.EntityType
         ~randomDefEquipType() Enums.DefEquip
         ~randomOffEquipType() Enums.OffEquip
+    }
+
+    class BattleManager {
+        -Menu menu
+        -Game game
+        -Enums.BattleState state
+        +BattleManager(Menu, Game)
+        +manageBattle(Character) Enums.GameState
+        +checkBattle(Character, Enemy, Enums.BattleState) void
     }
 
     class Menu {
@@ -201,12 +224,22 @@ classDiagram
         +showCurrentPlayer(Character) void
         +showOffEquips(Character) boolean
         +showDefEquips(Character) boolean
-        +showBattleInfo(Character, Enemy) void
-        +showDmg(Character, Enemy) void
+        +showBattleInfo(Character, Enemy, Enums.BattleState) int
+        +showDmg(Character, Enemy, Enums.BattleState) void
         +showBattleResult(Character, Enemy) void
         +showPlayerDeath(Character) void
         +showGameOver() void
         +showEndGame() void
+        +showFlee(int) void
+        +showMoveAvailable(Character) void
+        +showPlayerIdleAction() void
+        +showPlayerEndTurn(Character) void
+        +showPlayerTurn(Character) void
+        +showEncounter(Character, Enemy) void
+        +showWrongChoice() void
+        +showInvalideItemType(Character) void
+        +showPickDefEquip(Character, DefensiveEquipement) void
+        +showPickOffEquip(Character, OffensiveEquipment) void
         #checkInput(int, int, int) int
     }
 
@@ -225,6 +258,9 @@ classDiagram
         +removePotion(DefensiveEquipement) void
         +addOffEquip(OffensiveEquipment) void
         +removeOffEquip(OffensiveEquipment) void
+        +isEnemiesEmpty() boolean
+        +isDefEquipEmpty() boolean
+        +isOffEquipEmpty() boolean
         +getPos() int
     }
 
@@ -246,10 +282,15 @@ classDiagram
         +setCurrentOffEquip(OffensiveEquipment) int
         +getOffEquipById(int) OffensiveEquipment
         +getDefEquipById(int) DefensiveEquipement
+        +getCurrentOffEquipement() OffensiveEquipment
+        +addOffensiveEquipement(OffensiveEquipment) void
+        +addDefensiveEquipment(DefensiveEquipement) void
         +moveOffEquipToInventory() void
         +getHp() int
         +setHp(int) void
         +getDmg() int
+        +getId() int
+        +getPos() int
     }
 
     class Enemy {
@@ -305,10 +346,12 @@ classDiagram
         OffEquipType
         DefEquip
         GameState
+        BattleState
     }
 
     Main            ..>  Game        : crée
     Game            *--  Menu        : composition
+    Game            *--  BattleManager : composition
     Game            *--> "63" Cell   : cellTable
     Cell            o--> "*" Character
     Cell            o--> "*" Enemy
@@ -322,6 +365,8 @@ classDiagram
     Menu            ..>  Character   : affiche
     Menu            ..>  Cell        : affiche
     Game            ..>  Enums
+    BattleManager   ..>  Character   : combat
+    BattleManager   ..>  Enemy       : combat
     Database        ..>  Character   : persiste
 ```
 
