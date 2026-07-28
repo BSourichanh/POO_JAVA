@@ -1,11 +1,11 @@
 package fr.campus.poo_java.ui;
 
 import fr.campus.poo_java.Enums;
-import fr.campus.poo_java.entity.Character;
-import fr.campus.poo_java.entity.Enemy;
+import fr.campus.poo_java.entity.character.Character;
+import fr.campus.poo_java.entity.enemies.Enemy;
 import fr.campus.poo_java.equipement.defensive_equipement.DefensiveEquipement;
 import fr.campus.poo_java.equipement.offensive_equipement.OffensiveEquipment;
-import fr.campus.poo_java.game.Cell;
+import fr.campus.poo_java.game.cell.Cell;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,10 +14,10 @@ public class Menu {
 	// Un seul Scanner partagé : un Scanner met System.in en mémoire tampon,
 	// donc plusieurs instances se volent les entrées.
 	protected static final Scanner sc = new Scanner(System.in);
-	public static int textOffset = 3;
+	private static final int textOffset = 3;
 	private int currentId;
 	
-	public void showSeperator () {
+	public void showSeparator () {
 		System.out.println("=============================================================" +
 				"=============================================================");
 	}
@@ -27,8 +27,7 @@ public class Menu {
 		System.out.println("Joueur " + (id + 1) + " de choisir.\n");
 		System.out.println("Classes :\n1) Guerrier\n2) Mage");
 		int tmp = requestNb();
-		tmp = checkInput(maxPlayer, tmp);
-		if (tmp != -1)
+		if (tmp == 1 || tmp == 2)
 			return tmp;
 		return chooseClass(maxPlayer, id);
 	}
@@ -52,7 +51,7 @@ public class Menu {
 				System.out.println("Erreur, 1-2");
 				return requestNbPlayer(maxPlayer);
 			}
-			if (checkInput(maxPlayer, tmp) != -1)
+			if (checkInput(tmp, maxPlayer) != -1)
 				return tmp;
 			else {
 				System.out.println("Erreur, 1-2");
@@ -82,11 +81,11 @@ public class Menu {
 	}
 	
 	public void requestInputDiceThrow (Character player) {
-		requestInput("Entrer) " + player.getName() + " à fait un lancer de dée de "+ player.moveAvailable);
+		requestInput("Entrer) " + player.getName() + " à fait un lancer de dée de " + player.getMoveAvailable());
 	}
 	
 	public void showMoveAvailable (Character player) {
-		System.out.println("Déplacement disponible : " + player.moveAvailable + "\n");
+		System.out.println("Déplacement disponible : " + player.getMoveAvailable() + "\n");
 	}
 	
 	public Enums.GameState requestInputAction (Character player) {
@@ -128,7 +127,7 @@ public class Menu {
 		);
 	}
 	
-	public void showInvalideItemType () {
+	public void showWrongItemType () {
 		requestInput("Entrer) L'item ne peut pas être équipé pour votre classe");
 	}
 	
@@ -141,7 +140,7 @@ public class Menu {
 	}
 	
 	public void showPlayerEndTurn (Character player) {
-		System.out.println("Enter) Fin de tour de " + player.getName() + " le " + player.getEntityType());
+		System.out.println("Enter) Fin de tour de " + player.getName() + " le " + player.getType());
 	}
 	
 	public void showPlayerFinish (Character player) {
@@ -153,7 +152,7 @@ public class Menu {
 	}
 	
 	//Requête input
-	protected int checkInput (int end, int input) {
+	protected int checkInput (int input, int end) {
 		if (input >= 1 && input <= end)
 			return input;
 		else
@@ -214,10 +213,10 @@ public class Menu {
 	public void showCellsData (Cell[] cellTable, int maxCell) {
 		for (int i = 0; i < maxCell; i++) {
 			System.out.print("[");
-			List<Character> players = cellTable[i].players;
-			List<Enemy> enemies = cellTable[i].enemies;
-			List<DefensiveEquipement> defEquip = cellTable[i].defEquip;
-			List<OffensiveEquipment> offEquip = cellTable[i].offEquip;
+			List<Character> players = cellTable[i].getPlayers();
+			List<Enemy> enemies = cellTable[i].getEnemies();
+			List<DefensiveEquipement> defEquip = cellTable[i].getDefEquip();
+			List<OffensiveEquipment> offEquip = cellTable[i].getOffEquip();
 			
 			int tValue = players.size() + enemies.size() + defEquip.size() + offEquip.size() - 1;
 			currentId = 0;
@@ -233,7 +232,7 @@ public class Menu {
 	
 	public void showAllData (Cell[] cellsTable) {
 		for (Cell cell : cellsTable) {
-			for (Character character : cell.players) {
+			for (Character character : cell.getPlayers()) {
 				System.out.print("Character | id : " + character.getId()
 						+ " | pos : " + character.getPos()
 						+ " | name : " + character.getName()
@@ -263,7 +262,7 @@ public class Menu {
 				} else
 					System.out.print("\n");
 			}
-			for (Enemy enemy : cell.enemies) {
+			for (Enemy enemy : cell.getEnemies()) {
 				System.out.print("Ennemi | id : " + enemy.getId()
 						+ " | pos : " + enemy.getPos()
 						+ " | type : " + enemy.getType()
@@ -272,13 +271,13 @@ public class Menu {
 						+ "\n"
 				);
 			}
-			for (DefensiveEquipement defEquip : cell.defEquip) {
+			for (DefensiveEquipement defEquip : cell.getDefEquip()) {
 				System.out.print("Def | Type : " + defEquip.getType()
 						+ " | hp : " + defEquip.getHp()
 						+ "\n"
 				);
 			}
-			for (OffensiveEquipment offEquip : cell.offEquip) {
+			for (OffensiveEquipment offEquip : cell.getOffEquip()) {
 				System.out.print("Offensive equipement | name : " + offEquip.getName()
 						+ " | type : " + offEquip.getType()
 						+ " | dmg : " + offEquip.getDamage()
@@ -305,8 +304,8 @@ public class Menu {
 						+ ", ");
 			}
 		}
-		if (player.getCurrentOffEquipement() != null)
-			System.out.print(" Equipement : " + player.getCurrentOffEquipement().getName() + " |");
+		if (player.getCurrentOffEquipment() != null)
+			System.out.print(" Equipement : " + player.getCurrentOffEquipment().getName() + " |");
 		if (!player.isOffEquipEmpty()) {
 			System.out.print(" offEquip [");
 			for (OffensiveEquipment offEquip : player.getOffensiveEquipment()) {
@@ -335,10 +334,10 @@ public class Menu {
 	public boolean showOffEquips (Character player) {
 		
 		boolean val;
-		if (player.getCurrentOffEquipement() != null) {
-			System.out.println("Equipé : " + player.getCurrentOffEquipement().getName()
-					+ " | type : " + player.getCurrentOffEquipement().getType()
-					+ " | dmg : " + player.getCurrentOffEquipement().getDamage()
+		if (player.getCurrentOffEquipment() != null) {
+			System.out.println("Equipé : " + player.getCurrentOffEquipment().getName()
+					+ " | type : " + player.getCurrentOffEquipment().getType()
+					+ " | dmg : " + player.getCurrentOffEquipment().getDamage()
 			);
 		} else {
 			System.out.println("Aucun objet équipé");
@@ -357,9 +356,9 @@ public class Menu {
 	}
 	
 	public void showHeader (Character player, Cell[] cellTable, int maxCell) {
-		this.showSeperator();
+		this.showSeparator();
 		this.showCurrentPlayer(player);
 		this.showCellsData(cellTable, maxCell);
-		this.showSeperator();
+		this.showSeparator();
 	}
 }

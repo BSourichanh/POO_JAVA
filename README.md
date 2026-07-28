@@ -140,6 +140,7 @@ src/fr/campus/poo_java/
 │   ├── Menu.java                      Toutes les entrées/sorties console
 │   └── MenuBattle.java                Affichage spécifique aux combats
 ├── entity/
+│   ├── Entity.java                    Classe abstraite commune (id, name, type, PV, dégâts, position)
 │   ├── Character.java                 Joueur : PV, force, inventaire, déplacement
 │   ├── Enemy.java                     Classe de base des ennemis
 │   ├── character/                     Warrior, Wizard
@@ -158,6 +159,47 @@ Les combats utilisent eux-mêmes une machine à états (`BattleState`) : `PLAYER
 Le jeu implémente un système de dés extensible via l'interface `Dice` avec deux implémentations :
 `Dice6` (dé standard à 6 faces) et `Dice20` (dé à 20 faces pour les jets critiques).
 Les combats intègrent un système de coups critiques (`Crit`) : critique (+2 dégâts), échec critique (0 dégâts), ou normal.
+
+## Diagramme de cas d'utilisation
+
+```mermaid
+useCaseDiagram
+    actor Joueur
+    actor Système
+
+    Joueur --> (Lancer le jeu)
+    Joueur --> (Choisir sa classe)
+    Joueur --> (Choisir son nom)
+    Joueur --> (Lancer le dé)
+    Joueur --> (Se déplacer)
+    Joueur --> (Ouvrir l'inventaire)
+    Joueur --> (Boire une potion)
+    Joueur --> (Changer d'équipement)
+    Joueur --> (Attaquer)
+    Joueur --> (Fuir le combat)
+
+    Système --> (Initialiser le plateau)
+    Système --> (Générer les ennemis)
+    Système --> (Générer les équipements)
+    Système --> (Gérer le tour de jeu)
+    Système --> (Calculer les dégâts)
+    Système --> (Appliquer les coups critiques)
+    Système --> (Vérifier la fin de partie)
+
+    (Lancer le jeu) .-> (Initialiser le plateau) : <<include>>
+    (Lancer le jeu) .-> (Choisir sa classe) : <<include>>
+    (Choisir sa classe) .-> (Choisir son nom) : <<include>>
+    (Lancer le dé) .-> (Se déplacer) : <<include>>
+    (Se déplacer) .-> (Gérer le tour de jeu) : <<include>>
+    (Se déplacer) .-> (Attaquer) : <<include>> : si ennemi rencontré
+    (Se déplacer) .-> (Ouvrir l'inventaire) : <<include>> : option pendant déplacement
+    (Ouvrir l'inventaire) .-> (Boire une potion) : <<include>>
+    (Ouvrir l'inventaire) .-> (Changer d'équipement) : <<include>>
+    (Attaquer) .-> (Calculer les dégâts) : <<include>>
+    (Attaquer) .-> (Appliquer les coups critiques) : <<include>>
+    (Fuir le combat) .-> (Gérer le tour de jeu) : <<include>>
+    (Calculer les dégâts) .-> (Vérifier la fin de partie) : <<include>>
+```
 
 ## Diagramme de classes
 
@@ -218,7 +260,7 @@ classDiagram
     }
 
     class Menu {
-        +static int textOffset
+        -static final int textOffset
         #static final Scanner sc
         -int currentId
         +chooseClass(int, int) int
@@ -263,11 +305,15 @@ classDiagram
 
     class Cell {
         -int id
-        +List players
-        +List enemies
-        +List offEquip
-        +List defEquip
+        -List players
+        -List enemies
+        -List offEquip
+        -List defEquip
         ~Cell(int)
+        +getPlayers() List
+        +getEnemies() List
+        +getOffEquip() List
+        +getDefEquip() List
         +addPlayer(Character) void
         +removePlayer(Character) void
         +addEnemy(Enemy) void
@@ -283,17 +329,11 @@ classDiagram
     }
 
     class Character {
-        #int id
-        #String name
-        #EntityType type
-        #int strength
-        #int lifePoints
-        #List offEquipements
-        #List defensiveEquipements
-        #OffensiveEquipment currentOffEquip
-        #Cell currentCell
-        #int pos
         +int moveAvailable
+        +List offEquipements
+        +List defensiveEquipements
+        +OffensiveEquipment currentOffEquip
+        +Cell currentCell
         +Character(EntityType, String, int, Cell)
         +moveEntityToCell(Cell, Cell) void
         +useDefEquip(DefensiveEquipement) void
@@ -304,25 +344,34 @@ classDiagram
         +addOffensiveEquipement(OffensiveEquipment) void
         +addDefensiveEquipment(DefensiveEquipement) void
         +moveOffEquipToInventory() void
-        +getHp() int
-        +setHp(int) void
-        +getDmg() int
-        +getId() int
-        +getPos() int
+        +setMoveAvailable(int) void
+        +decreaseMoveAvailable() void
+        +removeDefensiveEquipment(DefensiveEquipement) void
+        +isDefEquipEmpty() boolean
+        +isOffEquipEmpty() boolean
     }
 
-    class Enemy {
+    class Entity {
+        <<abstract>>
         #int id
         #String name
         #EntityType type
         #int strength
         #int lifePoints
-        #Cell currentCell
         #int pos
+        +getInfo() void
+        +getId() int
+        +getType() EntityType
+        +getName() String
         +getHp() int
         +setHp(int) void
         +getDmg() int
-        +getInfo() void
+        +getPos() int
+        +toString() String
+    }
+
+    class Enemy {
+        +Enemy(EntityType, String, int, int, int, int)
     }
 
     class OffensiveEquipment {
@@ -393,6 +442,8 @@ classDiagram
     Character       o--> "*" DefensiveEquipement : potions
     Character       -->  "1" Cell    : currentCell
     Enemy           -->  "0..1" Cell : currentCell
+    Entity          <|--  Character
+    Entity          <|--  Enemy
     Menu            ..>  Character   : affiche
     Menu            ..>  Cell        : affiche
     Menu            <|--  MenuBattle
@@ -412,9 +463,20 @@ classDiagram
 classDiagram
     direction TB
 
-    class Character {
+    class Entity {
+        <<abstract>>
+        #id
+        #name
+        #type
         #lifePoints
         #strength
+        #pos
+    }
+
+    class Character {
+        +moveAvailable
+        +offEquipements
+        +defensiveEquipements
     }
     class Warrior {
         +Warrior(EntityType, String, int, Cell)
@@ -424,10 +486,13 @@ classDiagram
         +Wizard(EntityType, String, int, Cell)
         PV = 7 / DMG = 7
     }
+    Entity <|-- Character
     Character <|-- Warrior
     Character <|-- Wizard
 
-    class Enemy
+    class Enemy {
+        +Enemy(EntityType, String, int, int, int, int)
+    }
     class Goblin {
         PV = 5 / DMG = 3
     }
@@ -437,6 +502,7 @@ classDiagram
     class Dragon {
         PV = 15 / DMG = 8
     }
+    Entity <|-- Enemy
     Enemy <|-- Goblin
     Enemy <|-- Sorcier
     Enemy <|-- Dragon
@@ -522,8 +588,8 @@ name, damage)`.
   à un joueur, seul « Guerrier » est acceptable.
 - `Potion`, `Spell` et `Weapon` sont des classes intermédiaires vides, et
   `Database.saveDefensiveEquipment()` n'est pas implémentée.
-- `Character` et `Enemy` n'ont pas de classe mère commune alors qu'ils partagent sept
-  attributs (`id`, `name`, `type`, `strength`, `lifePoints`, `pos`, `currentCell`) et
-  leurs accesseurs : une classe `Entity` supprimerait cette duplication.
+- Les classes `Character` et `Enemy` partagent désormais une classe parente abstraite `Entity`,
+  ce qui élimine la duplication des attributs (`id`, `name`, `type`, `strength`, `lifePoints`, `pos`)
+  et de leurs accesseurs.
 - Les identifiants MySQL sont écrits en dur dans `Database.java` ; à externaliser avant
   toute diffusion publique du dépôt.

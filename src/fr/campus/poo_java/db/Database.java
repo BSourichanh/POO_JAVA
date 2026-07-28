@@ -1,6 +1,6 @@
 package fr.campus.poo_java.db;
 
-import fr.campus.poo_java.entity.Character;
+import fr.campus.poo_java.entity.character.Character;
 import fr.campus.poo_java.equipement.defensive_equipement.DefensiveEquipement;
 import fr.campus.poo_java.equipement.offensive_equipement.OffensiveEquipment;
 
@@ -117,7 +117,7 @@ public class Database {
 			psCharacter.setInt(3, player.getHp());
 			psCharacter.setInt(4, player.getDmg());
 			psCharacter.setInt(5, player.getPos());
-			psCharacter.setInt(6, player.moveAvailable);
+			psCharacter.setInt(6, player.getMoveAvailable());
 			
 			psCharacter.executeUpdate();
 			

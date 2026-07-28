@@ -1,8 +1,11 @@
 package fr.campus.poo_java.game;
 
 import fr.campus.poo_java.Enums;
-import fr.campus.poo_java.entity.Character;
-import fr.campus.poo_java.entity.Enemy;
+import fr.campus.poo_java.entity.character.Character;
+import fr.campus.poo_java.entity.enemies.Enemy;
+import fr.campus.poo_java.game.cell.Cell;
+import fr.campus.poo_java.game.dice.Dice;
+import fr.campus.poo_java.game.dice.Dice20;
 import fr.campus.poo_java.ui.Menu;
 import fr.campus.poo_java.ui.MenuBattle;
 
@@ -24,11 +27,11 @@ public class BattleManager {
 		return Enums.Crit.Normal;
 	}
 	
-	public Enums.GameState manageBattle (Character player) {
+	public Enums.GameState manageBattle (Character player,  Cell[] cellTable, int maxCell) {
 		MenuBattle menuBattle = new MenuBattle();
 		
-		menu.showHeader(player, game.cellTable, game.maxCell);
-		Enemy enemy = game.cellTable[player.getPos()].enemies.getFirst();
+		menu.showHeader(player, cellTable, maxCell);
+		Enemy enemy = cellTable[player.getPos()].getEnemies().getFirst();
 		menuBattle.showBattleTurn(player, enemy, state);
 		if (menuBattle.showBattleInfo(player, enemy, state) == 2)
 			return Enums.GameState.Flee;
@@ -38,7 +41,7 @@ public class BattleManager {
 		menuBattle.showDmg(player, enemy, state, crit);
 		menuBattle.showBattleResult(enemy);
 		if (enemy.getHp() <= 0) {
-			game.cellTable[player.getPos()].removeEnemy(enemy);
+			cellTable[player.getPos()].removeEnemy(enemy);
 			return Enums.GameState.BattleEnd;
 		} else if (player.getHp() <= 0) {
 			game.removePlayer(player);
@@ -48,14 +51,14 @@ public class BattleManager {
 			state = Enums.BattleState.ENEMY_TURN;
 		else
 			state = Enums.BattleState.PLAYER_TURN;
-		return manageBattle(player);
+		return manageBattle(player, cellTable, maxCell);
 	}
 	
 	public void execBattle (Character player, Enemy enemy, Enums.BattleState state, Enums.Crit crit) {
 		if (state == Enums.BattleState.PLAYER_TURN) {
 			int dmg = player.getDmg();
-			if (player.getCurrentOffEquipement() != null)
-				dmg += player.getCurrentOffEquipement().getDamage();
+			if (player.getCurrentOffEquipment() != null)
+				dmg += player.getCurrentOffEquipment().getDamage();
 			if (crit == Enums.Crit.Echec_Critique)
 				dmg = 0;
 			else if (crit == Enums.Crit.Critique)

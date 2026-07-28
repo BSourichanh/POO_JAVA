@@ -1,7 +1,7 @@
-package fr.campus.poo_java.game;
+package fr.campus.poo_java.game.cell;
 
-import fr.campus.poo_java.entity.Character;
-import fr.campus.poo_java.entity.Enemy;
+import fr.campus.poo_java.entity.character.Character;
+import fr.campus.poo_java.entity.enemies.Enemy;
 import fr.campus.poo_java.equipement.defensive_equipement.DefensiveEquipement;
 import fr.campus.poo_java.equipement.offensive_equipement.OffensiveEquipment;
 
@@ -9,14 +9,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cell {
-	public List<Character> players = new ArrayList<>();
-	public List<Enemy> enemies = new ArrayList<>();
-	public List<OffensiveEquipment> offEquip = new ArrayList<>();
-	public List<DefensiveEquipement> defEquip = new ArrayList<>();
-	private int id;
+	private final List<Character> players = new ArrayList<>();
+	private final List<Enemy> enemies = new ArrayList<>();
+	private final List<OffensiveEquipment> offEquip = new ArrayList<>();
+	private final List<DefensiveEquipement> defEquip = new ArrayList<>();
+	private final int id;
 	
 	public Cell (int id) {
 		this.id = id;
+	}
+	
+	public List<Character> getPlayers () {
+		return this.players;
+	}
+	
+	public List<Enemy> getEnemies () {
+		return this.enemies;
+	}
+	
+	public List<OffensiveEquipment> getOffEquip () {
+		return this.offEquip;
+	}
+	
+	public List<DefensiveEquipement> getDefEquip () {
+		return this.defEquip;
 	}
 	
 	public void addPlayer (Character player) {

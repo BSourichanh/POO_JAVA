@@ -1,4 +1,4 @@
-package fr.campus.poo_java.game;
+package fr.campus.poo_java.game.dice;
 
 import java.util.Random;
 

@@ -1,12 +1,12 @@
 package fr.campus.poo_java.ui;
 
 import fr.campus.poo_java.Enums;
-import fr.campus.poo_java.entity.Character;
-import fr.campus.poo_java.entity.Enemy;
+import fr.campus.poo_java.entity.character.Character;
+import fr.campus.poo_java.entity.enemies.Enemy;
 
 public class MenuBattle extends Menu {
 	
-	public void showEncounter (fr.campus.poo_java.entity.Character player, Enemy enemy) {
+	public void showEncounter (Character player, Enemy enemy) {
 		System.out.println(player.getName() + " le " + player.getType() + " tombe sur " + enemy.getName() + "\n");
 		requestInput("Entrer) Pour lancer le combat.");
 	}
@@ -16,11 +16,11 @@ public class MenuBattle extends Menu {
 		return requestNb();
 	}
 	
-	public int showBattleInfo (fr.campus.poo_java.entity.Character player, Enemy enemy, Enums.BattleState state) {
-		if (player.getCurrentOffEquipement() == null)
+	public int showBattleInfo (Character player, Enemy enemy, Enums.BattleState state) {
+		if (player.getCurrentOffEquipment() == null)
 			System.out.println(player.getName() + " le " + player.getType() + " | PV : " + player.getHp() + " | Dégats : " + player.getDmg());
 		else
-			System.out.println(player.getName() + " le " + player.getType() + " | PV : " + player.getHp() + " | Dégats : " + player.getDmg() + " + " + player.getCurrentOffEquipement().getDamage());
+			System.out.println(player.getName() + " le " + player.getType() + " | PV : " + player.getHp() + " | Dégats : " + player.getDmg() + " + " + player.getCurrentOffEquipment().getDamage());
 		System.out.println(enemy.getName() + " | PV : " + enemy.getHp() + " Dégats : " + enemy.getDmg() + "\n");
 		if (state == Enums.BattleState.PLAYER_TURN) {
 			return requestInputBattleAction();
@@ -30,12 +30,12 @@ public class MenuBattle extends Menu {
 		return -1;
 	}
 	
-	public void printPlayerDmgTo (fr.campus.poo_java.entity.Character player, Enemy enemy, Enums.Crit crit) {
+	public void printPlayerDmgTo (Character player, Enemy enemy, Enums.Crit crit) {
 		String weapon = "main nue.";
 		int dmg = player.getDmg();
-		if (player.getCurrentOffEquipement() != null) {
-			weapon = player.getCurrentOffEquipement().getName();
-			dmg += player.getCurrentOffEquipement().getDamage();
+		if (player.getCurrentOffEquipment() != null) {
+			weapon = player.getCurrentOffEquipment().getName();
+			dmg += player.getCurrentOffEquipment().getDamage();
 		}
 		System.out.println(player.getName() + " attaque " + enemy.getName() + " avec " + weapon);
 		if (crit == Enums.Crit.Critique) {
@@ -55,7 +55,7 @@ public class MenuBattle extends Menu {
 		System.out.println();
 	}
 	
-	public void printEnemyDmgTo(fr.campus.poo_java.entity.Character player, Enemy enemy, Enums.Crit crit){
+	public void printEnemyDmgTo(Character player, Enemy enemy, Enums.Crit crit){
 		System.out.println(enemy.getName() + " atttaque " + player.getName() + ".");
 		int dmg = enemy.getDmg();
 		if (crit == Enums.Crit.Critique) {
@@ -74,7 +74,7 @@ public class MenuBattle extends Menu {
 			System.out.println("0.");
 	}
 	
-	public void showDmg (fr.campus.poo_java.entity.Character player, Enemy enemy, Enums.BattleState state, Enums.Crit crit) {
+	public void showDmg (Character player, Enemy enemy, Enums.BattleState state, Enums.Crit crit) {
 		if (state == Enums.BattleState.PLAYER_TURN)
 			printPlayerDmgTo(player, enemy, crit);
 		else
@@ -89,7 +89,7 @@ public class MenuBattle extends Menu {
 		}
 	}
 	
-	public void showPlayerDeath (fr.campus.poo_java.entity.Character player) {
+	public void showPlayerDeath (Character player) {
 		System.out.println(player.getName() + " le " + player.getType() + " est mort !");
 		requestInput("Entrer) Pour continuer.");
 	}

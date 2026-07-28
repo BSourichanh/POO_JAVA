@@ -1,11 +1,11 @@
 package fr.campus.poo_java.game;
 
 import fr.campus.poo_java.Enums;
-import fr.campus.poo_java.entity.Character;
-import fr.campus.poo_java.entity.Enemy;
+import fr.campus.poo_java.entity.character.Character;
 import fr.campus.poo_java.entity.character.Warrior;
 import fr.campus.poo_java.entity.character.Wizard;
 import fr.campus.poo_java.entity.enemies.Dragon;
+import fr.campus.poo_java.entity.enemies.Enemy;
 import fr.campus.poo_java.entity.enemies.Goblin;
 import fr.campus.poo_java.entity.enemies.Sorcier;
 import fr.campus.poo_java.equipement.defensive_equipement.DefensiveEquipement;
@@ -16,25 +16,26 @@ import fr.campus.poo_java.equipement.offensive_equipement.spell.FireBall;
 import fr.campus.poo_java.equipement.offensive_equipement.spell.ThunderBolt;
 import fr.campus.poo_java.equipement.offensive_equipement.weapon.Mace;
 import fr.campus.poo_java.equipement.offensive_equipement.weapon.Sword;
+import fr.campus.poo_java.game.cell.Cell;
+import fr.campus.poo_java.game.dice.Dice6;
 import fr.campus.poo_java.ui.Menu;
 import fr.campus.poo_java.ui.MenuBattle;
 
 import java.util.Random;
-import java.util.Scanner;
 
 public class Game {
 	protected static int maxEnemies = 24;
 	protected static int maxPotion = 8;
 	protected static int maxWeapon = 16;
-	public int currentPlayer = 0;
-	public Enums.GameState gameState;
-	public int maxPlayer = 2;
-	public int maxCell = 63;
-	public Cell[] cellTable = new Cell[maxCell];
+	private int currentPlayer = 0;
+	private Enums.GameState gameState;
+	private int maxPlayer = 2;
+	private final int maxCell = 63;
+	private final Cell[] cellTable = new Cell[maxCell];
 	protected Menu menu;
 	protected MenuBattle menuBattle;
 	protected BattleManager battleManager;
-	Random random = new Random();
+	private final Random random = new Random();
 	
 	public Game () {
 		gameState = Enums.GameState.Idle;
@@ -56,11 +57,11 @@ public class Game {
 			switch (idType) {
 				case 1:
 					tmp = new Warrior(Enums.EntityType.Guerrier, name, i, cellTable[0]);
-					cellTable[0].players.add(tmp);
+					cellTable[0].getPlayers().add(tmp);
 					break;
 				case 2:
 					tmp = new Wizard(Enums.EntityType.Mage, name, i, cellTable[0]);
-					cellTable[0].players.add(tmp);
+					cellTable[0].getPlayers().add(tmp);
 					break;
 			}
 		}
@@ -74,15 +75,15 @@ public class Game {
 			if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty())
 				switch (randomEnemyType()) {
 					case Enums.EntityType.Goblin:
-						tmp = new Goblin();
+						tmp = new Goblin(cellIndex);
 						cellTable[cellIndex].addEnemy(tmp);
 						break;
 					case Enums.EntityType.Sorcier:
-						tmp = new Sorcier();
+						tmp = new Sorcier(cellIndex);
 						cellTable[cellIndex].addEnemy(tmp);
 						break;
 					case Enums.EntityType.Dragon:
-						tmp = new Dragon();
+						tmp = new Dragon(cellIndex);
 						cellTable[cellIndex].addEnemy(tmp);
 						break;
 				}
@@ -132,7 +133,7 @@ public class Game {
 	
 	public Character getPlayerById (int id) {
 		for (Cell cell : cellTable) {
-			for (Character player : cell.players)
+			for (Character player : cell.getPlayers())
 				if (player.getId() == id)
 					return player;
 		}
@@ -177,7 +178,7 @@ public class Game {
 			return manageAction(player);
 		if (input == 1) {
 			Dice6 dice = new Dice6();
-			player.moveAvailable = dice.roll();
+			player.setMoveAvailable(dice.roll());
 			menu.requestInputDiceThrow(player);
 			return Enums.GameState.Moving;
 		} else if (input == 2) {
@@ -192,7 +193,7 @@ public class Game {
 				return Enums.GameState.Idle;
 			}
 		} else if (input == 42) {
-			player.moveAvailable = 63;
+			player.setMoveAvailable(63);
 			return Enums.GameState.Moving;
 		} else {
 			menu.showWrongChoice();
@@ -213,20 +214,20 @@ public class Game {
 				Cell tmpCell = cellTable[pPos];
 				player.moveEntityToCell(tmpCell, cellTable[pPos + 1]);
 				tmpCell = cellTable[pPos + 1];
-				player.moveAvailable--;
+				player.decreaseMoveAvailable();
 				menu.showHeader(player, cellTable, maxCell);
 				if (!tmpCell.isEnemiesEmpty())
 					return Enums.GameState.InBattle;
 				if (!tmpCell.isDefEquipEmpty()) {
-					DefensiveEquipement tmpDef = tmpCell.defEquip.getFirst();
+					DefensiveEquipement tmpDef = tmpCell.getDefEquip().getFirst();
 					menu.showPickDefEquip(player, tmpDef);
 					player.addDefensiveEquipment(tmpDef);
 					tmpCell.removePotion(tmpDef);
 				}
 				if (!tmpCell.isOffEquipEmpty()) {
-					OffensiveEquipment tmpOff = tmpCell.offEquip.getFirst();
+					OffensiveEquipment tmpOff = tmpCell.getOffEquip().getFirst();
 					menu.showPickOffEquip(player, tmpOff);
-					player.addOffensiveEquipement(tmpOff);
+					player.addOffensiveEquipment(tmpOff);
 					tmpCell.removeOffEquip(tmpOff);
 				}
 				return Enums.GameState.Moving;
@@ -239,7 +240,7 @@ public class Game {
 		} else if (action == Enums.GameState.Potion) {
 			return Enums.GameState.Potion;
 		}
-		if (player.moveAvailable == 0 && gameState == Enums.GameState.Moving) {
+		if (player.getMoveAvailable() == 0 && gameState == Enums.GameState.Moving) {
 			return Enums.GameState.End;
 		}
 		return Enums.GameState.Moving;
@@ -254,7 +255,7 @@ public class Game {
 			return Enums.GameState.Moving;
 		OffensiveEquipment tmpOffEquip = player.getOffEquipById(nb - 1);
 		if (player.setCurrentOffEquip(tmpOffEquip) == -1) {
-			menu.showInvalideItemType();
+			menu.showWrongItemType();
 			return manageInventory(player);
 		} else
 			return Enums.GameState.Inventory;
@@ -280,7 +281,7 @@ public class Game {
 	public int countAlivePlayers () {
 		int count = 0;
 		for (Cell cell : cellTable)
-			count += cell.players.size();
+			count += cell.getPlayers().size();
 		return count;
 	}
 	
@@ -297,7 +298,7 @@ public class Game {
 	public void playTurn () {
 		Character player = getPlayerById(currentPlayer);
 		System.out.println("//" + gameState);
-		if (player.moveAvailable == 0 && gameState == Enums.GameState.Moving) {
+		if (player.getMoveAvailable() == 0 && gameState == Enums.GameState.Moving) {
 			gameState = Enums.GameState.End;
 		}
 		if (player.getPos() == maxCell - 1) {
@@ -319,9 +320,9 @@ public class Game {
 				gameState = managePotion(player);
 				break;
 			case InBattle:
-				if (!cellTable[player.getPos()].enemies.isEmpty())
-					menuBattle.showEncounter(player, cellTable[player.getPos()].enemies.getFirst());
-				gameState = battleManager.manageBattle(player);
+				if (!cellTable[player.getPos()].getEnemies().isEmpty())
+					menuBattle.showEncounter(player, cellTable[player.getPos()].getEnemies().getFirst());
+				gameState = battleManager.manageBattle(player, cellTable, maxCell);
 				if (gameState == Enums.GameState.BattleEnd) {
 					if (player.getHp() <= 0) {
 						if (countAlivePlayers() == 0) {
@@ -336,7 +337,7 @@ public class Game {
 				} else if (gameState == Enums.GameState.Flee) {
 					playTurn();
 				} else {
-					if (player.moveAvailable == 0)
+					if (player.getMoveAvailable() == 0)
 						gameState = Enums.GameState.End;
 					else
 						gameState = Enums.GameState.Moving;
@@ -359,7 +360,6 @@ public class Game {
 	}
 	
 	public void initGame () {
-		menu = new Menu();
 		initCells();
 		setMaxPlayer(menu.requestNbPlayer(maxPlayer));
 		initPlayers();
