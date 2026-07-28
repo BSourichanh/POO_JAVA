@@ -1,4 +1,4 @@
-package fr.campus.poo_java;
+package fr.campus.poo_java.game;
 
 import fr.campus.poo_java.entity.Character;
 import fr.campus.poo_java.entity.Enemy;
@@ -13,7 +13,7 @@ public class Cell {
 	public List<Enemy> enemies = new ArrayList<>();
 	public List<OffensiveEquipment> offEquip = new ArrayList<>();
 	public List<DefensiveEquipement> defEquip = new ArrayList<>();
-	private int id = 0;
+	private int id;
 	
 	public Cell (int id) {
 		this.id = id;

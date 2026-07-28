@@ -1,7 +1,7 @@
 package fr.campus.poo_java.entity;
 
-import fr.campus.poo_java.Cell;
 import fr.campus.poo_java.Enums;
+import fr.campus.poo_java.game.Cell;
 
 public class Enemy {
 	protected int id;
@@ -9,7 +9,6 @@ public class Enemy {
 	protected Enums.EntityType type;
 	protected int strength;
 	protected int lifePoints;
-	protected Cell currentCell;
 	protected int pos = 0;
 	
 	public void getInfo () {

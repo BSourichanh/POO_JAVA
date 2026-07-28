@@ -127,28 +127,37 @@ Une case vide reste `[]`.
 
 ```
 src/fr/campus/poo_java/
-├── Main.java                  Point d'entrée
-├── Menu.java                  Toutes les entrées/sorties console
-├── Cell.java                  Une case et son contenu (joueurs, ennemis, objets)
-├── Enums.java                 Types d'entités, d'équipements, états du jeu
+├── Main.java                          Point d'entrée
+├── Enums.java                         Types d'entités, d'équipements, états du jeu
 ├── game/
-│   ├── Game.java              Boucle de jeu, initialisation, gestion des tours
-│   └── BattleManager.java     Gestion des combats (dégâts, tours, fuite)
+│   ├── Game.java                      Boucle de jeu, initialisation, gestion des tours
+│   ├── BattleManager.java             Gestion des combats (dégâts, tours, fuite)
+│   ├── Cell.java                      Une case et son contenu (joueurs, ennemis, objets)
+│   ├── Dice.java                       Interface des dés
+│   ├── Dice6.java                      Dé à 6 faces
+│   └── Dice20.java                     Dé à 20 faces
+├── ui/
+│   ├── Menu.java                      Toutes les entrées/sorties console
+│   └── MenuBattle.java                Affichage spécifique aux combats
 ├── entity/
-│   ├── Character.java         Joueur : PV, force, inventaire, déplacement
-│   ├── Enemy.java             Classe de base des ennemis
-│   ├── character/             Warrior, Wizard
-│   └── enemies/               Goblin, Sorcier, Dragon
+│   ├── Character.java                 Joueur : PV, force, inventaire, déplacement
+│   ├── Enemy.java                     Classe de base des ennemis
+│   ├── character/                     Warrior, Wizard
+│   └── enemies/                       Goblin, Sorcier, Dragon
 ├── equipement/
-│   ├── offensive_equipement/   Weapon (Sword, Mace), Spell (FireBall, ThunderBolt)
-│   └── defensive_equipement/   Potion (PotionHP, BigPotionHP)
+│   ├── offensive_equipement/         Weapon (Sword, Mace), Spell (FireBall, ThunderBolt)
+│   └── defensive_equipement/         Potion (PotionHP, BigPotionHP)
 └── db/
-    └── Database.java          Persistance MySQL (non utilisée par le jeu)
+    └── Database.java                  Persistance MySQL (non utilisée par le jeu)
 ```
 
 La boucle de jeu est une machine à états (`Enums.GameState`) : `Idle` → `Moving` →
 `InBattle` / `Inventory` / `Flee` → `End` → tour suivant, jusqu'à `Finish`.
 Les combats utilisent eux-mêmes une machine à états (`Enums.BattleState`) : `PLAYER_TURN` ↔ `ENEMY_TURN`.
+
+Le jeu implémente un système de dés extensible via l'interface `Dice` avec deux implémentations :
+`Dice6` (dé standard à 6 faces) et `Dice20` (dé à 20 faces pour les jets critiques).
+Les combats intègrent un système de coups critiques (`Enums.Crit`) : critique (+2 dégâts), échec critique (0 dégâts), ou normal.
 
 ## Diagramme de classes
 
@@ -172,6 +181,7 @@ classDiagram
         -static int maxPotion
         +static int maxWeapon
         -Menu menu
+        -MenuBattle menuBattle
         -BattleManager battleManager
         -Random random
         +Game()
@@ -192,7 +202,6 @@ classDiagram
         +countAlivePlayers() int
         +nextPlayer() void
         +getPlayerById(int) Character
-        +throwDice() int
         +setMaxPlayer(int) void
         ~randomEnemyType() Enums.EntityType
         ~randomDefEquipType() Enums.DefEquip
@@ -224,23 +233,32 @@ classDiagram
         +showCurrentPlayer(Character) void
         +showOffEquips(Character) boolean
         +showDefEquips(Character) boolean
-        +showBattleInfo(Character, Enemy, Enums.BattleState) int
-        +showDmg(Character, Enemy, Enums.BattleState) void
         +showBattleResult(Character, Enemy) void
         +showPlayerDeath(Character) void
         +showGameOver() void
         +showEndGame() void
-        +showFlee(int) void
         +showMoveAvailable(Character) void
         +showPlayerIdleAction() void
         +showPlayerEndTurn(Character) void
         +showPlayerTurn(Character) void
-        +showEncounter(Character, Enemy) void
         +showWrongChoice() void
         +showInvalideItemType(Character) void
         +showPickDefEquip(Character, DefensiveEquipement) void
         +showPickOffEquip(Character, OffensiveEquipment) void
         #checkInput(int, int, int) int
+    }
+
+    class MenuBattle {
+        +showEncounter(Character, Enemy) void
+        +requestInputBattleAction() int
+        +showBattleInfo(Character, Enemy, Enums.BattleState) int
+        +showDmg(Character, Enemy, Enums.BattleState, Enums.Crit) void
+        +showBattleResult(Enemy) void
+        +showPlayerDeath(Character) void
+        +showBattleTurn(Character, Enemy, Enums.BattleState) void
+        +showFlee(int) void
+        +printPlayerDmgTo(Character, Enemy, Enums.Crit) void
+        +printEnemyDmgTo(Character, Enemy, Enums.Crit) void
     }
 
     class Cell {
@@ -325,6 +343,16 @@ classDiagram
         +getType() Enums.DefEquip
     }
 
+    interface Dice {
+        +roll() int
+    }
+    class Dice6 {
+        +roll() int
+    }
+    class Dice20 {
+        +roll() int
+    }
+
     class Database {
         -static final String URL
         -static final String USER
@@ -347,10 +375,12 @@ classDiagram
         DefEquip
         GameState
         BattleState
+        Crit
     }
 
     Main            ..>  Game        : crée
     Game            *--  Menu        : composition
+    Game            *--  MenuBattle   : composition
     Game            *--  BattleManager : composition
     Game            *--> "63" Cell   : cellTable
     Cell            o--> "*" Character
@@ -364,10 +394,15 @@ classDiagram
     Enemy           -->  "0..1" Cell : currentCell
     Menu            ..>  Character   : affiche
     Menu            ..>  Cell        : affiche
+    Menu            <|--  MenuBattle
+    MenuBattle      ..>  Character   : affiche combat
+    MenuBattle      ..>  Enemy       : affiche combat
     Game            ..>  Enums
     BattleManager   ..>  Character   : combat
     BattleManager   ..>  Enemy       : combat
     Database        ..>  Character   : persiste
+    Dice            <|--  Dice6
+    Dice            <|--  Dice20
 ```
 
 ### Hiérarchie des entités
@@ -482,8 +517,6 @@ name, damage)`.
 
 ## Limites connues
 
-- `Menu.showBattleResult()` affiche les PV du joueur *avant* application des dégâts de
-  l'ennemi : la valeur « PV restant » est en retard d'un coup.
 - `Menu.chooseClass()` borne le choix de la classe par le nombre de joueurs : en partie
   à un joueur, seul « Guerrier » est acceptable.
 - `Potion`, `Spell` et `Weapon` sont des classes intermédiaires vides, et

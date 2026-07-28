@@ -1,9 +1,10 @@
 package fr.campus.poo_java.game;
 
 import fr.campus.poo_java.Enums;
-import fr.campus.poo_java.Menu;
 import fr.campus.poo_java.entity.Character;
 import fr.campus.poo_java.entity.Enemy;
+import fr.campus.poo_java.ui.Menu;
+import fr.campus.poo_java.ui.MenuBattle;
 
 public class BattleManager {
 	private final Menu menu;
@@ -15,15 +16,27 @@ public class BattleManager {
 		this.game = game;
 	}
 	
+	public Enums.Crit checkCrit (int dice) {
+		if (dice == 1)
+			return Enums.Crit.Echec_Critique;
+		else if (dice == 20)
+			return Enums.Crit.Critique;
+		return Enums.Crit.Normal;
+	}
+	
 	public Enums.GameState manageBattle (Character player) {
+		MenuBattle menuBattle = new MenuBattle();
+		
 		menu.showHeader(player, game.cellTable, game.maxCell);
 		Enemy enemy = game.cellTable[player.getPos()].enemies.getFirst();
-		menu.showBattleTurn(player, enemy, state);
-		if (menu.showBattleInfo(player, enemy, state) == 2 )
+		menuBattle.showBattleTurn(player, enemy, state);
+		if (menuBattle.showBattleInfo(player, enemy, state) == 2)
 			return Enums.GameState.Flee;
-		this.checkBattle(player, enemy, state);
-		menu.showDmg(player, enemy, state);
-		menu.showBattleResult(player, enemy);
+		Dice dice = new Dice20();
+		Enums.Crit crit = this.checkCrit(dice.roll());
+		this.execBattle(player, enemy, state, crit);
+		menuBattle.showDmg(player, enemy, state, crit);
+		menuBattle.showBattleResult(enemy);
 		if (enemy.getHp() <= 0) {
 			game.cellTable[player.getPos()].removeEnemy(enemy);
 			return Enums.GameState.BattleEnd;
@@ -38,13 +51,23 @@ public class BattleManager {
 		return manageBattle(player);
 	}
 	
-	public void checkBattle (Character player, Enemy enemy, Enums.BattleState state) {
+	public void execBattle (Character player, Enemy enemy, Enums.BattleState state, Enums.Crit crit) {
 		if (state == Enums.BattleState.PLAYER_TURN) {
-			if (player.getCurrentOffEquipement() == null)
-				enemy.setHp(enemy.getHp() - player.getDmg());
-			else
-				enemy.setHp(enemy.getHp() - (player.getDmg() + player.getCurrentOffEquipement().getDamage()));
-		} else
-			player.setHp(player.getHp() - enemy.getDmg());
+			int dmg = player.getDmg();
+			if (player.getCurrentOffEquipement() != null)
+				dmg += player.getCurrentOffEquipement().getDamage();
+			if (crit == Enums.Crit.Echec_Critique)
+				dmg = 0;
+			else if (crit == Enums.Crit.Critique)
+				dmg += 2;
+			enemy.setHp(enemy.getHp() - dmg);
+		} else {
+			int dmg = enemy.getDmg();
+			if (crit == Enums.Crit.Echec_Critique)
+				dmg = 0;
+			else if (crit == Enums.Crit.Critique)
+				dmg += 2;
+			player.setHp(player.getHp() - dmg);
+		}
 	}
 }
