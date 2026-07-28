@@ -10,7 +10,7 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet.
 
 - **JDK 25** — le projet utilise des fonctionnalités récentes du langage : méthode `main`
   d'instance (`void main()` sans `static` ni `String[] args`), `List.getFirst()` et les
-  `case` d'énumération qualifiés (`case Enums.EntityType.Dragon:`).
+  `case` d'énumération qualifiés (`case EntityType.Dragon:`).
 - Aucune dépendance à installer pour jouer. Les jars présents dans `lib/`
   (MySQL Connector, protobuf) ne servent qu'à la persistance, désactivée par défaut.
 
@@ -28,7 +28,7 @@ java -Dstdout.encoding=UTF-8 -cp out fr.campus.poo_java.Main
 Les deux options d'encodage sont nécessaires :
 
 - `-encoding UTF-8` à la compilation, car le code contient des accents jusque dans les
-  identifiants (`Enums.OffEquip.Epée`) ;
+  identifiants (`OffEquip.Epée`) ;
 - `-Dstdout.encoding=UTF-8` à l'exécution, sans quoi les accents s'affichent en
   caractères parasites dans la console Windows (`D�placement`).
 
@@ -151,13 +151,13 @@ src/fr/campus/poo_java/
     └── Database.java                  Persistance MySQL (non utilisée par le jeu)
 ```
 
-La boucle de jeu est une machine à états (`Enums.GameState`) : `Idle` → `Moving` →
+La boucle de jeu est une machine à états (`GameState`) : `Idle` → `Moving` →
 `InBattle` / `Inventory` / `Flee` → `End` → tour suivant, jusqu'à `Finish`.
-Les combats utilisent eux-mêmes une machine à états (`Enums.BattleState`) : `PLAYER_TURN` ↔ `ENEMY_TURN`.
+Les combats utilisent eux-mêmes une machine à états (`BattleState`) : `PLAYER_TURN` ↔ `ENEMY_TURN`.
 
 Le jeu implémente un système de dés extensible via l'interface `Dice` avec deux implémentations :
 `Dice6` (dé standard à 6 faces) et `Dice20` (dé à 20 faces pour les jets critiques).
-Les combats intègrent un système de coups critiques (`Enums.Crit`) : critique (+2 dégâts), échec critique (0 dégâts), ou normal.
+Les combats intègrent un système de coups critiques (`Crit`) : critique (+2 dégâts), échec critique (0 dégâts), ou normal.
 
 ## Diagramme de classes
 
@@ -173,7 +173,7 @@ classDiagram
 
     class Game {
         +int currentPlayer
-        +Enums.GameState gameState
+        +GameState gameState
         +int maxPlayer
         +int maxCell
         +Cell[] cellTable
@@ -193,28 +193,28 @@ classDiagram
         +initDefEquip() void
         +startGame() void
         +playTurn() void
-        +manageAction(Character) Enums.GameState
-        +manageMove(Character) Enums.GameState
-        +manageInventory(Character) Enums.GameState
-        +managePotion(Character) Enums.GameState
-        +flee(Character) Enums.GameState
+        +manageAction(Character) GameState
+        +manageMove(Character) GameState
+        +manageInventory(Character) GameState
+        +managePotion(Character) GameState
+        +flee(Character) GameState
         +removePlayer(Character) void
         +countAlivePlayers() int
         +nextPlayer() void
         +getPlayerById(int) Character
         +setMaxPlayer(int) void
-        ~randomEnemyType() Enums.EntityType
-        ~randomDefEquipType() Enums.DefEquip
-        ~randomOffEquipType() Enums.OffEquip
+        ~randomEnemyType() EntityType
+        ~randomDefEquipType() DefEquip
+        ~randomOffEquipType() OffEquip
     }
 
     class BattleManager {
         -Menu menu
         -Game game
-        -Enums.BattleState state
+        -BattleState state
         +BattleManager(Menu, Game)
-        +manageBattle(Character) Enums.GameState
-        +checkBattle(Character, Enemy, Enums.BattleState) void
+        +manageBattle(Character) GameState
+        +checkBattle(Character, Enemy, BattleState) void
     }
 
     class Menu {
@@ -226,7 +226,7 @@ classDiagram
         +requestNbPlayer(int) int
         +requestNb() int
         +requestInput() String
-        +requestInputAction(Character) Enums.GameState
+        +requestInputAction(Character) GameState
         +requestInputDiceThrow(Character) void
         +showHeader(Character, Cell[], int) void
         +showCellsData(Cell[], int) void
@@ -251,22 +251,22 @@ classDiagram
     class MenuBattle {
         +showEncounter(Character, Enemy) void
         +requestInputBattleAction() int
-        +showBattleInfo(Character, Enemy, Enums.BattleState) int
-        +showDmg(Character, Enemy, Enums.BattleState, Enums.Crit) void
+        +showBattleInfo(Character, Enemy, BattleState) int
+        +showDmg(Character, Enemy, BattleState, Crit) void
         +showBattleResult(Enemy) void
         +showPlayerDeath(Character) void
-        +showBattleTurn(Character, Enemy, Enums.BattleState) void
+        +showBattleTurn(Character, Enemy, BattleState) void
         +showFlee(int) void
-        +printPlayerDmgTo(Character, Enemy, Enums.Crit) void
-        +printEnemyDmgTo(Character, Enemy, Enums.Crit) void
+        +printPlayerDmgTo(Character, Enemy, Crit) void
+        +printEnemyDmgTo(Character, Enemy, Crit) void
     }
 
     class Cell {
         -int id
-        +List~Character~ players
-        +List~Enemy~ enemies
-        +List~OffensiveEquipment~ offEquip
-        +List~DefensiveEquipement~ defEquip
+        +List players
+        +List enemies
+        +List offEquip
+        +List defEquip
         ~Cell(int)
         +addPlayer(Character) void
         +removePlayer(Character) void
@@ -285,11 +285,11 @@ classDiagram
     class Character {
         #int id
         #String name
-        #Enums.EntityType type
+        #EntityType type
         #int strength
         #int lifePoints
-        #List~OffensiveEquipment~ offEquipements
-        #List~DefensiveEquipement~ defensiveEquipements
+        #List offEquipements
+        #List defensiveEquipements
         #OffensiveEquipment currentOffEquip
         #Cell currentCell
         #int pos
@@ -314,7 +314,7 @@ classDiagram
     class Enemy {
         #int id
         #String name
-        #Enums.EntityType type
+        #EntityType type
         #int strength
         #int lifePoints
         #Cell currentCell
@@ -328,22 +328,23 @@ classDiagram
     class OffensiveEquipment {
         #String name
         #int dmg
-        #Enums.OffEquipType type
+        #OffEquipType type
         +getName() String
         +getDamage() int
-        +getType() Enums.OffEquipType
+        +getType() OffEquipType
     }
 
     class DefensiveEquipement {
-        #Enums.DefEquip type
+        #DefEquip type
         #String name
         #int hp
         +getName() String
         +getHp() int
-        +getType() Enums.DefEquip
+        +getType() DefEquip
     }
 
-    interface Dice {
+    class Dice {
+        <<interface>>
         +roll() int
     }
     class Dice6 {
@@ -401,8 +402,8 @@ classDiagram
     BattleManager   ..>  Character   : combat
     BattleManager   ..>  Enemy       : combat
     Database        ..>  Character   : persiste
-    Dice            <|--  Dice6
-    Dice            <|--  Dice20
+    Dice            ..|>  Dice6
+    Dice            ..|>  Dice20
 ```
 
 ### Hiérarchie des entités
