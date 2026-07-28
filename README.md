@@ -18,6 +18,166 @@ Le jeu intègre un moteur de rendu graphique console développé sur mesure (`Co
 
 ---
 
+## 🗺️ Cas d'utilisation (Use Case UML)
+
+```mermaid
+graph TD
+    Joueur((👤 Joueur))
+
+    subgraph Jeu ["Donjons & Dragons (POO JAVA)"]
+        UC1[Démarrer la partie / Choisir 1-2 joueurs]
+        UC2[Créer son personnage : Nom & Classe]
+        UC3[Lancer le dé & Se déplacer sur le plateau]
+        UC4[Combattre un ennemi]
+        UC5[Fuir un combat]
+        UC6[Ramasser & Équiper une arme/sort]
+        UC7[Utiliser une potion de soin]
+        UC8[Atteindre la case 63 : Victoire]
+    end
+
+    Joueur --> UC1
+    Joueur --> UC2
+    Joueur --> UC3
+    Joueur --> UC4
+    Joueur --> UC5
+    Joueur --> UC6
+    Joueur --> UC7
+    Joueur --> UC8
+```
+
+---
+
+## 📐 Diagramme de Classes (UML)
+
+```mermaid
+classDiagram
+    direction TB
+
+    class Entity {
+        <<abstract>>
+        #int id
+        #String name
+        #EntityType type
+        #int pos
+        #int lifePoints
+        #int maxLifePoints
+        #int strength
+        +getHp() int
+        +getMaxHp() int
+        +setHp(int) void
+        +getDmg() int
+        +setDmg(int) void
+    }
+
+    class Character {
+        <<abstract>>
+        #int moveAvailable
+        #List~OffensiveEquipment~ offEquipments
+        #List~DefensiveEquipment~ defensiveEquipments
+        #OffensiveEquipment currentOffEquip
+        +canEquip(OffensiveEquipment)* boolean
+        +setCurrentOffEquip(OffensiveEquipment) int
+        +useDefEquip(DefensiveEquipment) void
+    }
+
+    class Warrior {
+        +Warrior(String, int)
+        +canEquip(OffensiveEquipment) boolean
+    }
+
+    class Wizard {
+        +Wizard(String, int)
+        +canEquip(OffensiveEquipment) boolean
+    }
+
+    class Enemy {
+        +Enemy(EntityType, String, int, int, int, int)
+    }
+
+    class Goblin {
+        +Goblin(int)
+    }
+
+    class Sorcerer {
+        +Sorcerer(int)
+    }
+
+    class Dragon {
+        +Dragon(int)
+    }
+
+    class OffensiveEquipment {
+        <<abstract>>
+        #String name
+        #int damage
+        #OffEquipType type
+        +getName() String
+        +getDamage() int
+        +getType() OffEquipType
+    }
+
+    class DefensiveEquipment {
+        <<abstract>>
+        #String name
+        #int hp
+        +getName() String
+        +getHp() int
+    }
+
+    class Dice {
+        <<interface>>
+        +roll()* int
+    }
+
+    class Dice6 {
+        +roll() int
+    }
+
+    class Dice20 {
+        +roll() int
+    }
+
+    class Game {
+        -int currentPlayer
+        -GameState gameState
+        -GameBoard board
+        -Menu menu
+        -MenuBattle menuBattle
+        -BattleManager battleManager
+        +startGame() void
+        +playTurn() void
+    }
+
+    class ConsoleTheme {
+        +getDisplayWidth(String)$ int
+        +getHealthBar(int, int, int)$ String
+        +printBanner()$ void
+        +printBox(String, String...)$ void
+    }
+
+    Entity <|-- Character
+    Entity <|-- Enemy
+    Character <|-- Warrior
+    Character <|-- Wizard
+    Enemy <|-- Goblin
+    Enemy <|-- Sorcerer
+    Enemy <|-- Dragon
+    OffensiveEquipment <|-- Weapon
+    OffensiveEquipment <|-- Spell
+    DefensiveEquipment <|-- Potion
+    Dice <|.. Dice6
+    Dice <|.. Dice20
+    Game *-- GameBoard
+    Game *-- Menu
+    Game *-- MenuBattle
+    Game *-- BattleManager
+    Menu ..> ConsoleTheme
+    MenuBattle ..> ConsoleTheme
+    BoardRenderer ..> ConsoleTheme
+```
+
+---
+
 ## 🛠️ Prérequis
 
 - **JDK 17 ou supérieur** (ex: JDK 17 / JDK 21 / JDK 25).
