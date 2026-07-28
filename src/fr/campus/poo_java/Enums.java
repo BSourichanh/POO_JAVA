@@ -18,10 +18,14 @@ public class Enums {
 	}
 	
 	public enum GameState {
-		Idle, Moving, Inventory, Potion, InBattle, BattleEnd , Flee, End, Finish
+		Idle, Moving, Inventory, Potion, InBattle, BattleEnd, Flee, End, Finish
 	}
 	
 	public enum BattleState {
 		PLAYER_TURN, ENEMY_TURN
+	}
+	
+	public enum Crit {
+		Critique, Echec_Critique, Normal
 	}
 }

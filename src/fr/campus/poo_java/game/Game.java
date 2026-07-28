@@ -1,8 +1,6 @@
 package fr.campus.poo_java.game;
 
-import fr.campus.poo_java.Cell;
 import fr.campus.poo_java.Enums;
-import fr.campus.poo_java.Menu;
 import fr.campus.poo_java.entity.Character;
 import fr.campus.poo_java.entity.Enemy;
 import fr.campus.poo_java.entity.character.Warrior;
@@ -18,6 +16,8 @@ import fr.campus.poo_java.equipement.offensive_equipement.spell.FireBall;
 import fr.campus.poo_java.equipement.offensive_equipement.spell.ThunderBolt;
 import fr.campus.poo_java.equipement.offensive_equipement.weapon.Mace;
 import fr.campus.poo_java.equipement.offensive_equipement.weapon.Sword;
+import fr.campus.poo_java.ui.Menu;
+import fr.campus.poo_java.ui.MenuBattle;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -27,18 +27,19 @@ public class Game {
 	protected static int maxPotion = 8;
 	protected static int maxWeapon = 16;
 	public int currentPlayer = 0;
-	public Enums.GameState gameState = Enums.GameState.Idle;
+	public Enums.GameState gameState;
 	public int maxPlayer = 2;
 	public int maxCell = 63;
 	public Cell[] cellTable = new Cell[maxCell];
 	protected Menu menu;
+	protected MenuBattle menuBattle;
 	protected BattleManager battleManager;
-	Scanner sc = new Scanner(System.in);
 	Random random = new Random();
 	
 	public Game () {
 		gameState = Enums.GameState.Idle;
 		menu = new Menu();
+		menuBattle = new MenuBattle();
 	}
 	
 	//Init
@@ -69,7 +70,7 @@ public class Game {
 		
 		for (int i = 0; i < maxEnemies; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
-			Enemy tmp = null;
+			Enemy tmp;
 			if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty())
 				switch (randomEnemyType()) {
 					case Enums.EntityType.Goblin:
@@ -91,7 +92,7 @@ public class Game {
 	public void initOffEquip () {
 		for (int i = 0; i < maxWeapon; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
-			OffensiveEquipment tmp = null;
+			OffensiveEquipment tmp;
 			if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty())
 				switch (randomOffEquipType()) {
 					case Enums.OffEquip.Epée:
@@ -154,23 +155,17 @@ public class Game {
 		return types[random.nextInt(types.length)];
 	}
 	
-	public int throwDice () {
-		Random random = new Random();
-		int diceValue = random.nextInt(6) + 1;
-		return diceValue;
-	}
-	
 	public void setMaxPlayer (int nb) {
 		this.maxPlayer = nb;
 	}
 	
-	public Enums.GameState flee(Character player) {
+	public Enums.GameState flee (Character player) {
 		int rand = random.nextInt(1, 7);
 		if (player.getPos() - rand < 0)
 			player.moveEntityToCell(cellTable[player.getPos()], cellTable[0]);
 		else
 			player.moveEntityToCell(cellTable[player.getPos()], cellTable[player.getPos() - rand]);
-		menu.showFlee(rand);
+		menuBattle.showFlee(rand);
 		return Enums.GameState.End;
 	}
 	
@@ -181,8 +176,8 @@ public class Game {
 		if (input == -1)
 			return manageAction(player);
 		if (input == 1) {
-			player.moveAvailable = throwDice();
-			;
+			Dice6 dice = new Dice6();
+			player.moveAvailable = dice.roll();
 			menu.requestInputDiceThrow(player);
 			return Enums.GameState.Moving;
 		} else if (input == 2) {
@@ -259,7 +254,7 @@ public class Game {
 			return Enums.GameState.Moving;
 		OffensiveEquipment tmpOffEquip = player.getOffEquipById(nb - 1);
 		if (player.setCurrentOffEquip(tmpOffEquip) == -1) {
-			menu.showInvalideItemType(player);
+			menu.showInvalideItemType();
 			return manageInventory(player);
 		} else
 			return Enums.GameState.Inventory;
@@ -279,7 +274,7 @@ public class Game {
 	public void removePlayer (Character player) {
 		player.setHp(0);
 		cellTable[player.getPos()].removePlayer(player);
-		menu.showPlayerDeath(player);
+		menuBattle.showPlayerDeath(player);
 	}
 	
 	public int countAlivePlayers () {
@@ -325,7 +320,7 @@ public class Game {
 				break;
 			case InBattle:
 				if (!cellTable[player.getPos()].enemies.isEmpty())
-					menu.showEncounter(player, cellTable[player.getPos()].enemies.getFirst());
+					menuBattle.showEncounter(player, cellTable[player.getPos()].enemies.getFirst());
 				gameState = battleManager.manageBattle(player);
 				if (gameState == Enums.GameState.BattleEnd) {
 					if (player.getHp() <= 0) {
@@ -354,7 +349,6 @@ public class Game {
 			case End:
 				menu.showHeader(player, cellTable, maxCell);
 				menu.showPlayerEndTurn(player);
-				menu.requestInput();
 				nextPlayer();
 				gameState = Enums.GameState.Idle;
 				break;

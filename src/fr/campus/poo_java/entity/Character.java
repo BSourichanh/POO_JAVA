@@ -1,9 +1,9 @@
 package fr.campus.poo_java.entity;
 
-import fr.campus.poo_java.Cell;
 import fr.campus.poo_java.Enums;
 import fr.campus.poo_java.equipement.defensive_equipement.DefensiveEquipement;
 import fr.campus.poo_java.equipement.offensive_equipement.OffensiveEquipment;
+import fr.campus.poo_java.game.Cell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -143,14 +143,5 @@ public class Character {
 		if (id >= 0 && id < offEquipements.size())
 			return offEquipements.get(id);
 		return null;
-	}
-	
-	public void removeFromInventoryOffEquipement (OffensiveEquipment offEquip) {
-		offEquipements.remove(offEquip);
-	}
-	
-	public void moveOffEquipToInventory () {
-		offEquipements.add(currentOffEquip);
-		currentOffEquip = null;
 	}
 }

@@ -1,9 +1,11 @@
-package fr.campus.poo_java;
+package fr.campus.poo_java.ui;
 
+import fr.campus.poo_java.Enums;
 import fr.campus.poo_java.entity.Character;
 import fr.campus.poo_java.entity.Enemy;
 import fr.campus.poo_java.equipement.defensive_equipement.DefensiveEquipement;
 import fr.campus.poo_java.equipement.offensive_equipement.OffensiveEquipment;
+import fr.campus.poo_java.game.Cell;
 
 import java.util.List;
 import java.util.Scanner;
@@ -25,23 +27,21 @@ public class Menu {
 		System.out.println("Joueur " + (id + 1) + " de choisir.\n");
 		System.out.println("Classes :\n1) Guerrier\n2) Mage");
 		int tmp = requestNb();
-		tmp = checkInput(1, maxPlayer, tmp);
+		tmp = checkInput(maxPlayer, tmp);
 		if (tmp != -1)
 			return tmp;
 		return chooseClass(maxPlayer, id);
 	}
 	
 	public String requestName () {
-		System.out.println("Entrer votre nom.");
-		String inputText = requestInput();
+		String inputText = requestInput("Entrer votre nom.");
 		if (inputText.isEmpty())
 			return requestName();
 		return inputText;
 	}
 	
 	public int requestNbPlayer (int maxPlayer) {
-		System.out.println("1-2) Combien de joueurs ?");
-		String inputText = requestInput();
+		String inputText = requestInput("1-2) Combien de joueurs ?");
 		if (inputText.isEmpty())
 			return requestNbPlayer(maxPlayer);
 		else {
@@ -52,7 +52,7 @@ public class Menu {
 				System.out.println("Erreur, 1-2");
 				return requestNbPlayer(maxPlayer);
 			}
-			if (checkInput(1, maxPlayer, tmp) != -1)
+			if (checkInput(maxPlayer, tmp) != -1)
 				return tmp;
 			else {
 				System.out.println("Erreur, 1-2");
@@ -62,8 +62,7 @@ public class Menu {
 	}
 	
 	public int requestNb () {
-		System.out.println("Entrer votre choix :");
-		String input = requestInput();
+		String input = requestInput("Entrer votre choix :");
 		if (input.isEmpty())
 			return -1;
 		try {
@@ -83,8 +82,7 @@ public class Menu {
 	}
 	
 	public void requestInputDiceThrow (Character player) {
-		System.out.println("Entrer) " + player.getName() + " à fait un lancer de dée de " + player.moveAvailable);
-		requestInput();
+		requestInput("Entrer) " + player.getName() + " à fait un lancer de dée de "+ player.moveAvailable);
 	}
 	
 	public void showMoveAvailable (Character player) {
@@ -92,149 +90,54 @@ public class Menu {
 	}
 	
 	public Enums.GameState requestInputAction (Character player) {
-		System.out.println("Entrer) Avance de une case\n" + "1) Inventaire\n2) Potion");
+		System.out.println("""
+				Entrer) Avance de une case
+				1) Inventaire
+				2) Potion""");
 		int input = requestNb();
 		
-		if (input == 1){
+		if (input == 1) {
 			if (player.isOffEquipEmpty()) {
 				System.out.println("Inventaire vide.");
 				return requestInputAction(player);
 			} else {
 				return Enums.GameState.Inventory;
 			}
-		}
-		else if (input == 2) {
+		} else if (input == 2) {
 			if (player.isDefEquipEmpty()) {
 				System.out.println("Inventaire vide.");
 				return requestInputAction(player);
-			}
-			else {
+			} else {
 				return Enums.GameState.Potion;
 			}
-		}
-		else
+		} else
 			return Enums.GameState.Moving;
 	}
 	
 	public void showPickDefEquip (Character player, DefensiveEquipement defEquip) {
-		System.out.println(player.getName()
+		requestInput("Enter) " + player.getName()
 				+ " le " + player.getType()
-				+ " ramasse " + defEquip.getType()
+				+ " ramasse " + defEquip.getName()
 		);
-		requestInput();
 	}
 	
 	public void showPickOffEquip (Character player, OffensiveEquipment offEquip) {
-		System.out.println(player.getName()
+		requestInput(player.getName()
 				+ " le " + player.getType()
 				+ " ramasse " + offEquip.getType()
 		);
-		requestInput();
 	}
 	
-	public void showInvalideItemType (Character player) {
-		System.out.println("Entrer) L'item ne peut pas être équipé pour votre classe");
-		requestInput();
+	public void showInvalideItemType () {
+		requestInput("Entrer) L'item ne peut pas être équipé pour votre classe");
 	}
 	
 	//Affichage Battle
 	
-	public void showEncounter (Character player, Enemy enemy) {
-		System.out.println(player.getName() + " le " + player.getType() + " tombe sur " + enemy.getName() + "\n");
-		System.out.println("Entrer) Pour lancer le combat.");
-		requestInput();
-	}
-	
-	public int requestInputBattleAction(){
-		System.out.println("1) Attaquer.\n2) Fuir.");
-		int input = requestNb();
-		return input;
-	}
-	
-	public int showBattleInfo (Character player, Enemy enemy, Enums.BattleState state) {
-		if (player.getCurrentOffEquipement() == null)
-			System.out.println(player.getName() + " le " + player.getType() + " | PV : " + player.getHp() + " | Dégats : " + player.getDmg());
-		else
-			System.out.println(player.getName() + " le " + player.getType() + " | PV : " + player.getHp() + " | Dégats : " + player.getDmg() + " + " + player.getCurrentOffEquipement().getDamage());
-		System.out.println(enemy.getName() + " | PV : " + enemy.getHp() + " Dégats : " + enemy.getDmg() + "\n");
-		if (state == Enums.BattleState.PLAYER_TURN) {
-			return requestInputBattleAction();
-		}
-		else
-			System.out.println("Entrer) L'ennemi attaque.");
-		requestInput();
-		return -1;
-	}
-	
-	public void printPlayerDmgTo(Character player, Enemy enemy) {
-		if (player.getCurrentOffEquipement() == null) {
-			System.out.println(player.getName() + " attaque " + enemy.getName() + " à main nue");
-			System.out.print(player.getName() + " inflige " + player.getDmg() + " à " + enemy.getName() + " PV restant ");
-			if (enemy.getHp() > 0)
-				System.out.println(enemy.getHp() + ".");
-			else
-				System.out.println("0.");
-		} else {
-			System.out.println(player.getName() + " attaque " + enemy.getName() + " avec " + player.getCurrentOffEquipement().getName());
-			System.out.print(player.getName() + " inflige " + (player.getDmg() + player.getCurrentOffEquipement().getDamage()) + " à " + enemy.getName() + " PV restant ");
-			if (enemy.getHp() > 0)
-				 System.out.println(enemy.getHp() + ".");
-			else
-				System.out.println("0.");
-		}
-		System.out.println();
-		if (enemy.getHp() > 0)
-			System.out.println("Entrer) Fin du tour de " + player.getName() + ".");
-		
-		requestInput();
-	}
-	
-	public void showDmg (Character player, Enemy enemy, Enums.BattleState state) {
-		if (state == Enums.BattleState.PLAYER_TURN) {
-			printPlayerDmgTo(player, enemy);
-		} else {
-			System.out.println(enemy.getName() + " atttaque " + player.getName() + ".");
-			System.out.print(enemy.getName() + " inflige " + enemy.getDmg() + " à " + player.getName() + " PV restant ");
-			if (player.getHp() > 0)
-				System.out.println(player.getHp() + ".");
-			else
-				System.out.println("0.");
-			requestInput();
-		}
-	}
-	
-	public void showBattleResult (Character player, Enemy enemy) {
-		if (enemy.getHp() <= 0) {
-			System.out.println(enemy.getName() + " est mort.\n");
-			System.out.println("Entrer) Fin de combat");
-			requestInput();
-		}
-		
-	}
-	
-	public void showPlayerDeath (Character player) {
-		System.out.println(player.getName() + " le " + player.getType() + " est mort !");
-		System.out.println("Entrer) Pour continuer.");
-		requestInput();
-	}
-	
-	public void showBattleTurn (Character player, Enemy enemy, Enums.BattleState state) {
-		if (state == Enums.BattleState.PLAYER_TURN)
-			System.out.println("Tour de " + player.getName() + " le " + player.getType());
-		else
-			System.out.println("Tour de " + enemy.getName());
-	}
-	
-	public void showFlee(int rand){
-		System.out.println("Vous avez fuit.");
-		System.out.println("Entrer) vous reculer de " + rand +" cases.");
-		requestInput();
-	}
 	
 	//Affichage fin de tour / jeu
 	public void showGameOver () {
-		System.out.println("Tous les joueurs sont morts, fin de la partie.");
-		requestInput();
+		requestInput("Entrer) Tous les joueurs sont morts, fin de la partie.");
 	}
 	
 	public void showPlayerEndTurn (Character player) {
@@ -250,14 +153,15 @@ public class Menu {
 	}
 	
 	//Requête input
-	protected int checkInput (int start, int end, int input) {
-		if (input >= start && input <= end)
+	protected int checkInput (int end, int input) {
+		if (input >= 1 && input <= end)
 			return input;
 		else
 			return -1;
 	}
 	
-	public String requestInput () {
+	public String requestInput (String message) {
+		System.out.println(message);
 		System.out.print("> ");
 		String input = sc.nextLine();
 		System.out.print("\n");
@@ -277,33 +181,32 @@ public class Menu {
 	}
 	
 	public void printPlayers (List<Character> players, int nbInCell) {
-		for (int p = 0; p < players.size(); p++) {
-			Character tmp = players.get(p);
+		for (Character tmp : players) {
 			if (tmp.getName().length() < textOffset)
-				System.out.print(players.get(p).getName());
+				System.out.print(tmp.getName());
 			else
-				System.out.print(players.get(p).getName().substring(0, textOffset));
+				System.out.print(tmp.getName().substring(0, textOffset));
 			printSeparatorData(nbInCell);
 		}
 	}
 	
 	public void printEnemies (List<Enemy> enemies, int nbInCell) {
-		for (int e = 0; e < enemies.size(); e++) {
-			System.out.print(enemies.get(e).getType().toString().substring(0, textOffset));
+		for (Enemy enemy : enemies) {
+			System.out.print(enemy.getType().toString().substring(0, textOffset));
 			printSeparatorData(nbInCell);
 		}
 	}
 	
 	public void printDefEquip (List<DefensiveEquipement> defEquip, int nbInCell) {
-		for (int e = 0; e < defEquip.size(); e++) {
-			System.out.print(defEquip.get(e).getName());
+		for (DefensiveEquipement defensiveEquipement : defEquip) {
+			System.out.print(defensiveEquipement.getName());
 			printSeparatorData(nbInCell);
 		}
 	}
 	
 	public void printOffEquip (List<OffensiveEquipment> offEquip, int nbInCell) {
-		for (int e = 0; e < offEquip.size(); e++) {
-			System.out.print(offEquip.get(e).getName().substring(0, textOffset));
+		for (OffensiveEquipment offensiveEquipment : offEquip) {
+			System.out.print(offensiveEquipment.getName().substring(0, textOffset));
 			printSeparatorData(nbInCell);
 		}
 	}
@@ -419,8 +322,7 @@ public class Menu {
 	
 	public boolean showDefEquips (Character player) {
 		if (player.getDefensiveEquipment().isEmpty()) {
-			System.out.println("Entrer) Pas de potion.");
-			requestInput();
+			requestInput("Entrer) Pas de potion.");
 			return false;
 		}
 		System.out.println("Potion : ");
@@ -432,7 +334,7 @@ public class Menu {
 	
 	public boolean showOffEquips (Character player) {
 		
-		boolean val = true;
+		boolean val;
 		if (player.getCurrentOffEquipement() != null) {
 			System.out.println("Equipé : " + player.getCurrentOffEquipement().getName()
 					+ " | type : " + player.getCurrentOffEquipement().getType()
@@ -442,8 +344,7 @@ public class Menu {
 			System.out.println("Aucun objet équipé");
 		}
 		if (player.getOffensiveEquipment().isEmpty()) {
-			System.out.println("Entrer) Inventaire vide.");
-			requestInput();
+			requestInput("Entrer) Inventaire vide.");
 			val = false;
 		} else {
 			for (int i = 0; i < player.getOffensiveEquipment().size(); i++) {
