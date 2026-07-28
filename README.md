@@ -104,7 +104,7 @@ Pendant un combat :
 ## Déroulement d'un combat
 
 1. Le joueur frappe en premier : dégâts = sa force + ceux de l'équipement équipé.
-2. Si l'ennemi survit, il riposte, puis s'enfuit — la case est libérée dans tous les cas.
+2. Si l'ennemi survit, il riposte et repasse au tour du joueur.
 3. Si les PV du joueur tombent à 0 ou moins, il meurt : le message de décès s'affiche,
    il disparaît du plateau et le tour passe au joueur suivant encore en vie.
 4. S'il ne reste plus aucun survivant, la partie se termine.
