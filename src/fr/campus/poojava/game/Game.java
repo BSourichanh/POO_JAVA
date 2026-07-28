@@ -202,7 +202,12 @@ public class Game {
 					if (player.getHp() <= 0) {
 						if (board.countAlivePlayers() == 0) {
 							menu.showGameOver();
-							gameState = GameState.FINISH;
+							if (menu.requestPlayAgain()) {
+								this.initGame();
+								this.playTurn();
+							} else {
+								gameState = GameState.FINISH;
+							}
 						} else {
 							nextPlayer();
 							gameState = GameState.IDLE;

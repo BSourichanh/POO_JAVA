@@ -129,9 +129,13 @@ public class Menu {
 	public void showGameOver () {
 		ConsoleTheme.printBox("💀 FIN DE LA PARTIE 💀",
 				ConsoleTheme.BRIGHT_RED + "Tous les héros sont tombés au combat..." + ConsoleTheme.RESET,
-				ConsoleTheme.DIM + "Appuyez sur [Entrée] pour quitter." + ConsoleTheme.RESET
+				""
 		);
-		sc.nextLine();
+	}
+
+	public boolean requestPlayAgain() {
+		String input = requestInput("💀 Voulez-vous recommencer une partie ? (oui/non)");
+		return input.equalsIgnoreCase("oui") || input.equalsIgnoreCase("o");
 	}
 
 	public void showPlayerEndTurn (Character player) {

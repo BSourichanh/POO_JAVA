@@ -15,6 +15,7 @@ Le jeu intègre un moteur de rendu graphique console développé sur mesure (`Co
 - **Cartes de statut & d'arène encadrées** avec alignement strict des bordures au millimètre.
 - **Jauges de santé dynamiques** avec dégradés de couleur (`[██████████] 8/8 HP`).
 - **Grille de plateau compacte (Case 1 à 63)** avec icônes et codes à 2 lettres (`[⚔️J1]`, `[🐉DR]`, `[👺GB]`, `[🔮SO]`, `[🧪PT]`, `[🗡️EP]`, `[🔨MA]`, `[✨FE]`, `[✨EC]`).
+- **Option de Rejouabilité** : Possibilité de relancer instantanément une nouvelle partie après un Game Over (`requestPlayAgain`).
 
 ---
 
@@ -33,6 +34,7 @@ graph TD
         UC6[Ramasser & Équiper une arme/sort]
         UC7[Utiliser une potion de soin]
         UC8[Atteindre la case 63 : Victoire]
+        UC9[Recommencer une partie après Game Over]
     end
 
     Joueur --> UC1
@@ -43,6 +45,7 @@ graph TD
     Joueur --> UC6
     Joueur --> UC7
     Joueur --> UC8
+    Joueur --> UC9
 ```
 
 ---
@@ -146,6 +149,14 @@ classDiagram
         -BattleManager battleManager
         +startGame() void
         +playTurn() void
+    }
+
+    class Menu {
+        +requestNbPlayer(int) int
+        +chooseClass(int, int) int
+        +requestName() String
+        +requestPlayAgain() boolean
+        +showGameOver() void
     }
 
     class ConsoleTheme {
@@ -259,7 +270,7 @@ src/fr/campus/poojava/
 │       └── Dice20.java                Dé 20 faces
 └── ui/
     ├── ConsoleTheme.java              Gestion des thèmes ANSI, calculs de bordures Unicode & jauges de vie
-    ├── Menu.java                      Gestion des entrées/sorties utilisateur et inventaires
+    ├── Menu.java                      Gestion des entrées/sorties utilisateur, rejouabilité et inventaires
     ├── BoardRenderer.java             Rendu graphique du plateau console et fiches de statut
     └── MenuBattle.java                Cartes d'affrontement et bannières de combat
 ```
@@ -269,7 +280,8 @@ src/fr/campus/poojava/
 ## 🌟 Points Forts du Projet
 
 1. **Rendu Console ANSI Moderne** : Design soigné avec cartes d'information encadrées, jauges de vie et grille de plateau parfaitement alignée.
-2. **Homogénéité Linguistique** : Code source 100% propre et cohérent en anglais (`Sorcerer`, `SWORD`, `LIGHTNING`, `FIREBALL`).
-3. **Domain Packaging (`game.board`, `game.battle`)** : Organisation modulaire par domaine d'activité.
-4. **Découplage UI** : Séparation claire entre la logique métier (`game`) et la couche de présentation (`ui`).
-5. **Fichiers compacts (< 300 lignes)** : Code source maintenable, lisible et fortement découplé.
+2. **Rejouabilité intégrée** : Possibilité de recommencer immédiatement une partie après une défaite (`requestPlayAgain`).
+3. **Homogénéité Linguistique** : Code source 100% propre et cohérent en anglais (`Sorcerer`, `SWORD`, `LIGHTNING`, `FIREBALL`).
+4. **Domain Packaging (`game.board`, `game.battle`)** : Organisation modulaire par domaine d'activité.
+5. **Découplage UI** : Séparation claire entre la logique métier (`game`) et la couche de présentation (`ui`).
+6. **Fichiers compacts (< 300 lignes)** : Code source maintenable, lisible et fortement découplé.
