@@ -6,15 +6,21 @@ package fr.campus.poojava.equipment.offensive;
  * @author BSourichanh
  */
 public abstract class OffensiveEquipment {
-	/** Nom de l'équipement offensif */
+	/**
+	 * Nom de l'équipement offensif
+	 */
 	protected String name;
-
-	/** Dégâts supplémentaires accordés par l'équipement */
+	
+	/**
+	 * Dégâts supplémentaires accordés par l'équipement
+	 */
 	protected int damage;
-
-	/** Type d'équipement offensif (WEAPON ou SPELL) */
+	
+	/**
+	 * Type d'équipement offensif (WEAPON ou SPELL)
+	 */
 	protected OffEquipType type;
-
+	
 	/**
 	 * Constructeur d'un équipement offensif.
 	 *
@@ -27,33 +33,45 @@ public abstract class OffensiveEquipment {
 		this.damage = damage;
 		this.type = type;
 	}
-
-	/** @return Le nom de l'équipement. */
+	
+	/**
+	 * @return Le nom de l'équipement.
+	 */
 	public String getName () {
 		return name;
 	}
-
-	/** @param name Le nouveau nom. */
+	
+	/**
+	 * @param name Le nouveau nom.
+	 */
 	public void setName (String name) {
 		this.name = name;
 	}
-
-	/** @return Les dégâts supplémentaires accordés. */
+	
+	/**
+	 * @return Les dégâts supplémentaires accordés.
+	 */
 	public int getDamage () {
 		return damage;
 	}
-
-	/** @param damage Les nouveaux dégâts. */
+	
+	/**
+	 * @param damage Les nouveaux dégâts.
+	 */
 	public void setDamage (int damage) {
 		this.damage = damage;
 	}
-
-	/** @return Le type d'équipement offensif. */
+	
+	/**
+	 * @return Le type d'équipement offensif.
+	 */
 	public OffEquipType getType () {
 		return type;
 	}
-
-	/** @param type Le nouveau type d'équipement. */
+	
+	/**
+	 * @param type Le nouveau type d'équipement.
+	 */
 	public void setType (OffEquipType type) {
 		this.type = type;
 	}

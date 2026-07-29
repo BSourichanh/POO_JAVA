@@ -7,29 +7,43 @@ package fr.campus.poojava.entity;
  * @author BSourichanh
  */
 public enum EntityType {
-	/** Héros Guerrier */
+	/**
+	 * Héros Guerrier
+	 */
 	WARRIOR("Guerrier"),
-	/** Héros Mage */
+	/**
+	 * Héros Mage
+	 */
 	WIZARD("Mage"),
-	/** Ennemi Goblin */
+	/**
+	 * Ennemi Goblin
+	 */
 	GOBLIN("Goblin"),
-	/** Ennemi Sorcier */
+	/**
+	 * Ennemi Sorcier
+	 */
 	SORCERER("Sorcier"),
-	/** Ennemi Dragon */
+	/**
+	 * Ennemi Dragon
+	 */
 	DRAGON("Dragon");
-
+	
 	private final String displayName;
-
+	
 	EntityType (String displayName) {
 		this.displayName = displayName;
 	}
-
-	/** @return Le nom d'affichage convivial en français. */
+	
+	/**
+	 * @return Le nom d'affichage convivial en français.
+	 */
 	public String getDisplayName () {
 		return displayName;
 	}
-
-	/** @return Le nom d'affichage convivial en français. */
+	
+	/**
+	 * @return Le nom d'affichage convivial en français.
+	 */
 	@Override
 	public String toString () {
 		return displayName;

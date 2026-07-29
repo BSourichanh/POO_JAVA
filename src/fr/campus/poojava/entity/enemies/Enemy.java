@@ -9,7 +9,7 @@ import fr.campus.poojava.entity.EntityType;
  * @author BSourichanh
  */
 public class Enemy extends Entity {
-
+	
 	/**
 	 * Constructeur d'un ennemi.
 	 *

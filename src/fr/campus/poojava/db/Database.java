@@ -14,11 +14,11 @@ import java.util.List;
  * @author BSourichanh
  */
 public class Database {
-
+	
 	private static final String URL = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://localhost:3306/game");
 	private static final String USER = System.getenv().getOrDefault("DB_USER", "root");
 	private static final String PASSWORD = System.getenv().getOrDefault("DB_PASS", "");
-
+	
 	/**
 	 * Établit une connexion JDBC avec la base de données MySQL.
 	 *
@@ -28,7 +28,7 @@ public class Database {
 	public static Connection getConnection () throws SQLException {
 		return DriverManager.getConnection(URL, USER, PASSWORD);
 	}
-
+	
 	/**
 	 * Teste la connectivité vers la base de données MySQL.
 	 *
@@ -43,36 +43,38 @@ public class Database {
 		}
 		return false;
 	}
-
-	/** Récupère et affiche la liste de tous les héros enregistrés en base. */
+	
+	/**
+	 * Récupère et affiche la liste de tous les héros enregistrés en base.
+	 */
 	public void getHeroes () {
 		String sql = "SELECT * FROM Characters";
-
+		
 		try (Connection con = Database.getConnection();
 		     Statement stmt = con.createStatement();
 		     ResultSet rs = stmt.executeQuery(sql)) {
-
+			
 			while (rs.next()) {
 				int id = rs.getInt("Id");
 				String type = rs.getString("Type");
 				String name = rs.getString("Name");
 				int life = rs.getInt("LifePoints");
-
+				
 				System.out.println(id + " " + type + " " + name + " " + life);
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void saveOffensiveEquipment (Connection con, int characterId, List<OffensiveEquipment> equipments) throws SQLException {
 		String sql = """
 				INSERT INTO OffensiveEquipment
 				(characterId, name, damage)
 				VALUES (?, ?, ?)
 				""";
-
+		
 		try (PreparedStatement ps = con.prepareStatement(sql)) {
 			for (OffensiveEquipment equip : equipments) {
 				ps.setInt(1, characterId);
@@ -82,14 +84,14 @@ public class Database {
 			}
 		}
 	}
-
+	
 	private void saveDefensiveEquipment (Connection con, int characterId, List<DefensiveEquipment> defensiveEquipments) throws SQLException {
 		String sql = """
 				INSERT INTO DefensiveEquipment
 				(characterId, name, hp)
 				VALUES (?, ?, ?)
 				""";
-
+		
 		try (PreparedStatement ps = con.prepareStatement(sql)) {
 			for (DefensiveEquipment equip : defensiveEquipments) {
 				ps.setInt(1, characterId);
@@ -99,7 +101,7 @@ public class Database {
 			}
 		}
 	}
-
+	
 	/**
 	 * Supprime un héros de la base par son identifiant unique.
 	 *
@@ -110,24 +112,24 @@ public class Database {
 				DELETE FROM Characters
 				WHERE id = ?
 				""";
-
+		
 		try (Connection con = Database.getConnection();
 		     PreparedStatement ps = con.prepareStatement(sql)) {
-
+			
 			ps.setInt(1, id);
 			int rows = ps.executeUpdate();
-
+			
 			if (rows > 0) {
 				System.out.println("Héros supprimé !");
 			} else {
 				System.out.println("Aucun héros trouvé avec cet id.");
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Enregistre un personnage et ses équipements associés dans la base de données.
 	 *
@@ -139,33 +141,35 @@ public class Database {
 				(Type, Name, LifePoints, Strength, pos, moveAvailable)
 				VALUES (?, ?, ?, ?, ?, ?)
 				""";
-
+		
 		try (Connection con = Database.getConnection();
 		     PreparedStatement psCharacter = con.prepareStatement(sqlCharacter, Statement.RETURN_GENERATED_KEYS)) {
-
+			
 			psCharacter.setString(1, player.getType().name());
 			psCharacter.setString(2, player.getName());
 			psCharacter.setInt(3, player.getHp());
 			psCharacter.setInt(4, player.getDmg());
 			psCharacter.setInt(5, player.getPos());
 			psCharacter.setInt(6, player.getMoveAvailable());
-
+			
 			psCharacter.executeUpdate();
-
+			
 			ResultSet rs = psCharacter.getGeneratedKeys();
-
+			
 			if (rs.next()) {
 				int characterId = rs.getInt(1);
 				saveOffensiveEquipment(con, characterId, player.getOffensiveEquipment());
 				saveDefensiveEquipment(con, characterId, player.getDefensiveEquipment());
 			}
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-
-	/** Réinitialise et vide l'ensemble des tables de la base de données. */
+	
+	/**
+	 * Réinitialise et vide l'ensemble des tables de la base de données.
+	 */
 	public void clearHeroes () {
 		String[] sqls = {
 				"SET FOREIGN_KEY_CHECKS = 0",
@@ -174,16 +178,16 @@ public class Database {
 				"TRUNCATE TABLE Characters",
 				"SET FOREIGN_KEY_CHECKS = 1"
 		};
-
+		
 		try (Connection con = Database.getConnection();
 		     Statement stmt = con.createStatement()) {
-
+			
 			for (String sql : sqls) {
 				stmt.executeUpdate(sql);
 			}
-
+			
 			System.out.println("Base réinitialisée.");
-
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

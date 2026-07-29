@@ -6,12 +6,16 @@ package fr.campus.poojava.equipment.defensive;
  * @author BSourichanh
  */
 public abstract class DefensiveEquipment {
-	/** Nom de l'équipement défensif */
+	/**
+	 * Nom de l'équipement défensif
+	 */
 	protected String name;
-
-	/** Points de santé restaurés par l'équipement */
+	
+	/**
+	 * Points de santé restaurés par l'équipement
+	 */
 	protected int hp;
-
+	
 	/**
 	 * Constructeur d'un équipement défensif.
 	 *
@@ -22,23 +26,31 @@ public abstract class DefensiveEquipment {
 		this.name = name;
 		this.hp = hp;
 	}
-
-	/** @return Le nom de l'équipement. */
+	
+	/**
+	 * @return Le nom de l'équipement.
+	 */
 	public String getName () {
 		return name;
 	}
-
-	/** @param name Le nouveau nom de l'équipement. */
+	
+	/**
+	 * @param name Le nouveau nom de l'équipement.
+	 */
 	public void setName (String name) {
 		this.name = name;
 	}
-
-	/** @return Les points de vie restaurés. */
+	
+	/**
+	 * @return Les points de vie restaurés.
+	 */
 	public int getHp () {
 		return hp;
 	}
-
-	/** @param hp Les nouveaux points de vie restaurés. */
+	
+	/**
+	 * @param hp Les nouveaux points de vie restaurés.
+	 */
 	public void setHp (int hp) {
 		this.hp = hp;
 	}

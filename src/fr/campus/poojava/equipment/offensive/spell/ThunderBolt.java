@@ -6,8 +6,10 @@ package fr.campus.poojava.equipment.offensive.spell;
  * @author BSourichanh
  */
 public class ThunderBolt extends Spell {
-
-	/** Constructeur du sort Éclair. */
+	
+	/**
+	 * Constructeur du sort Éclair.
+	 */
 	public ThunderBolt () {
 		super("Éclair", 2);
 	}

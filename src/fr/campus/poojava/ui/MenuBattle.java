@@ -12,7 +12,7 @@ import fr.campus.poojava.game.battle.Crit;
  */
 public class MenuBattle {
 	private final Menu menu = new Menu();
-
+	
 	private String getEnemyIcon (Enemy enemy) {
 		String name = enemy.getName().toLowerCase();
 		if (name.contains("dragon")) return ConsoleTheme.SYM_DRAGON;
@@ -20,7 +20,7 @@ public class MenuBattle {
 		if (name.contains("sorc")) return ConsoleTheme.SYM_SORCERER;
 		return ConsoleTheme.SYM_ENEMY;
 	}
-
+	
 	/**
 	 * Affiche l'encadré d'engagement de combat.
 	 *
@@ -36,7 +36,7 @@ public class MenuBattle {
 		);
 		menu.requestInput("Appuyez sur [Entrée] pour engager la bataille.");
 	}
-
+	
 	/**
 	 * Demande la décision tactique du joueur (Attaquer ou Fuir).
 	 *
@@ -48,7 +48,7 @@ public class MenuBattle {
 		System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[2]" + ConsoleTheme.RESET + " 🏃 Fuir le combat");
 		return menu.requestNb();
 	}
-
+	
 	/**
 	 * Affiche la carte d'arène de combat comparant les PV et dégâts des deux combattants.
 	 *
@@ -59,17 +59,17 @@ public class MenuBattle {
 	 */
 	public int showBattleInfo (Character player, Enemy enemy, BattleState state) {
 		String enemyIcon = getEnemyIcon(enemy);
-
+		
 		int playerDmg = player.getDmg();
 		String weaponName = "Mains nues";
 		if (player.getCurrentOffEquipment() != null) {
 			playerDmg += player.getCurrentOffEquipment().getDamage();
 			weaponName = player.getCurrentOffEquipment().getName() + " (+" + player.getCurrentOffEquipment().getDamage() + ")";
 		}
-
+		
 		String playerHpBar = ConsoleTheme.getHealthBar(player.getHp(), player.getMaxHp(), 8);
 		String enemyHpBar = ConsoleTheme.getHealthBar(enemy.getHp(), enemy.getMaxHp(), 8);
-
+		
 		ConsoleTheme.printBox("⚔️ ARENE DE COMBAT ⚔️",
 				ConsoleTheme.BRIGHT_GREEN + ConsoleTheme.BOLD + player.getName() + " (" + player.getType() + ")" + ConsoleTheme.RESET,
 				ConsoleTheme.SYM_HEART + " Santé   : " + playerHpBar,
@@ -79,7 +79,7 @@ public class MenuBattle {
 				ConsoleTheme.SYM_HEART + " Santé   : " + enemyHpBar,
 				ConsoleTheme.SYM_WEAPON + " Attaque : " + ConsoleTheme.BOLD + enemy.getDmg() + ConsoleTheme.RESET + " dégâts"
 		);
-
+		
 		if (state == BattleState.PLAYER_TURN) {
 			return requestInputBattleAction();
 		} else {
@@ -88,7 +88,7 @@ public class MenuBattle {
 		menu.requestInput("Appuyez sur [Entrée] pour continuer.");
 		return -1;
 	}
-
+	
 	/**
 	 * Affiche l'attaque du joueur et le résultat du coup (critique, échec ou normal).
 	 *
@@ -103,9 +103,9 @@ public class MenuBattle {
 			weapon = player.getCurrentOffEquipment().getName();
 			dmg += player.getCurrentOffEquipment().getDamage();
 		}
-
+		
 		System.out.println(ConsoleTheme.BRIGHT_GREEN + "⚔️ " + player.getName() + " attaque " + enemy.getName() + " avec " + weapon + " !" + ConsoleTheme.RESET);
-
+		
 		if (crit == Crit.CRITIQUE) {
 			System.out.println(ConsoleTheme.BRIGHT_YELLOW + ConsoleTheme.BOLD + "💥 COUP CRITIQUE ! (+2 dégâts)" + ConsoleTheme.RESET);
 			dmg += 2;
@@ -117,12 +117,12 @@ public class MenuBattle {
 		} else {
 			System.out.println(ConsoleTheme.BRIGHT_GREEN + "⚡ Dégâts infligés : " + ConsoleTheme.BOLD + dmg + ConsoleTheme.RESET + " à " + enemy.getName());
 		}
-
+		
 		int enemyHp = Math.max(0, enemy.getHp());
 		System.out.println("❤️ PV restant de " + enemy.getName() + " : " + ConsoleTheme.getHealthBar(enemyHp, enemy.getMaxHp(), 8));
 		System.out.println();
 	}
-
+	
 	/**
 	 * Affiche la riposte de l'ennemi et les dégâts subis par le joueur.
 	 *
@@ -134,7 +134,7 @@ public class MenuBattle {
 		String enemyIcon = getEnemyIcon(enemy);
 		System.out.println(ConsoleTheme.BRIGHT_RED + enemyIcon + " " + enemy.getName() + " frappe " + player.getName() + " !" + ConsoleTheme.RESET);
 		int dmg = enemy.getDmg();
-
+		
 		if (crit == Crit.CRITIQUE) {
 			System.out.println(ConsoleTheme.BRIGHT_RED + ConsoleTheme.BOLD + "💥 COUP CRITIQUE ENNEMI ! (+2 dégâts)" + ConsoleTheme.RESET);
 			dmg += 2;
@@ -146,11 +146,11 @@ public class MenuBattle {
 		} else {
 			System.out.println(ConsoleTheme.BRIGHT_RED + "💔 Dégâts subis : " + ConsoleTheme.BOLD + dmg + ConsoleTheme.RESET + " par " + player.getName());
 		}
-
+		
 		int playerHp = Math.max(0, player.getHp());
 		System.out.println("❤️ PV restant de " + player.getName() + " : " + ConsoleTheme.getHealthBar(playerHp, player.getMaxHp(), 8));
 	}
-
+	
 	/**
 	 * Affiche le résultat des dégâts échangés lors d'un tour de combat.
 	 *
@@ -167,7 +167,7 @@ public class MenuBattle {
 		}
 		menu.requestInput("Appuyez sur [Entrée] pour continuer.");
 	}
-
+	
 	/**
 	 * Affiche la victoire si un ennemi est terrassé.
 	 *
@@ -183,7 +183,7 @@ public class MenuBattle {
 			menu.requestInput("Appuyez sur [Entrée] - Fin du combat.");
 		}
 	}
-
+	
 	/**
 	 * Affiche l'encadré de la mort d'un joueur au combat.
 	 *
@@ -195,7 +195,7 @@ public class MenuBattle {
 		);
 		menu.requestInput("Appuyez sur [Entrée] pour continuer.");
 	}
-
+	
 	/**
 	 * Annonce le début d'un tour de combat (joueur ou ennemi).
 	 *
@@ -210,7 +210,7 @@ public class MenuBattle {
 			System.out.println(ConsoleTheme.BRIGHT_RED + "👉 Tour de l'ennemi " + enemy.getName() + " !" + ConsoleTheme.RESET);
 		}
 	}
-
+	
 	/**
 	 * Affiche l'encadré d'une fuite réussie.
 	 *

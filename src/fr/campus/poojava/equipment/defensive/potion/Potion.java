@@ -8,7 +8,7 @@ import fr.campus.poojava.equipment.defensive.DefensiveEquipment;
  * @author BSourichanh
  */
 public abstract class Potion extends DefensiveEquipment {
-
+	
 	/**
 	 * Constructeur d'une potion.
 	 *

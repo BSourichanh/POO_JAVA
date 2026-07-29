@@ -21,15 +21,15 @@ import java.util.Random;
  * @author BSourichanh
  */
 public class Game {
-	private int currentPlayer = 0;
-	private GameState gameState;
-	private int maxPlayer = 2;
 	private final GameBoard board;
+	private final Random random = new Random();
 	protected Menu menu;
 	protected MenuBattle menuBattle;
 	protected BattleManager battleManager;
-	private final Random random = new Random();
-
+	private int currentPlayer = 0;
+	private GameState gameState;
+	private int maxPlayer = 2;
+	
 	/**
 	 * Constructeur de la partie. Initialise le plateau de 63 cases et les composants d'interface.
 	 */
@@ -39,12 +39,14 @@ public class Game {
 		this.menu = new Menu();
 		this.menuBattle = new MenuBattle();
 	}
-
-	/** @return Le plateau de jeu. */
+	
+	/**
+	 * @return Le plateau de jeu.
+	 */
 	public GameBoard getBoard () {
 		return board;
 	}
-
+	
 	/**
 	 * Récupère un joueur par son identifiant unique.
 	 *
@@ -54,7 +56,7 @@ public class Game {
 	public Character getPlayerById (int id) {
 		return board.getPlayerById(id);
 	}
-
+	
 	/**
 	 * Définit le nombre de joueurs dans la partie.
 	 *
@@ -63,7 +65,7 @@ public class Game {
 	public void setMaxPlayer (int nb) {
 		this.maxPlayer = nb;
 	}
-
+	
 	/**
 	 * Gère la fuite d'un joueur en le reculant d'un nombre aléatoire de cases (1 à 6).
 	 *
@@ -80,7 +82,7 @@ public class Game {
 		menuBattle.showFlee(rand);
 		return GameState.END;
 	}
-
+	
 	/**
 	 * Gère le choix d'action initial du tour d'un joueur (Lancer de dé, Potion, Équipement).
 	 *
@@ -117,7 +119,7 @@ public class Game {
 			}
 		}
 	}
-
+	
 	/**
 	 * Gère le déplacement case par case du joueur et les événements déclenchés (Combats, Potions, Équipements).
 	 *
@@ -127,7 +129,7 @@ public class Game {
 	public GameState manageMove (Character player) {
 		menu.showHeader(player, board.getCellTable(), board.getMaxCell());
 		menu.showCurrentPlayerTurn(player);
-
+		
 		int pPos = player.getPos();
 		menu.showMoveAvailable(player);
 		GameState action = menu.requestInputAction(player);
@@ -167,7 +169,7 @@ public class Game {
 		}
 		return GameState.MOVING;
 	}
-
+	
 	/**
 	 * Gère la sélection et l'équipement d'une arme ou d'un sort dans l'inventaire.
 	 *
@@ -192,7 +194,7 @@ public class Game {
 			}
 		}
 	}
-
+	
 	/**
 	 * Gère la sélection et l'utilisation d'une potion dans l'inventaire.
 	 *
@@ -209,7 +211,7 @@ public class Game {
 		}
 		return GameState.MOVING;
 	}
-
+	
 	/**
 	 * Délégué de gestion de combat vers le BattleManager.
 	 *
@@ -219,7 +221,7 @@ public class Game {
 	public GameState initBattle (Character player) {
 		return battleManager.manageBattle(player, board);
 	}
-
+	
 	/**
 	 * Retire un joueur mort de la partie et informe l'interface.
 	 *
@@ -230,8 +232,10 @@ public class Game {
 		board.getCell(player.getPos()).removePlayer(player);
 		menuBattle.showPlayerDeath(player);
 	}
-
-	/** Passe le tour au joueur vivant suivant. */
+	
+	/**
+	 * Passe le tour au joueur vivant suivant.
+	 */
 	public void nextPlayer () {
 		for (int i = 1; i <= maxPlayer; i++) {
 			int id = (currentPlayer + i) % maxPlayer;
@@ -241,8 +245,10 @@ public class Game {
 			}
 		}
 	}
-
-	/** Exécute une étape/un tour complet de la partie selon la machine à états. */
+	
+	/**
+	 * Exécute une étape/un tour complet de la partie selon la machine à états.
+	 */
 	public void playTurn () {
 		Character player = board.getPlayerById(currentPlayer);
 		if (player == null) {
@@ -255,7 +261,7 @@ public class Game {
 			gameState = GameState.FINISH;
 			menu.showPlayerFinish(player);
 		}
-
+		
 		switch (gameState) {
 			case IDLE -> gameState = manageAction(player);
 			case MOVING -> gameState = manageMove(player);
@@ -275,8 +281,10 @@ public class Game {
 			case FINISH -> menu.showEndGame();
 		}
 	}
-
-	/** Initialise une nouvelle partie (création des joueurs, ennemis, équipements). */
+	
+	/**
+	 * Initialise une nouvelle partie (création des joueurs, ennemis, équipements).
+	 */
 	public void initGame () {
 		setMaxPlayer(menu.requestNbPlayer(maxPlayer));
 		board.initPlayers(maxPlayer, menu);
@@ -285,8 +293,10 @@ public class Game {
 		board.initDefEquip();
 		battleManager = new BattleManager(menu, this);
 	}
-
-	/** Affiche la bannière d'introduction et lance la boucle de jeu principale. */
+	
+	/**
+	 * Affiche la bannière d'introduction et lance la boucle de jeu principale.
+	 */
 	public void startGame () {
 		ConsoleTheme.printBanner();
 		this.initGame();

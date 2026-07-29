@@ -6,8 +6,10 @@ package fr.campus.poojava.equipment.offensive.weapon;
  * @author BSourichanh
  */
 public class Sword extends Weapon {
-
-	/** Constructeur de l'arme Épée. */
+	
+	/**
+	 * Constructeur de l'arme Épée.
+	 */
 	public Sword () {
 		super("Épée", 5);
 	}

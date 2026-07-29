@@ -31,7 +31,7 @@ public class BattleManager {
 	public BattleManager (Menu menu, Game game) {
 		this(menu, game, new MenuBattle(), new Dice20());
 	}
-
+	
 	/**
 	 * Constructeur avec injection complète de dépendances (DIP / Tests).
 	 *
@@ -46,7 +46,7 @@ public class BattleManager {
 		this.menuBattle = menuBattle;
 		this.dice = dice;
 	}
-
+	
 	/**
 	 * Détermine si le jet de d20 donne un coup critique, un échec critique ou un coup normal.
 	 *
@@ -61,7 +61,7 @@ public class BattleManager {
 		}
 		return Crit.NORMAL;
 	}
-
+	
 	/**
 	 * Gère l'intégralité d'un affrontement : annonce d'engagement, déroulement du combat tour par tour,
 	 * résolution des dégâts et détermination de la suite du jeu.
@@ -75,7 +75,7 @@ public class BattleManager {
 		if (currentCell == null || currentCell.getEnemies().isEmpty()) {
 			return GameState.MOVING;
 		}
-
+		
 		Enemy enemy = currentCell.getEnemies().getFirst();
 		menuBattle.showEncounter(player, enemy);
 		
@@ -85,17 +85,17 @@ public class BattleManager {
 			if (currentCell.getEnemies().isEmpty()) {
 				return player.getMoveAvailable() == 0 ? GameState.END : GameState.MOVING;
 			}
-
+			
 			menuBattle.showBattleTurn(player, enemy, state);
 			if (menuBattle.showBattleInfo(player, enemy, state) == 2) {
 				return GameState.FLEE;
 			}
-
+			
 			Crit crit = this.checkCrit(this.dice.roll());
 			this.execBattle(player, enemy, state, crit);
 			menuBattle.showDmg(player, enemy, state, crit);
 			menuBattle.showBattleResult(enemy);
-
+			
 			if (enemy.getHp() <= 0) {
 				currentCell.removeEnemy(enemy);
 				return player.getMoveAvailable() == 0 ? GameState.END : GameState.MOVING;
@@ -112,11 +112,11 @@ public class BattleManager {
 				game.nextPlayer();
 				return GameState.IDLE;
 			}
-
+			
 			state = (state == BattleState.PLAYER_TURN) ? BattleState.ENEMY_TURN : BattleState.PLAYER_TURN;
 		}
 	}
-
+	
 	/**
 	 * Applique les dégâts calculés (avec prise en compte du coup critique) sur la cible.
 	 *

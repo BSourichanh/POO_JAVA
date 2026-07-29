@@ -9,7 +9,7 @@ import fr.campus.poojava.entity.EntityType;
  * @author BSourichanh
  */
 public class Sorcerer extends Enemy {
-
+	
 	/**
 	 * Constructeur d'un Sorcier placé à une position donnée.
 	 *

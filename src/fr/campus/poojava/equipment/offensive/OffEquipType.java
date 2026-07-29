@@ -6,8 +6,12 @@ package fr.campus.poojava.equipment.offensive;
  * @author BSourichanh
  */
 public enum OffEquipType {
-	/** Arme physique (réservée aux Guerriers) */
+	/**
+	 * Arme physique (réservée aux Guerriers)
+	 */
 	WEAPON,
-	/** Sort magique (réservé aux Mages) */
+	/**
+	 * Sort magique (réservé aux Mages)
+	 */
 	SPELL
 }

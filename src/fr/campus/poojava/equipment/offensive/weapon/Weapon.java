@@ -9,7 +9,7 @@ import fr.campus.poojava.equipment.offensive.OffensiveEquipment;
  * @author BSourichanh
  */
 public abstract class Weapon extends OffensiveEquipment {
-
+	
 	/**
 	 * Constructeur d'une arme physique.
 	 *

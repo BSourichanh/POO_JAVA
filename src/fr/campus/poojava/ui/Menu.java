@@ -17,12 +17,14 @@ import java.util.Scanner;
 public class Menu {
 	protected static final Scanner sc = new Scanner(System.in);
 	protected final BoardRenderer renderer = new BoardRenderer();
-
-	/** Affiche la ligne séparatrice de l'interface. */
+	
+	/**
+	 * Affiche la ligne séparatrice de l'interface.
+	 */
 	public void showSeparator () {
 		renderer.showSeparator();
 	}
-
+	
 	/**
 	 * Demande au joueur de choisir sa classe de héros (Guerrier ou Mage).
 	 *
@@ -35,7 +37,7 @@ public class Menu {
 			System.out.println(ConsoleTheme.BRIGHT_CYAN + "🧙 C'est au Joueur " + (id + 1) + " de choisir sa classe :" + ConsoleTheme.RESET);
 			System.out.println(ConsoleTheme.BRIGHT_YELLOW + "  [1]" + ConsoleTheme.RESET + " ⚔️  Guerrier  " + ConsoleTheme.DIM + "(Combat rapproché, épée / massue)" + ConsoleTheme.RESET);
 			System.out.println(ConsoleTheme.BRIGHT_YELLOW + "  [2]" + ConsoleTheme.RESET + " 🧙 Mage      " + ConsoleTheme.DIM + "(Sortilèges, boule de feu / éclair)" + ConsoleTheme.RESET);
-
+			
 			int tmp = requestNb();
 			if (tmp == 1 || tmp == 2) {
 				return tmp;
@@ -43,7 +45,7 @@ public class Menu {
 			showWrongChoice();
 		}
 	}
-
+	
 	/**
 	 * Demande au joueur d'entrer son nom de héros.
 	 *
@@ -57,7 +59,7 @@ public class Menu {
 			}
 		}
 	}
-
+	
 	/**
 	 * Demande le nombre de joueurs participant à la partie.
 	 *
@@ -79,7 +81,7 @@ public class Menu {
 			}
 		}
 	}
-
+	
 	/**
 	 * Demande la saisie d'un nombre entier dans la console.
 	 *
@@ -96,7 +98,7 @@ public class Menu {
 			return -1;
 		}
 	}
-
+	
 	/**
 	 * Annonce le début du tour du joueur courant.
 	 *
@@ -106,15 +108,17 @@ public class Menu {
 		String icon = player.getType() == EntityType.WARRIOR ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
 		System.out.println(ConsoleTheme.BOLD + ConsoleTheme.BRIGHT_GREEN + icon + " C'est le tour de " + player.getName() + " le " + player.getType() + " !" + ConsoleTheme.RESET);
 	}
-
-	/** Affiche les actions disponibles au début du tour (Dé, Potion, Équipement). */
+	
+	/**
+	 * Affiche les actions disponibles au début du tour (Dé, Potion, Équipement).
+	 */
 	public void showPlayerIdleAction () {
 		System.out.println(ConsoleTheme.BOLD + ConsoleTheme.BRIGHT_CYAN + "📜 Actions disponibles :" + ConsoleTheme.RESET);
 		System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[1]" + ConsoleTheme.RESET + " 🎲 Lancer de dé");
 		System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[2]" + ConsoleTheme.RESET + " 🧪 Utiliser une potion");
 		System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[3]" + ConsoleTheme.RESET + " 🗡️ Équiper un objet");
 	}
-
+	
 	/**
 	 * Affiche le résultat du lancer de dé et attend la validation utilisateur.
 	 *
@@ -123,7 +127,7 @@ public class Menu {
 	public void requestInputDiceThrow (Character player) {
 		requestInput(ConsoleTheme.BRIGHT_YELLOW + "🎲 Appuyez sur [Entrée] - " + player.getName() + " a obtenu un lancer de dé de " + ConsoleTheme.BOLD + player.getMoveAvailable() + ConsoleTheme.RESET);
 	}
-
+	
 	/**
 	 * Affiche le nombre de cases de déplacement restantes.
 	 *
@@ -132,7 +136,7 @@ public class Menu {
 	public void showMoveAvailable (Character player) {
 		System.out.println("🚶 Déplacement disponible : " + ConsoleTheme.BRIGHT_YELLOW + ConsoleTheme.BOLD + player.getMoveAvailable() + " case(s)" + ConsoleTheme.RESET + "\n");
 	}
-
+	
 	/**
 	 * Demande au joueur son action pendant la phase de déplacement.
 	 *
@@ -145,9 +149,9 @@ public class Menu {
 			System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[Entrée]" + ConsoleTheme.RESET + " 🚶 Avancer d'une case");
 			System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[1]" + ConsoleTheme.RESET + " 🎒 Inventaire des armes/sorts");
 			System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[2]" + ConsoleTheme.RESET + " 🧪 Inventaire des potions");
-
+			
 			int input = requestNb();
-
+			
 			if (input == 1) {
 				if (player.isOffEquipEmpty()) {
 					System.out.println(ConsoleTheme.BRIGHT_RED + "❌ Inventaire d'équipements vide." + ConsoleTheme.RESET);
@@ -165,7 +169,7 @@ public class Menu {
 			}
 		}
 	}
-
+	
 	/**
 	 * Informe le ramassage d'une potion par le joueur.
 	 *
@@ -175,7 +179,7 @@ public class Menu {
 	public void showPickDefEquip (Character player, DefensiveEquipment defEquip) {
 		requestInput(ConsoleTheme.BRIGHT_CYAN + "✨ Appuyez sur [Entrée] - " + player.getName() + " le " + player.getType() + " ramasse " + ConsoleTheme.BOLD + defEquip.getName() + ConsoleTheme.RESET + " !");
 	}
-
+	
 	/**
 	 * Informe le ramassage d'un équipement offensif par le joueur.
 	 *
@@ -185,30 +189,34 @@ public class Menu {
 	public void showPickOffEquip (Character player, OffensiveEquipment offEquip) {
 		requestInput(ConsoleTheme.BRIGHT_MAGENTA + "✨ Appuyez sur [Entrée] - " + player.getName() + " le " + player.getType() + " ramasse " + ConsoleTheme.BOLD + offEquip.getName() + ConsoleTheme.RESET + " !");
 	}
-
-	/** Affiche un avertissement si l'objet ne peut être équipé par la classe du joueur. */
+	
+	/**
+	 * Affiche un avertissement si l'objet ne peut être équipé par la classe du joueur.
+	 */
 	public void showWrongItemType () {
 		requestInput(ConsoleTheme.BRIGHT_RED + "⚠️ Cet objet ne peut pas être équipé pour votre classe !" + ConsoleTheme.RESET);
 	}
-
-	/** Affiche la bannière d'échec de la partie (Game Over). */
+	
+	/**
+	 * Affiche la bannière d'échec de la partie (Game Over).
+	 */
 	public void showGameOver () {
 		ConsoleTheme.printBox("💀 FIN DE LA PARTIE 💀",
 				ConsoleTheme.BRIGHT_RED + "Tous les héros sont tombés au combat..." + ConsoleTheme.RESET,
 				""
 		);
 	}
-
+	
 	/**
 	 * Demande au joueur s'il souhaite recommencer une nouvelle partie après un Game Over.
 	 *
 	 * @return true si le joueur répond oui ou o, false sinon.
 	 */
-	public boolean requestPlayAgain() {
+	public boolean requestPlayAgain () {
 		String input = requestInput("💀 Voulez-vous recommencer une partie ? (oui/non)");
 		return input.equalsIgnoreCase("oui") || input.equalsIgnoreCase("o");
 	}
-
+	
 	/**
 	 * Informe de la fin du tour du joueur courant.
 	 *
@@ -217,7 +225,7 @@ public class Menu {
 	public void showPlayerEndTurn (Character player) {
 		System.out.println(ConsoleTheme.DIM + "🔚 Appuyez sur [Entrée] - Fin de tour de " + player.getName() + " le " + player.getType() + ConsoleTheme.RESET);
 	}
-
+	
 	/**
 	 * Affiche la victoire d'un joueur atteignant la dernière case du plateau.
 	 *
@@ -229,12 +237,14 @@ public class Menu {
 				"Félicitations pour votre bravoure !"
 		);
 	}
-
-	/** Affiche le message de fin de partie. */
+	
+	/**
+	 * Affiche le message de fin de partie.
+	 */
 	public void showEndGame () {
 		System.out.println(ConsoleTheme.BRIGHT_GREEN + ConsoleTheme.BOLD + "\n🎉 Partie terminée ! Merci d'avoir joué !" + ConsoleTheme.RESET);
 	}
-
+	
 	protected int checkInput (int input, int end) {
 		if (input >= 1 && input <= end) {
 			return input;
@@ -242,7 +252,7 @@ public class Menu {
 			return -1;
 		}
 	}
-
+	
 	/**
 	 * Affiche un message d'invite et attend la ligne saisie par l'utilisateur.
 	 *
@@ -256,12 +266,14 @@ public class Menu {
 		System.out.print("\n");
 		return input;
 	}
-
-	/** Affiche un message d'erreur pour choix invalide. */
+	
+	/**
+	 * Affiche un message d'erreur pour choix invalide.
+	 */
 	public void showWrongChoice () {
 		System.out.println(ConsoleTheme.BRIGHT_RED + "❌ Choix invalide. Veuillez réessayez." + ConsoleTheme.RESET);
 	}
-
+	
 	/**
 	 * Délègue au renderer l'affichage des cases du plateau.
 	 *
@@ -271,7 +283,7 @@ public class Menu {
 	public void showCellsData (Cell[] cellTable, int maxCell) {
 		renderer.showCellsData(cellTable, maxCell);
 	}
-
+	
 	/**
 	 * Délègue au renderer l'affichage de l'audit complet.
 	 *
@@ -280,7 +292,7 @@ public class Menu {
 	public void showAllData (Cell[] cellsTable) {
 		renderer.showAllData(cellsTable);
 	}
-
+	
 	/**
 	 * Délègue au renderer l'affichage du statut du joueur actif.
 	 *
@@ -289,7 +301,7 @@ public class Menu {
 	public void showCurrentPlayer (Character player) {
 		renderer.showCurrentPlayer(player);
 	}
-
+	
 	/**
 	 * Affiche la liste des potions de l'inventaire du joueur pour sélection.
 	 *
@@ -308,7 +320,7 @@ public class Menu {
 		}
 		return true;
 	}
-
+	
 	/**
 	 * Affiche l'équipement offensif tenu et la liste de l'inventaire.
 	 *
@@ -338,7 +350,7 @@ public class Menu {
 			return true;
 		}
 	}
-
+	
 	/**
 	 * Délègue au renderer l'affichage de l'en-tête du tour.
 	 *

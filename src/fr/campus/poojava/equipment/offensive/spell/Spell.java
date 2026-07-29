@@ -9,7 +9,7 @@ import fr.campus.poojava.equipment.offensive.OffensiveEquipment;
  * @author BSourichanh
  */
 public abstract class Spell extends OffensiveEquipment {
-
+	
 	/**
 	 * Constructeur d'un sort magique.
 	 *

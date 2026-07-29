@@ -9,7 +9,7 @@ import java.util.Random;
  */
 public class Dice20 implements Dice {
 	private final Random random = new Random();
-
+	
 	/**
 	 * Lance le dé à 20 faces.
 	 *

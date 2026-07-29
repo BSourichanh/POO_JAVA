@@ -6,8 +6,12 @@ package fr.campus.poojava.game.battle;
  * @author BSourichanh
  */
 public enum BattleState {
-	/** Tour d'attaque du joueur */
+	/**
+	 * Tour d'attaque du joueur
+	 */
 	PLAYER_TURN,
-	/** Tour de riposte de l'ennemi */
+	/**
+	 * Tour de riposte de l'ennemi
+	 */
 	ENEMY_TURN
 }

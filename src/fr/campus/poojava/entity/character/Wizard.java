@@ -11,7 +11,7 @@ import fr.campus.poojava.equipment.offensive.OffensiveEquipment;
  * @author BSourichanh
  */
 public class Wizard extends Character {
-
+	
 	/**
 	 * Constructeur d'un Mage.
 	 *
@@ -21,7 +21,7 @@ public class Wizard extends Character {
 	public Wizard (String name, int id) {
 		super(EntityType.WIZARD, name, id, 7, 7);
 	}
-
+	
 	/**
 	 * Détermine si le mage peut équiper un équipement offensif (uniquement les sorts).
 	 *

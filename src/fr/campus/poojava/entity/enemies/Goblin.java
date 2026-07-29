@@ -9,7 +9,7 @@ import fr.campus.poojava.entity.EntityType;
  * @author BSourichanh
  */
 public class Goblin extends Enemy {
-
+	
 	/**
 	 * Constructeur d'un Goblin placé à une position donnée.
 	 *

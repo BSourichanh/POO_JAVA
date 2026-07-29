@@ -32,11 +32,11 @@ public class GameBoard {
 	private static final int MAX_ENEMIES = 24;
 	private static final int MAX_POTIONS = 8;
 	private static final int MAX_WEAPONS = 16;
-
+	
 	private final int maxCell;
 	private final Cell[] cellTable;
 	private final Random random = new Random();
-
+	
 	/**
 	 * Constructeur du plateau de jeu.
 	 *
@@ -47,17 +47,21 @@ public class GameBoard {
 		this.cellTable = new Cell[maxCell];
 		initCells();
 	}
-
-	/** @return Le tableau complet des cases du plateau. */
+	
+	/**
+	 * @return Le tableau complet des cases du plateau.
+	 */
 	public Cell[] getCellTable () {
 		return cellTable;
 	}
-
-	/** @return Le nombre total de cases du plateau. */
+	
+	/**
+	 * @return Le nombre total de cases du plateau.
+	 */
 	public int getMaxCell () {
 		return maxCell;
 	}
-
+	
 	/**
 	 * Récupère une case spécifique par son index (0 à maxCell-1).
 	 *
@@ -70,13 +74,13 @@ public class GameBoard {
 		}
 		return null;
 	}
-
+	
 	private void initCells () {
 		for (int i = 0; i < maxCell; i++) {
 			cellTable[i] = new Cell(i);
 		}
 	}
-
+	
 	/**
 	 * Initialise les joueurs et les place sur la première case (case 0).
 	 *
@@ -96,8 +100,10 @@ public class GameBoard {
 			player.moveEntityToCell(null, cellTable[0]);
 		}
 	}
-
-	/** Génère et distribue aléatoirement 24 ennemis sur le plateau. */
+	
+	/**
+	 * Génère et distribue aléatoirement 24 ennemis sur le plateau.
+	 */
 	public void initEnemies () {
 		for (int i = 0; i < MAX_ENEMIES; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
@@ -106,8 +112,10 @@ public class GameBoard {
 			}
 		}
 	}
-
-	/** Génère et distribue aléatoirement 16 armes et sorts sur le plateau. */
+	
+	/**
+	 * Génère et distribue aléatoirement 16 armes et sorts sur le plateau.
+	 */
 	public void initOffEquip () {
 		for (int i = 0; i < MAX_WEAPONS; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
@@ -116,8 +124,10 @@ public class GameBoard {
 			}
 		}
 	}
-
-	/** Génère et distribue aléatoirement 8 potions sur le plateau. */
+	
+	/**
+	 * Génère et distribue aléatoirement 8 potions sur le plateau.
+	 */
 	public void initDefEquip () {
 		for (int i = 0; i < MAX_POTIONS; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
@@ -126,7 +136,7 @@ public class GameBoard {
 			}
 		}
 	}
-
+	
 	/**
 	 * Fabrique (Factory) un ennemi aléatoire pour une position donnée.
 	 *
@@ -141,7 +151,7 @@ public class GameBoard {
 			default -> new Goblin(cellIndex);
 		};
 	}
-
+	
 	/**
 	 * Fabrique (Factory) un équipement offensif aléatoire.
 	 *
@@ -155,7 +165,7 @@ public class GameBoard {
 			case FIREBALL -> new FireBall();
 		};
 	}
-
+	
 	/**
 	 * Fabrique (Factory) un équipement défensif aléatoire.
 	 *
@@ -167,7 +177,7 @@ public class GameBoard {
 			case POTION_PV -> new PotionHP();
 		};
 	}
-
+	
 	/**
 	 * Recherche et retourne un joueur vivant par son identifiant unique.
 	 *
@@ -184,8 +194,10 @@ public class GameBoard {
 		}
 		return null;
 	}
-
-	/** @return Le nombre total de joueurs vivants actuellement sur le plateau. */
+	
+	/**
+	 * @return Le nombre total de joueurs vivants actuellement sur le plateau.
+	 */
 	public int countAlivePlayers () {
 		int count = 0;
 		for (Cell cell : cellTable) {
@@ -193,17 +205,17 @@ public class GameBoard {
 		}
 		return count;
 	}
-
+	
 	private EntityType randomEnemyType () {
 		EntityType[] types = {EntityType.GOBLIN, EntityType.SORCERER, EntityType.DRAGON};
 		return types[random.nextInt(types.length)];
 	}
-
+	
 	private DefEquip randomDefEquipType () {
 		DefEquip[] types = {DefEquip.POTION_PV, DefEquip.GRANDE_POTION_PV};
 		return types[random.nextInt(types.length)];
 	}
-
+	
 	private OffEquip randomOffEquipType () {
 		OffEquip[] types = OffEquip.values();
 		return types[random.nextInt(types.length)];

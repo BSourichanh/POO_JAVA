@@ -9,7 +9,7 @@ import fr.campus.poojava.entity.EntityType;
  * @author BSourichanh
  */
 public class Dragon extends Enemy {
-
+	
 	/**
 	 * Constructeur d'un Dragon placé à une position donnée.
 	 *

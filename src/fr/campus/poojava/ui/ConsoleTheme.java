@@ -7,7 +7,7 @@ public class ConsoleTheme {
 	public static final String DIM = "\u001B[2m";
 	public static final String ITALIC = "\u001B[3m";
 	public static final String UNDERLINE = "\u001B[4m";
-
+	
 	// Foreground Colors
 	public static final String BLACK = "\u001B[30m";
 	public static final String RED = "\u001B[31m";
@@ -17,7 +17,7 @@ public class ConsoleTheme {
 	public static final String MAGENTA = "\u001B[35m";
 	public static final String CYAN = "\u001B[36m";
 	public static final String WHITE = "\u001B[37m";
-
+	
 	// Bright Foreground Colors
 	public static final String BRIGHT_RED = "\u001B[91m";
 	public static final String BRIGHT_GREEN = "\u001B[92m";
@@ -26,7 +26,7 @@ public class ConsoleTheme {
 	public static final String BRIGHT_MAGENTA = "\u001B[95m";
 	public static final String BRIGHT_CYAN = "\u001B[96m";
 	public static final String BRIGHT_WHITE = "\u001B[97m";
-
+	
 	// Background Colors
 	public static final String BG_BLACK = "\u001B[40m";
 	public static final String BG_RED = "\u001B[41m";
@@ -35,7 +35,7 @@ public class ConsoleTheme {
 	public static final String BG_BLUE = "\u001B[44m";
 	public static final String BG_MAGENTA = "\u001B[45m";
 	public static final String BG_CYAN = "\u001B[46m";
-
+	
 	// Symbols
 	public static final String SYM_WARRIOR = "⚔️";
 	public static final String SYM_WIZARD = "🧙";
@@ -53,17 +53,16 @@ public class ConsoleTheme {
 	public static final String SYM_TROPHY = "🏆";
 	public static final String SYM_CRIT = "💥";
 	public static final String SYM_CROSS = "❌";
-
+	
 	/**
 	 * Calcule la largeur d'affichage effective en colonnes terminal
-	 * en prenant en compte les émojis BMP (ex: ❤️, ⚔️, ✨, 🎲), les surrogate pairs,
-	 * en excluant les éléments de bloc (█, ░) et dessins de boîtes (0x2500-0x259F)
-	 * et en ignorant les séquences ANSI et sélecteurs de variation Unicode.
+	 * en prenant en compte les émojis BMP, les surrogate pairs,
+	 * et en ignorant la totalité des séquences ANSI et sélecteurs de variation Unicode.
 	 */
 	public static int getDisplayWidth (String str) {
 		if (str == null) return 0;
-		// 1. Supprimer les séquences de couleur ANSI
-		String clean = str.replaceAll("\u001B\\[[;\\d]*m", "");
+		// 1. Supprimer toutes les séquences d'échappement ANSI
+		String clean = str.replaceAll("\u001B\\[[\\d;]*[a-zA-Z]", "");
 		// 2. Supprimer les sélecteurs de variation Unicode (0-width)
 		clean = clean.replaceAll("[\uFE00-\uFE0F]", "");
 
@@ -75,7 +74,6 @@ public class ConsoleTheme {
 				i++; // ignorer le low surrogate
 			} else if ((c >= 0x2300 && c <= 0x24FF) || (c >= 0x2600 && c <= 0x27BF) || (c >= 0x2B00 && c <= 0x2BFF)) {
 				// Emojis et symboles BMP (ex: ❤️ \u2764, ⚔ \u2694, ✨ \u2728, 🎲 \u2685, ⚡ \u26A1)
-				// Exclut 0x2500-0x259F (Block elements & Box drawing: █, ░, ┌, ─, etc.)
 				width += 2;
 			} else {
 				width += 1;
@@ -83,7 +81,7 @@ public class ConsoleTheme {
 		}
 		return width;
 	}
-
+	
 	/**
 	 * Generates a visual colored health bar.
 	 */
@@ -92,7 +90,7 @@ public class ConsoleTheme {
 		int hp = Math.max(0, Math.min(currentHp, maxHp));
 		int filled = (int) Math.round((double) hp / maxHp * barLength);
 		int empty = barLength - filled;
-
+		
 		String color;
 		double percentage = (double) hp / maxHp;
 		if (percentage > 0.6) {
@@ -102,7 +100,7 @@ public class ConsoleTheme {
 		} else {
 			color = BRIGHT_RED;
 		}
-
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append(color).append("[");
 		for (int i = 0; i < filled; i++) {
@@ -116,7 +114,7 @@ public class ConsoleTheme {
 		sb.append(BOLD).append(hp).append("/").append(maxHp).append(" HP").append(RESET);
 		return sb.toString();
 	}
-
+	
 	/**
 	 * Banner ASCII Art pour le jeu avec calcul dynamique des bordures et alignement exact.
 	 */
@@ -133,7 +131,7 @@ public class ConsoleTheme {
 				"             ⚔️  DONJONS & DRAGONS - EDITION CONSOLE  🧙          ",
 				""
 		};
-
+		
 		int maxLen = 0;
 		for (String line : content) {
 			int len = getDisplayWidth(line);
@@ -141,18 +139,18 @@ public class ConsoleTheme {
 				maxLen = len;
 			}
 		}
-		int width = maxLen + 4;
-
+		int width = Math.max(74, maxLen + 4);
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append(BRIGHT_YELLOW).append(BOLD);
-
+		
 		// Top border
 		sb.append(" ╔");
 		for (int i = 0; i < width; i++) {
 			sb.append("═");
 		}
 		sb.append("╗\n");
-
+		
 		// Content lines
 		for (String line : content) {
 			int padding = width - getDisplayWidth(line);
@@ -162,19 +160,19 @@ public class ConsoleTheme {
 			}
 			sb.append("║\n");
 		}
-
+		
 		// Bottom border
 		sb.append(" ╚");
 		for (int i = 0; i < width; i++) {
 			sb.append("═");
 		}
 		sb.append("╝\n").append(RESET);
-
+		
 		System.out.print(sb.toString());
 	}
-
+	
 	/**
-	 * Print framed message box with perfectly matched column width across top, content, and bottom lines.
+	 * Affiche un encadré de message avec calcul dynamique de la largeur et alignement parfait des bordures.
 	 */
 	public static void printBox (String title, String... lines) {
 		int maxLen = getDisplayWidth(title);
@@ -184,8 +182,8 @@ public class ConsoleTheme {
 				maxLen = len;
 			}
 		}
-		int width = Math.max(68, maxLen + 4);
-
+		int width = Math.max(74, maxLen + 4);
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append(BRIGHT_CYAN).append("┌─ ").append(BOLD).append(title).append(RESET).append(BRIGHT_CYAN);
 		int remainingHeader = width - getDisplayWidth(title) - 2;
@@ -193,7 +191,7 @@ public class ConsoleTheme {
 			sb.append("─");
 		}
 		sb.append("┐\n").append(RESET);
-
+		
 		for (String line : lines) {
 			int padding = width - getDisplayWidth(line) - 1;
 			sb.append(BRIGHT_CYAN).append("│ ").append(RESET).append(line);
@@ -202,13 +200,13 @@ public class ConsoleTheme {
 			}
 			sb.append(BRIGHT_CYAN).append("│\n").append(RESET);
 		}
-
+		
 		sb.append(BRIGHT_CYAN).append("└");
 		for (int i = 0; i < width; i++) {
 			sb.append("─");
 		}
 		sb.append("┘\n").append(RESET);
-
+		
 		System.out.print(sb.toString());
 	}
 }

@@ -18,12 +18,14 @@ import java.util.List;
 public class BoardRenderer {
 	private static final int TEXT_OFFSET = 3;
 	private int currentId;
-
-	/** Affiche une ligne séparatrice horizontale bleue. */
+	
+	/**
+	 * Affiche une ligne séparatrice horizontale bleue.
+	 */
 	public void showSeparator () {
 		System.out.println(ConsoleTheme.BRIGHT_BLUE + "════════════════════════════════════════════════════════════════════════════════" + ConsoleTheme.RESET);
 	}
-
+	
 	/**
 	 * Imprime un séparateur de cellule si l'identifiant courant est inférieur au nombre d'éléments.
 	 *
@@ -35,7 +37,7 @@ public class BoardRenderer {
 			currentId++;
 		}
 	}
-
+	
 	/**
 	 * Affiche les noms des joueurs tronqués sur une case.
 	 *
@@ -52,7 +54,7 @@ public class BoardRenderer {
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
 	/**
 	 * Affiche le type d'ennemi tronqué sur une case.
 	 *
@@ -65,7 +67,7 @@ public class BoardRenderer {
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
 	/**
 	 * Affiche le nom des équipements défensifs tronqué sur une case.
 	 *
@@ -78,7 +80,7 @@ public class BoardRenderer {
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
 	/**
 	 * Affiche le nom des équipements offensifs tronqué sur une case.
 	 *
@@ -91,13 +93,13 @@ public class BoardRenderer {
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
 	private String getCellIconAnd2LetterContent (Cell cell) {
 		List<Character> players = cell.getPlayers();
 		List<Enemy> enemies = cell.getEnemies();
 		List<DefensiveEquipment> defEquip = cell.getDefEquip();
 		List<OffensiveEquipment> offEquip = cell.getOffEquip();
-
+		
 		if (!players.isEmpty()) {
 			Character p = players.get(0);
 			String icon = p.getType() == EntityType.WARRIOR ? "⚔️" : "🧙";
@@ -108,7 +110,7 @@ public class BoardRenderer {
 			String enemyIcon = ConsoleTheme.SYM_ENEMY;
 			String enemyName = e.getName().toLowerCase();
 			String eCode = "EN";
-
+			
 			if (enemyName.contains("dragon")) {
 				enemyIcon = ConsoleTheme.SYM_DRAGON;
 				eCode = "DR";
@@ -121,7 +123,7 @@ public class BoardRenderer {
 			} else if (e.getName().length() >= 2) {
 				eCode = e.getName().substring(0, 2).toUpperCase();
 			}
-
+			
 			return "[" + ConsoleTheme.BRIGHT_RED + enemyIcon + eCode + ConsoleTheme.RESET + "]  ";
 		} else if (!defEquip.isEmpty()) {
 			DefensiveEquipment d = defEquip.get(0);
@@ -133,7 +135,7 @@ public class BoardRenderer {
 			String oName = o.getName().toLowerCase();
 			String icon = ConsoleTheme.SYM_WEAPON;
 			String oCode = "AR";
-
+			
 			if (oName.contains("épée") || oName.contains("epee") || oName.contains("sword")) {
 				icon = "🗡️";
 				oCode = "EP";
@@ -149,13 +151,13 @@ public class BoardRenderer {
 			} else if (o.getName().length() >= 2) {
 				oCode = o.getName().substring(0, 2).toUpperCase();
 			}
-
+			
 			return "[" + ConsoleTheme.BRIGHT_MAGENTA + icon + oCode + ConsoleTheme.RESET + "]  ";
 		} else {
 			return "[" + ConsoleTheme.DIM + "    " + ConsoleTheme.RESET + "]  ";
 		}
 	}
-
+	
 	/**
 	 * Affiche la grille du plateau de jeu par rangées de 10 cases (numérotées de 1 à maxCell).
 	 *
@@ -164,14 +166,14 @@ public class BoardRenderer {
 	 */
 	public void showCellsData (Cell[] cellTable, int maxCell) {
 		System.out.println(ConsoleTheme.BOLD + ConsoleTheme.BRIGHT_WHITE + "🗺️  PLATEAU DE JEU (Case 1 à " + maxCell + ") :" + ConsoleTheme.RESET);
-
+		
 		final int CELL_PER_ROW = 10;
 		for (int row = 0; row < maxCell; row += CELL_PER_ROW) {
 			int end = Math.min(row + CELL_PER_ROW, maxCell);
-
+			
 			StringBuilder lineNum = new StringBuilder();
 			StringBuilder lineContent = new StringBuilder();
-
+			
 			for (int i = row; i < end; i++) {
 				lineNum.append(String.format(ConsoleTheme.DIM + " [%02d]   " + ConsoleTheme.RESET, i + 1));
 				lineContent.append(getCellIconAnd2LetterContent(cellTable[i]));
@@ -181,7 +183,7 @@ public class BoardRenderer {
 			System.out.println();
 		}
 	}
-
+	
 	/**
 	 * Affiche un audit technique détaillé du contenu complet du plateau de jeu (pour débogage).
 	 *
@@ -226,7 +228,7 @@ public class BoardRenderer {
 			}
 		}
 	}
-
+	
 	/**
 	 * Affiche la fiche de statut encadrée du joueur actif.
 	 *
@@ -235,38 +237,44 @@ public class BoardRenderer {
 	public void showCurrentPlayer (Character player) {
 		String classIcon = player.getType() == EntityType.WARRIOR ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
 		String title = classIcon + " TOUR DE " + player.getName().toUpperCase() + " (" + player.getType() + ")";
-
+		
 		List<String> infoLines = new ArrayList<>();
-
-		// Line 1: HP & Dmg
-		String hpBar = ConsoleTheme.getHealthBar(player.getHp(), player.getMaxHp(), 10);
-		infoLines.add(ConsoleTheme.SYM_HEART + " Santé     : " + hpBar + "  |  " + ConsoleTheme.SYM_WEAPON + " Dégâts de base : " + ConsoleTheme.BOLD + player.getDmg() + ConsoleTheme.RESET);
-
-		// Line 2: Equipped item
-		if (player.getCurrentOffEquipment() != null) {
-			infoLines.add(ConsoleTheme.SYM_WEAPON + " Équipé    : " + ConsoleTheme.BRIGHT_YELLOW + player.getCurrentOffEquipment().getName()
-					+ ConsoleTheme.RESET + " (+" + player.getCurrentOffEquipment().getDamage() + " dégâts)");
+		
+		// Line 1: Santé & Position
+		String hpBar = ConsoleTheme.getHealthBar(player.getHp(), player.getMaxHp(), 8);
+		infoLines.add(ConsoleTheme.SYM_HEART + " Santé     : " + hpBar + "  |  📍 Case : " + ConsoleTheme.BRIGHT_YELLOW + (player.getPos() + 1) + "/63" + ConsoleTheme.RESET);
+		
+		// Line 2: Équipement actif & Dégâts de base
+		String equipped = player.getCurrentOffEquipment() != null
+				? ConsoleTheme.BRIGHT_YELLOW + player.getCurrentOffEquipment().getName() + ConsoleTheme.RESET + " (+" + player.getCurrentOffEquipment().getDamage() + " dégâts)"
+				: ConsoleTheme.DIM + "Mains nues" + ConsoleTheme.RESET;
+		infoLines.add(ConsoleTheme.SYM_WEAPON + " Équipé    : " + equipped + "  (Base: " + ConsoleTheme.BOLD + player.getDmg() + ConsoleTheme.RESET + ")");
+		
+		// Line 3: Réserve d'armes/sorts
+		StringBuilder offInv = new StringBuilder(ConsoleTheme.SYM_WEAPON + " Armes/Sorts: ");
+		if (player.getOffensiveEquipment().isEmpty()) {
+			offInv.append(ConsoleTheme.DIM).append("Aucune").append(ConsoleTheme.RESET);
 		} else {
-			infoLines.add(ConsoleTheme.SYM_WEAPON + " Équipé    : " + ConsoleTheme.DIM + "Mains nues" + ConsoleTheme.RESET);
-		}
-
-		// Line 3: Inventory
-		StringBuilder inv = new StringBuilder(ConsoleTheme.SYM_POTION + " Potions   : ");
-		if (player.getDefensiveEquipment().isEmpty()) {
-			inv.append(ConsoleTheme.DIM).append("Aucune").append(ConsoleTheme.RESET);
-		} else {
-			for (DefensiveEquipment pot : player.getDefensiveEquipment()) {
-				inv.append(ConsoleTheme.BRIGHT_CYAN).append("[").append(pot.getName()).append("] ").append(ConsoleTheme.RESET);
+			for (OffensiveEquipment item : player.getOffensiveEquipment()) {
+				offInv.append(ConsoleTheme.BRIGHT_MAGENTA).append("[").append(item.getName()).append("] ").append(ConsoleTheme.RESET);
 			}
 		}
-		infoLines.add(inv.toString());
+		infoLines.add(offInv.toString());
 
-		// Line 4: Position
-		infoLines.add("📍 Position  : Case " + ConsoleTheme.BRIGHT_YELLOW + (player.getPos() + 1) + ConsoleTheme.RESET);
-
+		// Line 4: Potions
+		StringBuilder defInv = new StringBuilder(ConsoleTheme.SYM_POTION + " Potions    : ");
+		if (player.getDefensiveEquipment().isEmpty()) {
+			defInv.append(ConsoleTheme.DIM).append("Aucune").append(ConsoleTheme.RESET);
+		} else {
+			for (DefensiveEquipment pot : player.getDefensiveEquipment()) {
+				defInv.append(ConsoleTheme.BRIGHT_CYAN).append("[").append(pot.getName()).append("] ").append(ConsoleTheme.RESET);
+			}
+		}
+		infoLines.add(defInv.toString());
+		
 		ConsoleTheme.printBox(title, infoLines.toArray(new String[0]));
 	}
-
+	
 	/**
 	 * Affiche l'en-tête complet du tour (séparateur, fiche du joueur, grille du plateau).
 	 *

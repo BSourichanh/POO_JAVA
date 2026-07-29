@@ -6,22 +6,40 @@ package fr.campus.poojava.game;
  * @author BSourichanh
  */
 public enum GameState {
-	/** En attente de l'action de lancer de dé */
+	/**
+	 * En attente de l'action de lancer de dé
+	 */
 	IDLE,
-	/** Phase de déplacement sur le plateau */
+	/**
+	 * Phase de déplacement sur le plateau
+	 */
 	MOVING,
-	/** Gestion de l'inventaire des armes/sorts */
+	/**
+	 * Gestion de l'inventaire des armes/sorts
+	 */
 	INVENTORY,
-	/** Utilisation d'une potion de soin */
+	/**
+	 * Utilisation d'une potion de soin
+	 */
 	POTION,
-	/** Combat engagé */
+	/**
+	 * Combat engagé
+	 */
 	IN_BATTLE,
-	/** Fin d'un affrontement */
+	/**
+	 * Fin d'un affrontement
+	 */
 	BATTLE_END,
-	/** Fuite réussie d'un combat */
+	/**
+	 * Fuite réussie d'un combat
+	 */
 	FLEE,
-	/** Fin du tour du joueur courant */
+	/**
+	 * Fin du tour du joueur courant
+	 */
 	END,
-	/** Partie terminée (victoire ou Game Over) */
+	/**
+	 * Partie terminée (victoire ou Game Over)
+	 */
 	FINISH
 }

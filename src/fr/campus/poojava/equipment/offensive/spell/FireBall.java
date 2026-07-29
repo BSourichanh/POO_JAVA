@@ -6,8 +6,10 @@ package fr.campus.poojava.equipment.offensive.spell;
  * @author BSourichanh
  */
 public class FireBall extends Spell {
-
-	/** Constructeur du sort Boule de Feu. */
+	
+	/**
+	 * Constructeur du sort Boule de Feu.
+	 */
 	public FireBall () {
 		super("Boule de Feu", 7);
 	}

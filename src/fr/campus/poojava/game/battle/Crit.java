@@ -6,10 +6,16 @@ package fr.campus.poojava.game.battle;
  * @author BSourichanh
  */
 public enum Crit {
-	/** Coup critique récompensé par +2 dégâts supplémentaires */
+	/**
+	 * Coup critique récompensé par +2 dégâts supplémentaires
+	 */
 	CRITIQUE,
-	/** Échec critique annulant tous les dégâts de l'attaque */
+	/**
+	 * Échec critique annulant tous les dégâts de l'attaque
+	 */
 	ECHEC_CRITIQUE,
-	/** Attaque normale */
+	/**
+	 * Attaque normale
+	 */
 	NORMAL
 }

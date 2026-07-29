@@ -6,8 +6,10 @@ package fr.campus.poojava.equipment.offensive.weapon;
  * @author BSourichanh
  */
 public class Mace extends Weapon {
-
-	/** Constructeur de l'arme Massue. */
+	
+	/**
+	 * Constructeur de l'arme Massue.
+	 */
 	public Mace () {
 		super("Massue", 3);
 	}

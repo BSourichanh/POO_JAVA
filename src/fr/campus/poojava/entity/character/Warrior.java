@@ -11,7 +11,7 @@ import fr.campus.poojava.equipment.offensive.OffensiveEquipment;
  * @author BSourichanh
  */
 public class Warrior extends Character {
-
+	
 	/**
 	 * Constructeur d'un Guerrier.
 	 *
@@ -21,7 +21,7 @@ public class Warrior extends Character {
 	public Warrior (String name, int id) {
 		super(EntityType.WARRIOR, name, id, 10, 5);
 	}
-
+	
 	/**
 	 * Détermine si le guerrier peut équiper un équipement offensif (uniquement les armes).
 	 *

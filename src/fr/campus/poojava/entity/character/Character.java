@@ -16,18 +16,26 @@ import java.util.List;
  * @author BSourichanh
  */
 public abstract class Character extends Entity {
-	/** Nombre de cases de déplacement restantes pour le tour courant */
+	/**
+	 * Nombre de cases de déplacement restantes pour le tour courant
+	 */
 	protected int moveAvailable = 0;
-
-	/** Inventaire des équipements offensifs possédés (armes ou sorts) */
+	
+	/**
+	 * Inventaire des équipements offensifs possédés (armes ou sorts)
+	 */
 	protected List<OffensiveEquipment> offEquipments = new ArrayList<>();
-
-	/** Inventaire des équipements défensifs possédés (potions de soin) */
+	
+	/**
+	 * Inventaire des équipements défensifs possédés (potions de soin)
+	 */
 	protected List<DefensiveEquipment> defensiveEquipments = new ArrayList<>();
-
-	/** Équipement offensif actuellement tenu en main/équipé */
+	
+	/**
+	 * Équipement offensif actuellement tenu en main/équipé
+	 */
 	protected OffensiveEquipment currentOffEquip;
-
+	
 	/**
 	 * Constructeur de personnage.
 	 *
@@ -46,7 +54,7 @@ public abstract class Character extends Entity {
 		this.strength = initialStrength;
 		this.pos = 0;
 	}
-
+	
 	/**
 	 * Vérifie de façon polymorphique si le personnage peut équiper un objet offensif donné.
 	 *
@@ -54,32 +62,42 @@ public abstract class Character extends Entity {
 	 * @return true si le personnage peut équiper l'objet, false sinon.
 	 */
 	public abstract boolean canEquip (OffensiveEquipment offEquip);
-
-	/** @return Le nombre de cases de déplacement disponibles. */
+	
+	/**
+	 * @return Le nombre de cases de déplacement disponibles.
+	 */
 	public int getMoveAvailable () {
 		return this.moveAvailable;
 	}
-
-	/** @return La liste des équipements défensifs (potions). */
-	public List<DefensiveEquipment> getDefensiveEquipment () {
-		return defensiveEquipments;
-	}
-
-	/** @return La liste des équipements offensifs en réserve. */
-	public List<OffensiveEquipment> getOffensiveEquipment () {
-		return offEquipments;
-	}
-
-	/** @return L'équipement offensif actuellement équipé (null si mains nues). */
-	public OffensiveEquipment getCurrentOffEquipment () {
-		return this.currentOffEquip;
-	}
-
-	/** @param moveAvailable Le nombre de mouvements disponibles à définir. */
+	
+	/**
+	 * @param moveAvailable Le nombre de mouvements disponibles à définir.
+	 */
 	public void setMoveAvailable (int moveAvailable) {
 		this.moveAvailable = moveAvailable;
 	}
-
+	
+	/**
+	 * @return La liste des équipements défensifs (potions).
+	 */
+	public List<DefensiveEquipment> getDefensiveEquipment () {
+		return defensiveEquipments;
+	}
+	
+	/**
+	 * @return La liste des équipements offensifs en réserve.
+	 */
+	public List<OffensiveEquipment> getOffensiveEquipment () {
+		return offEquipments;
+	}
+	
+	/**
+	 * @return L'équipement offensif actuellement équipé (null si mains nues).
+	 */
+	public OffensiveEquipment getCurrentOffEquipment () {
+		return this.currentOffEquip;
+	}
+	
 	/**
 	 * Ajoute un nouvel équipement offensif dans l'inventaire.
 	 *
@@ -88,7 +106,7 @@ public abstract class Character extends Entity {
 	public void addOffensiveEquipment (OffensiveEquipment offEquip) {
 		this.offEquipments.add(offEquip);
 	}
-
+	
 	/**
 	 * Ajoute une potion dans l'inventaire défensif.
 	 *
@@ -97,7 +115,7 @@ public abstract class Character extends Entity {
 	public void addDefensiveEquipment (DefensiveEquipment defEquip) {
 		this.defensiveEquipments.add(defEquip);
 	}
-
+	
 	/**
 	 * Équipe un objet offensif depuis l'inventaire s'il est compatible avec la classe du personnage.
 	 *
@@ -115,12 +133,14 @@ public abstract class Character extends Entity {
 		currentOffEquip = offEquip;
 		return 1;
 	}
-
-	/** Décrémente le nombre de cases de déplacement restantes. */
+	
+	/**
+	 * Décrémente le nombre de cases de déplacement restantes.
+	 */
 	public void decreaseMoveAvailable () {
 		this.moveAvailable--;
 	}
-
+	
 	/**
 	 * Retire un équipement défensif de l'inventaire.
 	 *
@@ -129,7 +149,7 @@ public abstract class Character extends Entity {
 	public void removeDefensiveEquipment (DefensiveEquipment defEquip) {
 		defensiveEquipments.remove(defEquip);
 	}
-
+	
 	/**
 	 * Déplace le personnage de la case de départ vers la case d'arrivée.
 	 *
@@ -145,7 +165,7 @@ public abstract class Character extends Entity {
 			this.pos = nextCell.getPos();
 		}
 	}
-
+	
 	/**
 	 * Consomme une potion pour restaurer les points de vie et la retire de l'inventaire.
 	 *
@@ -155,17 +175,21 @@ public abstract class Character extends Entity {
 		this.lifePoints = Math.min(this.getMaxHp(), this.lifePoints + potion.getHp());
 		removeDefensiveEquipment(potion);
 	}
-
-	/** @return true si l'inventaire de potions est vide, false sinon. */
+	
+	/**
+	 * @return true si l'inventaire de potions est vide, false sinon.
+	 */
 	public boolean isDefEquipEmpty () {
 		return this.defensiveEquipments.isEmpty();
 	}
-
-	/** @return true si l'inventaire d'armes/sorts est vide, false sinon. */
+	
+	/**
+	 * @return true si l'inventaire d'armes/sorts est vide, false sinon.
+	 */
 	public boolean isOffEquipEmpty () {
 		return this.offEquipments.isEmpty();
 	}
-
+	
 	/**
 	 * Récupère une potion par son index (1-indexé).
 	 *
@@ -178,7 +202,7 @@ public abstract class Character extends Entity {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Récupère un équipement offensif par son index (0-indexé).
 	 *
