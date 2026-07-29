@@ -21,7 +21,7 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
  ║   ██║     ╚██████╔╝╚██████╔╝╚█████╔╝██║  ██║ ╚████╔╝ ██║  ██║        ║
  ║   ╚═╝      ╚═════╝  ╚═════╝  ╚════╝ ╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝        ║
  ║                                                                      ║
- ║             ⚔️  DONJONS & DRAGONS - EDITION CONSOLE  🧙              ║
+ ║              [x]  DONJONS & DRAGONS - EDITION CONSOLE  [*]           ║
  ║                                                                      ║
  ╚══════════════════════════════════════════════════════════════════════╝
 
@@ -31,19 +31,19 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 
 ### 2. Vue du Plateau & Fiches de Statut
 ```text
-┌─ ⚔️ TOUR DE ARTHUR (Guerrier)────────────────────────────────────────────┐
-│ ❤️ Santé     : [████████] 10/10 HP  |  📍 Case : 14/63                   │
-│ 🗡️ Équipé    : Épée (+5 dégâts)  (Base: 5)                                │
-│ 🗡️ Armes/Sorts: [Massue]                                                   │
-│ 🧪 Potions    : [Potion Standard] [Grande Potion]                          │
+┌─ TOUR DE ARTHUR (Guerrier) ──────────────────────────────────────────────┐
+│  Santé       : [████████] 10/10 HP  |  Case : 14/63                      │
+│  Équipé      : Épée (+5 dégâts)  (Base: 5)                               │
+│  Armes/Sorts : [Massue]                                                  │
+│  Potions     : [Potion Standard] [Grande Potion]                         │
 └──────────────────────────────────────────────────────────────────────────┘
 
-🗺️  PLATEAU DE JEU (Case 1 à 63) :
+MAP - PLATEAU DE JEU (Case 1 à 63) :
  [01]    [02]    [03]    [04]    [05]    [06]    [07]    [08]    [09]    [10]   
-[    ]  [🧪PT]  [🐉DR]  [    ]  [🗡️EP]  [👺GB]  [    ]  [🧙J2]  [🔮SO]  [✨FE] 
+[    ]  [ PT ]  [ DR ]  [    ]  [ EP ]  [ GB ]  [    ]  [ J2 ]  [ SO ]  [ FE ] 
 
  [11]    [12]    [13]    [14]    [15]    [16]    ...
-[    ]  [🧪PT]  [    ]  [⚔️J1]  [🔨MA]  [🐉DR]   ...
+[    ]  [ PT ]  [    ]  [ J1 ]  [ MA ]  [ DR ]   ...
 ```
 
 ### 3. Choix d'Action du Joueur
@@ -59,28 +59,28 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 
 ### 4. Carte d'Arène de Combat & Résolution des Dégâts
 ```text
-⚔️ COMBAT ENGAGÉ ! ⚔️
-Arthur le WARRIOR fait face à 🐉 Dragon !
+COMBAT ENGAGÉ !
+Arthur le WARRIOR fait face à Dragon !
 
-┌─ ⚔️ ARENE DE COMBAT ⚔️ ──────────────────────────────────────────────────┐
-│ Arthur (WARRIOR)                                                        │
-│ ❤️ Santé   : [████████] 10/10 HP                                       │
-│ 🗡️ Attaque : 10 dégâts (Épée (+5))                                      │
-│                                                                         │
-│ 🐉 Dragon                                                               │
-│ ❤️ Santé   : [████████] 15/15 HP                                       │
-│ 🗡️ Attaque : 4 dégâts                                                   │
-└─────────────────────────────────────────────────────────────────────────┘
+┌─ ARENE DE COMBAT ────────────────────────────────────────────────────────┐
+│ Arthur (WARRIOR)                                                         │
+│  Santé   : [████████] 10/10 HP                                           │
+│  Attaque : 10 dégâts (Épée (+5))                                         │
+│                                                                          │
+│ Dragon                                                                   │
+│  Santé   : [████████] 15/15 HP                                           │
+│  Attaque : 4 dégâts                                                      │
+└──────────────────────────────────────────────────────────────────────────┘
 
-⚔️ Décision tactique :
-  [1] ⚔️ Attaquer
-  [2] 🏃 Fuir le combat
+Décision tactique :
+  [1] Attaquer
+  [2] Fuir le combat
 ❯ 1
 
-⚔️ Arthur attaque Dragon avec Épée !
-💥 COUP CRITIQUE ! (+2 dégâts)
-⚡ Dégâts infligés : 12 à Dragon
-❤️ PV restant de Dragon : [█░░░░░░░] 3/15 HP
+Arthur attaque Dragon avec Épée !
+COUP CRITIQUE ! (+2 dégâts)
+Dégâts infligés : 12 à Dragon
+PV restant de Dragon : [█░░░░░░░] 3/15 HP
 ```
 
 ---
