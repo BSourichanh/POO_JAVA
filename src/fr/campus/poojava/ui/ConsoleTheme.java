@@ -56,7 +56,8 @@ public class ConsoleTheme {
 
 	/**
 	 * Calcule la largeur d'affichage effective en colonnes terminal
-	 * en prenant en compte les émojis BMP (ex: ❤️, ⚔️, ✨, 🎲), les surrogate pairs
+	 * en prenant en compte les émojis BMP (ex: ❤️, ⚔️, ✨, 🎲), les surrogate pairs,
+	 * en excluant les éléments de bloc (█, ░) et dessins de boîtes (0x2500-0x259F)
 	 * et en ignorant les séquences ANSI et sélecteurs de variation Unicode.
 	 */
 	public static int getDisplayWidth (String str) {
@@ -72,8 +73,9 @@ public class ConsoleTheme {
 			if (Character.isHighSurrogate(c)) {
 				width += 2;
 				i++; // ignorer le low surrogate
-			} else if ((c >= 0x2300 && c <= 0x27BF) || (c >= 0x2B00 && c <= 0x2BFF)) {
+			} else if ((c >= 0x2300 && c <= 0x24FF) || (c >= 0x2600 && c <= 0x27BF) || (c >= 0x2B00 && c <= 0x2BFF)) {
 				// Emojis et symboles BMP (ex: ❤️ \u2764, ⚔ \u2694, ✨ \u2728, 🎲 \u2685, ⚡ \u26A1)
+				// Exclut 0x2500-0x259F (Block elements & Box drawing: █, ░, ┌, ─, etc.)
 				width += 2;
 			} else {
 				width += 1;
