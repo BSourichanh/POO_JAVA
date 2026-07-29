@@ -1,21 +1,96 @@
-# POO_JAVA — Jeu de plateau
+# POO_JAVA — Jeu de plateau Donjons & Dragons
 
-Jeu de plateau textuel en Java, jouable à 1 ou 2 joueurs dans la console avec une **Interface Terminal Moderne (TUI / ANSI)**.
-Chaque joueur avance sur un plateau de 63 cases à coups de dé, ramasse de l'équipement,
-affronte les ennemis rencontrés et tente d'atteindre la dernière case en restant en vie.
+Jeu de plateau textuel en Java, jouable à 1 ou 2 joueurs dans la console avec une **Interface Terminal Moderne (TUI / ANSI)** et une architecture orientée objet respectant strictement les principes **S.O.L.I.D.** et les **Design Patterns**.
+
+Chaque joueur avance sur un plateau de 63 cases à coups de dé, ramasse des armes, des sorts et des potions, affronte les ennemis rencontrés (Goblins, Sorciers, Dragons) et tente d'atteindre la case 63 en restant en vie.
 
 Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 
 ---
 
-## 🎨 Interface Console Moderne (TUI / ANSI)
+## 🎨 Aperçu & Captures Terminal (Gameplay Preview)
 
-Le jeu intègre un moteur de rendu graphique console développé sur mesure (`ConsoleTheme.java` & `BoardRenderer.java`) :
-- **Bannière ASCII Art** au lancement de l'application.
-- **Cartes de statut & d'arène encadrées** avec alignement strict des bordures au millimètre.
-- **Jauges de santé dynamiques** avec dégradés de couleur (`[██████████] 8/8 HP`).
-- **Grille de plateau compacte (Case 1 à 63)** avec icônes et codes à 2 lettres (`[⚔️J1]`, `[🐉DR]`, `[👺GB]`, `[🔮SO]`, `[🧪PT]`, `[🗡️EP]`, `[🔨MA]`, `[✨FE]`, `[✨EC]`).
-- **Option de Rejouabilité** : Possibilité de relancer instantanément une nouvelle partie après un Game Over (`requestPlayAgain`).
+### 1. Bannière d'Accueil & Menu Initial
+```text
+ ╔══════════════════════════════════════════════════════════════════════╗
+ ║                                                                      ║
+ ║   ██████╗  ██████╗  ██████╗     ██╗ █████╗ ██╗   ██╗ █████╗          ║
+ ║   ██╔══██╗██╔═══██╗██╔═══██╗    ██║██╔══██╗██║   ██║██╔══██╗         ║
+ ║   ██████╔╝██║   ██║██║   ██║    ██║███████║██║   ██║███████║         ║
+ ║   ██╔═══╝ ██║   ██║██║   ██║██   ██║██╔══██║╚██╗ ██╔╝██╔══██║        ║
+ ║   ██║     ╚██████╔╝╚██████╔╝╚█████╔╝██║  ██║ ╚████╔╝ ██║  ██║        ║
+ ║   ╚═╝      ╚═════╝  ╚═════╝  ╚════╝ ╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝        ║
+ ║                                                                      ║
+ ║             ⚔️  DONJONS & DRAGONS - EDITION CONSOLE  🧙              ║
+ ║                                                                      ║
+ ╚══════════════════════════════════════════════════════════════════════╝
+
+👥 Combien de joueurs souhaitent jouer ? (1-2)
+❯ 2
+```
+
+### 2. Vue du Plateau & Fiches de Statut
+```text
+┌─ 👤 STATUS DES JOUEURS ───────────────────────────────────────────────┐
+│ ⚔️ Arthur (Guerrier) | Case : 14/63 | ❤️ [██████████] 10/10 HP | 🗡️ Épée (+5)
+│ 🧙 Merlin (Mage)     | Case : 8/63  | ❤️ [██████░░░░] 6/10 HP  | ✨ Boule de Feu (+7)
+└───────────────────────────────────────────────────────────────────────┘
+
+┌─ 🗺️ PLATEAU DE JEU (63 CASES) ─────────────────────────────────────────┐
+│ [01:  ] [02:🧪PT] [03:🐉DR] [04:  ] [05:🗡️EP] [06:👺GB] [07:  ] [08:🧙J2] │
+│ [09:🔮SO] [10:✨FE] [11:  ] [12:🧪PT] [13:  ] [14:⚔️J1] [15:🔨MA] [16:🐉DR] │
+│ ...                                                                   │
+└───────────────────────────────────────────────────────────────────────┘
+```
+
+### 3. Choix d'Action du Joueur
+```text
+👉 C'est votre tour, Arthur !
+
+🎯 Choisissez votre action :
+  [1] 🎲 Lancer le dé
+  [2] 🧪 Utiliser une potion de soin
+  [3] 🗡️ Équiper une arme / sort
+❯ 1
+```
+
+### 4. Carte d'Arène de Combat & Résolution des Dégâts
+```text
+⚔️ COMBAT ENGAGÉ ! ⚔️
+Arthur le WARRIOR fait face à 🐉 Dragon !
+
+┌─ ⚔️ ARENE DE COMBAT ⚔️ ──────────────────────────────────────────────┐
+│ Arthur (WARRIOR)                                                      │
+│ ❤️ Santé   : [██████████] 10/10 HP                                     │
+│ 🗡️ Attaque : 10 dégâts (Épée (+5))                                    │
+│                                                                       │
+│ 🐉 Dragon                                                             │
+│ ❤️ Santé   : [██████████] 15/15 HP                                     │
+│ 🗡️ Attaque : 4 dégâts                                                 │
+└───────────────────────────────────────────────────────────────────────┘
+
+⚔️ Décision tactique :
+  [1] ⚔️ Attaquer
+  [2] 🏃 Fuir le combat
+❯ 1
+
+⚔️ Arthur attaque Dragon avec Épée !
+💥 COUP CRITIQUE ! (+2 dégâts)
+⚡ Dégâts infligés : 12 à Dragon
+❤️ PV restant de Dragon : [█░░░░░░░] 3/15 HP
+```
+
+---
+
+## 🏗️ Architecture & Respect des Principes S.O.L.I.D.
+
+Le projet a été conçu selon les standards de la Clean Architecture :
+
+- **S (Single Responsibility Principle)** : Séparation stricte entre les vues (`ConsoleTheme`, `BoardRenderer`, `MenuBattle`), le contrôleur de combat (`BattleManager`), la génération de carte (`GameBoard`) et l'orchestrateur (`Game`).
+- **O (Open/Closed Principle)** : Utilisation du **Factory Method Pattern** pour l'instanciation des ennemis et équipements dans `GameBoard`.
+- **L (Liskov Substitution Principle)** : Polymorphisme complet sur les sous-classes de `Character` (`Warrior`, `Wizard`), `Enemy` (`Goblin`, `Sorcerer`, `Dragon`) et `OffensiveEquipment`.
+- **I (Interface Segregation Principle)** : Interface `Dice` ultra-ciblée avec sa méthode `roll()`.
+- **D (Dependency Inversion Principle)** : Injection de dépendances (`Dice`, `MenuBattle`, `Menu`) dans `BattleManager`.
 
 ---
 
@@ -185,6 +260,7 @@ classDiagram
         -BattleManager battleManager
         +startGame() void
         +playTurn() void
+        +manageBattle(Character) GameState
     }
 
     class Menu {
@@ -238,7 +314,7 @@ classDiagram
 ## 🛠️ Prérequis
 
 - **JDK 17 ou supérieur** (ex: JDK 17 / JDK 21 / JDK 25).
-- Aucune dépendance externe obligatoire pour jouer. Les JARs présents dans `lib/` (MySQL Connector) ne servent qu'à la persistance optionnelle.
+- Aucune dépendance externe obligatoire pour jouer.
 
 ---
 
@@ -253,7 +329,7 @@ Depuis la racine du projet :
 
 ```bash
 # Compilation avec encodage UTF-8 vers out/production/POO_JAVA
-javac --release 17 -encoding UTF-8 -d out/production/POO_JAVA (Get-ChildItem -Recurse -Filter *.java src).FullName
+javac --release 21 -encoding UTF-8 -d out/production/POO_JAVA (Get-ChildItem -Recurse -Filter *.java src).FullName
 
 # Exécution de l'application avec support UTF-8
 java -D"file.encoding=UTF-8" -cp out/production/POO_JAVA fr.campus.poojava.Main
@@ -261,7 +337,7 @@ java -D"file.encoding=UTF-8" -cp out/production/POO_JAVA fr.campus.poojava.Main
 
 ---
 
-## 📁 Structure du projet (Clean Architecture & Packaging par Domaine)
+## 📁 Structure du projet (Clean Architecture & Domain Packaging)
 
 ```
 src/fr/campus/poojava/
@@ -301,13 +377,13 @@ src/fr/campus/poojava/
 │           ├── Mace.java              Massue
 │           └── Sword.java             Épée
 ├── game/
-│   ├── Game.java                      Boucle principale et machine à états (~250 lignes)
+│   ├── Game.java                      Boucle principale et machine à états
 │   ├── GameState.java                 Enum des états du jeu
 │   ├── board/
-│   │   ├── GameBoard.java             Gestionnaire du plateau 63 cases
+│   │   ├── GameBoard.java             Gestionnaire du plateau (Factory Pattern)
 │   │   └── Cell.java                  Case du plateau
 │   ├── battle/
-│   │   ├── BattleManager.java         Gestionnaire des combats itératif
+│   │   ├── BattleManager.java         Gestionnaire des combats itératif (Injection de dépendances)
 │   │   ├── BattleState.java           Enum des états de combat
 │   │   └── Crit.java                  Enum des coups critiques
 │   └── dice/
@@ -315,8 +391,8 @@ src/fr/campus/poojava/
 │       ├── Dice6.java                 Dé 6 faces
 │       └── Dice20.java                Dé 20 faces
 └── ui/
-    ├── ConsoleTheme.java              Gestion des thèmes ANSI, calculs de bordures Unicode & jauges de vie
-    ├── Menu.java                      Gestion des entrées/sorties utilisateur, rejouabilité et inventaires
+    ├── ConsoleTheme.java              Thèmes ANSI, calculs de bordures Unicode & jauges de vie
+    ├── Menu.java                      Entrées/sorties utilisateur, rejouabilité et inventaires
     ├── BoardRenderer.java             Rendu graphique du plateau console et fiches de statut
     └── MenuBattle.java                Cartes d'affrontement et bannières de combat
 ```
@@ -325,9 +401,8 @@ src/fr/campus/poojava/
 
 ## 🌟 Points Forts du Projet
 
-1. **Rendu Console ANSI Moderne** : Design soigné avec cartes d'information encadrées, jauges de vie et grille de plateau parfaitement alignée.
-2. **Rejouabilité intégrée** : Possibilité de recommencer immédiatement une partie après une défaite (`requestPlayAgain`).
-3. **Homogénéité Linguistique** : Code source 100% propre et cohérent en anglais (`Sorcerer`, `SWORD`, `LIGHTNING`, `FIREBALL`).
-4. **Domain Packaging (`game.board`, `game.battle`)** : Organisation modulaire par domaine d'activité.
-5. **Découplage UI** : Séparation claire entre la logique métier (`game`) et la couche de présentation (`ui`).
-6. **Fichiers compacts (< 300 lignes)** : Code source maintenable, lisible et fortement découplé.
+1. **Rendu Console ANSI avec Alignement Dynamique** : Bordures calculées dynamiquement sans décalage, jauges de santé dégradées.
+2. **Architecture S.O.L.I.D. & Design Patterns** : Factory Method Pattern pour la création du plateau, Dependency Inversion pour les dés et menus de combat.
+3. **Rejouabilité intégrée** : Possibilité de relancer instantanément une partie après une défaite (`requestPlayAgain`).
+4. **Domain Packaging** : Découpe modulaire claire (`game.board`, `game.battle`, `ui`, `entity`).
+5. **Code Source Maintenable (< 300 lignes par fichier)** : Lisibilité et maintenabilité maximales.
