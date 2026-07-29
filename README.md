@@ -33,9 +33,9 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 ```text
 ┌─ ⚔️ TOUR DE ARTHUR (Guerrier)────────────────────────────────────────────┐
 │ ❤️ Santé     : [████████] 10/10 HP  |  📍 Case : 14/63                   │
-│ 🗡️ Équipé    : Épée (+5 dégâts)  (Base: 5)                             │
-│ 🗡️ Armes/Sorts: [Massue]                                                │
-│ 🧪 Potions    : [Potion Standard] [Grande Potion]                        │
+│ 🗡️ Équipé    : Épée (+5 dégâts)  (Base: 5)                                │
+│ 🗡️ Armes/Sorts: [Massue]                                                   │
+│ 🧪 Potions    : [Potion Standard] [Grande Potion]                          │
 └──────────────────────────────────────────────────────────────────────────┘
 
 🗺️  PLATEAU DE JEU (Case 1 à 63) :
@@ -63,14 +63,14 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 Arthur le WARRIOR fait face à 🐉 Dragon !
 
 ┌─ ⚔️ ARENE DE COMBAT ⚔️ ──────────────────────────────────────────────────┐
-│ Arthur (WARRIOR)                                                      │
-│ ❤️ Santé   : [████████] 10/10 HP                                      │
-│ 🗡️ Attaque : 10 dégâts (Épée (+5))                                     │
-│                                                                       │
-│ 🐉 Dragon                                                             │
-│ ❤️ Santé   : [████████] 15/15 HP                                      │
-│ 🗡️ Attaque : 4 dégâts                                                 │
-└───────────────────────────────────────────────────────────────────────┘
+│ Arthur (WARRIOR)                                                        │
+│ ❤️ Santé   : [████████] 10/10 HP                                       │
+│ 🗡️ Attaque : 10 dégâts (Épée (+5))                                      │
+│                                                                         │
+│ 🐉 Dragon                                                               │
+│ ❤️ Santé   : [████████] 15/15 HP                                       │
+│ 🗡️ Attaque : 4 dégâts                                                   │
+└─────────────────────────────────────────────────────────────────────────┘
 
 ⚔️ Décision tactique :
   [1] ⚔️ Attaquer
