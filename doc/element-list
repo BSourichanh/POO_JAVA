@@ -1,0 +1,15 @@
+fr.campus.poojava
+fr.campus.poojava.db
+fr.campus.poojava.entity
+fr.campus.poojava.entity.character
+fr.campus.poojava.entity.enemies
+fr.campus.poojava.equipment.defensive
+fr.campus.poojava.equipment.defensive.potion
+fr.campus.poojava.equipment.offensive
+fr.campus.poojava.equipment.offensive.spell
+fr.campus.poojava.equipment.offensive.weapon
+fr.campus.poojava.game
+fr.campus.poojava.game.battle
+fr.campus.poojava.game.board
+fr.campus.poojava.game.dice
+fr.campus.poojava.ui
