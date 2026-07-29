@@ -20,6 +20,12 @@ import fr.campus.poojava.ui.Menu;
 
 import java.util.Random;
 
+/**
+ * Gestionnaire du plateau de jeu de 63 cases.
+ * Gère l'initialisation des cases, du placement des joueurs, des ennemis, des armes/sorts et des potions.
+ *
+ * @author BSourichanh
+ */
 public class GameBoard {
 	private static final int MAX_ENEMIES = 24;
 	private static final int MAX_POTIONS = 8;
@@ -29,20 +35,33 @@ public class GameBoard {
 	private final Cell[] cellTable;
 	private final Random random = new Random();
 
+	/**
+	 * Constructeur du plateau de jeu.
+	 *
+	 * @param maxCell Le nombre total de cases (ex: 63).
+	 */
 	public GameBoard (int maxCell) {
 		this.maxCell = maxCell;
 		this.cellTable = new Cell[maxCell];
 		initCells();
 	}
 
+	/** @return Le tableau complet des cases du plateau. */
 	public Cell[] getCellTable () {
 		return cellTable;
 	}
 
+	/** @return Le nombre total de cases du plateau. */
 	public int getMaxCell () {
 		return maxCell;
 	}
 
+	/**
+	 * Récupère une case spécifique par son index (0 à maxCell-1).
+	 *
+	 * @param index L'index 0-indexé.
+	 * @return La case correspondante ou null si hors limites.
+	 */
 	public Cell getCell (int index) {
 		if (index >= 0 && index < maxCell) {
 			return cellTable[index];
@@ -56,6 +75,12 @@ public class GameBoard {
 		}
 	}
 
+	/**
+	 * Initialise les joueurs et les place sur la première case (case 0).
+	 *
+	 * @param maxPlayer Nombre de joueurs.
+	 * @param menu      Menu pour l'interaction utilisateur.
+	 */
 	public void initPlayers (int maxPlayer, Menu menu) {
 		for (int i = 0; i < maxPlayer; i++) {
 			int idType = menu.chooseClass(maxPlayer, i);
@@ -70,6 +95,7 @@ public class GameBoard {
 		}
 	}
 
+	/** Génère et distribue aléatoirement 24 ennemis sur le plateau. */
 	public void initEnemies () {
 		for (int i = 0; i < MAX_ENEMIES; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
@@ -83,6 +109,7 @@ public class GameBoard {
 		}
 	}
 
+	/** Génère et distribue aléatoirement 16 armes et sorts sur le plateau. */
 	public void initOffEquip () {
 		for (int i = 0; i < MAX_WEAPONS; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
@@ -97,6 +124,7 @@ public class GameBoard {
 		}
 	}
 
+	/** Génère et distribue aléatoirement 8 potions sur le plateau. */
 	public void initDefEquip () {
 		for (int i = 0; i < MAX_POTIONS; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
@@ -109,6 +137,12 @@ public class GameBoard {
 		}
 	}
 
+	/**
+	 * Recherche et retourne un joueur vivant par son identifiant unique.
+	 *
+	 * @param id L'identifiant du joueur.
+	 * @return Le joueur trouvé ou null.
+	 */
 	public Character getPlayerById (int id) {
 		for (Cell cell : cellTable) {
 			for (Character player : cell.getPlayers()) {
@@ -120,6 +154,7 @@ public class GameBoard {
 		return null;
 	}
 
+	/** @return Le nombre total de joueurs vivants actuellement sur le plateau. */
 	public int countAlivePlayers () {
 		int count = 0;
 		for (Cell cell : cellTable) {

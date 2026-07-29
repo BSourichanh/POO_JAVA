@@ -9,14 +9,25 @@ import fr.campus.poojava.game.board.Cell;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Composant responsable du rendu visuel de la grille du plateau de jeu et des fiches de statut des héros.
+ *
+ * @author BSourichanh
+ */
 public class BoardRenderer {
 	private static final int TEXT_OFFSET = 3;
 	private int currentId;
 
+	/** Affiche une ligne séparatrice horizontale bleue. */
 	public void showSeparator () {
 		System.out.println(ConsoleTheme.BRIGHT_BLUE + "════════════════════════════════════════════════════════════════════════════════" + ConsoleTheme.RESET);
 	}
 
+	/**
+	 * Imprime un séparateur de cellule si l'identifiant courant est inférieur au nombre d'éléments.
+	 *
+	 * @param nbInCell Nombre total d'éléments dans la case.
+	 */
 	public void printSeparatorData (int nbInCell) {
 		if (currentId < nbInCell) {
 			System.out.print("|");
@@ -24,6 +35,12 @@ public class BoardRenderer {
 		}
 	}
 
+	/**
+	 * Affiche les noms des joueurs tronqués sur une case.
+	 *
+	 * @param players  Liste des joueurs.
+	 * @param nbInCell Nombre total d'éléments dans la case.
+	 */
 	public void printPlayers (List<Character> players, int nbInCell) {
 		for (Character tmp : players) {
 			if (tmp.getName().length() < TEXT_OFFSET) {
@@ -35,6 +52,12 @@ public class BoardRenderer {
 		}
 	}
 
+	/**
+	 * Affiche le type d'ennemi tronqué sur une case.
+	 *
+	 * @param enemies  Liste des ennemis.
+	 * @param nbInCell Nombre total d'éléments dans la case.
+	 */
 	public void printEnemies (List<Enemy> enemies, int nbInCell) {
 		for (Enemy enemy : enemies) {
 			System.out.print(enemy.getType().toString().substring(0, TEXT_OFFSET));
@@ -42,6 +65,12 @@ public class BoardRenderer {
 		}
 	}
 
+	/**
+	 * Affiche le nom des équipements défensifs tronqué sur une case.
+	 *
+	 * @param defEquip Liste des potions.
+	 * @param nbInCell Nombre d'éléments dans la case.
+	 */
 	public void printDefEquip (List<DefensiveEquipment> defEquip, int nbInCell) {
 		for (DefensiveEquipment defensiveEquipment : defEquip) {
 			System.out.print(defensiveEquipment.getName().substring(0, Math.min(TEXT_OFFSET, defensiveEquipment.getName().length())));
@@ -49,6 +78,12 @@ public class BoardRenderer {
 		}
 	}
 
+	/**
+	 * Affiche le nom des équipements offensifs tronqué sur une case.
+	 *
+	 * @param offEquip Liste des armes/sorts.
+	 * @param nbInCell Nombre d'éléments dans la case.
+	 */
 	public void printOffEquip (List<OffensiveEquipment> offEquip, int nbInCell) {
 		for (OffensiveEquipment offensiveEquipment : offEquip) {
 			System.out.print(offensiveEquipment.getName().substring(0, Math.min(TEXT_OFFSET, offensiveEquipment.getName().length())));
@@ -120,6 +155,12 @@ public class BoardRenderer {
 		}
 	}
 
+	/**
+	 * Affiche la grille du plateau de jeu par rangées de 10 cases (numérotées de 1 à maxCell).
+	 *
+	 * @param cellTable Le tableau des cases du plateau.
+	 * @param maxCell   Le nombre total de cases.
+	 */
 	public void showCellsData (Cell[] cellTable, int maxCell) {
 		System.out.println(ConsoleTheme.BOLD + ConsoleTheme.BRIGHT_WHITE + "🗺️  PLATEAU DE JEU (Case 1 à " + maxCell + ") :" + ConsoleTheme.RESET);
 
@@ -140,6 +181,11 @@ public class BoardRenderer {
 		}
 	}
 
+	/**
+	 * Affiche un audit technique détaillé du contenu complet du plateau de jeu (pour débogage).
+	 *
+	 * @param cellsTable Le tableau des cases.
+	 */
 	public void showAllData (Cell[] cellsTable) {
 		System.out.println(ConsoleTheme.BRIGHT_YELLOW + "=== AUDIT COMPLET DU PLATEAU ===" + ConsoleTheme.RESET);
 		for (Cell cell : cellsTable) {
@@ -180,6 +226,11 @@ public class BoardRenderer {
 		}
 	}
 
+	/**
+	 * Affiche la fiche de statut encadrée du joueur actif.
+	 *
+	 * @param player Le joueur actif.
+	 */
 	public void showCurrentPlayer (Character player) {
 		String classIcon = player.getType().toString().toUpperCase().contains("WARRIOR") || player.getType().toString().toLowerCase().contains("guerrier") ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
 		String title = classIcon + " TOUR DE " + player.getName().toUpperCase() + " (" + player.getType() + ")";
@@ -215,6 +266,13 @@ public class BoardRenderer {
 		ConsoleTheme.printBox(title, infoLines.toArray(new String[0]));
 	}
 
+	/**
+	 * Affiche l'en-tête complet du tour (séparateur, fiche du joueur, grille du plateau).
+	 *
+	 * @param player    Le joueur actif.
+	 * @param cellTable Le tableau des cases.
+	 * @param maxCell   Le nombre total de cases.
+	 */
 	public void showHeader (Character player, Cell[] cellTable, int maxCell) {
 		this.showSeparator();
 		this.showCurrentPlayer(player);

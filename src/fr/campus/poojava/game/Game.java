@@ -13,6 +13,13 @@ import fr.campus.poojava.ui.MenuBattle;
 
 import java.util.Random;
 
+/**
+ * Moteur principal du jeu de plateau Donjons & Dragons.
+ * Gère la boucle de jeu au tour par tour, les transitions de la machine à états (GameState),
+ * l'initialisation du plateau et des joueurs, et les interactions utilisateur.
+ *
+ * @author BSourichanh
+ */
 public class Game {
 	private int currentPlayer = 0;
 	private GameState gameState;
@@ -23,6 +30,9 @@ public class Game {
 	protected BattleManager battleManager;
 	private final Random random = new Random();
 
+	/**
+	 * Constructeur de la partie. Initialise le plateau de 63 cases et les composants d'interface.
+	 */
 	public Game () {
 		this.gameState = GameState.IDLE;
 		this.board = new GameBoard(63);
@@ -30,18 +40,36 @@ public class Game {
 		this.menuBattle = new MenuBattle();
 	}
 
+	/** @return Le plateau de jeu. */
 	public GameBoard getBoard () {
 		return board;
 	}
 
+	/**
+	 * Récupère un joueur par son identifiant unique.
+	 *
+	 * @param id L'identifiant du joueur.
+	 * @return Le joueur correspondant ou null.
+	 */
 	public Character getPlayerById (int id) {
 		return board.getPlayerById(id);
 	}
 
+	/**
+	 * Définit le nombre de joueurs dans la partie.
+	 *
+	 * @param nb Le nombre de joueurs (1 ou 2).
+	 */
 	public void setMaxPlayer (int nb) {
 		this.maxPlayer = nb;
 	}
 
+	/**
+	 * Gère la fuite d'un joueur en le reculant d'un nombre aléatoire de cases (1 à 6).
+	 *
+	 * @param player Le joueur qui prend la fuite.
+	 * @return L'état de fin de tour (GameState.END).
+	 */
 	public GameState flee (Character player) {
 		int rand = random.nextInt(1, 7);
 		if (player.getPos() - rand < 0) {
@@ -53,6 +81,12 @@ public class Game {
 		return GameState.END;
 	}
 
+	/**
+	 * Gère le choix d'action initial du tour d'un joueur (Lancer de dé, Potion, Équipement).
+	 *
+	 * @param player Le joueur actif.
+	 * @return Le nouvel état de jeu.
+	 */
 	public GameState manageAction (Character player) {
 		while (true) {
 			menu.showHeader(player, board.getCellTable(), board.getMaxCell());
@@ -84,6 +118,12 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Gère le déplacement case par case du joueur et les événements déclenchés (Combats, Potions, Équipements).
+	 *
+	 * @param player Le joueur en mouvement.
+	 * @return Le nouvel état de jeu.
+	 */
 	public GameState manageMove (Character player) {
 		menu.showHeader(player, board.getCellTable(), board.getMaxCell());
 		menu.showCurrentPlayerTurn(player);
@@ -128,6 +168,12 @@ public class Game {
 		return GameState.MOVING;
 	}
 
+	/**
+	 * Gère la sélection et l'équipement d'une arme ou d'un sort dans l'inventaire.
+	 *
+	 * @param player Le joueur.
+	 * @return Le nouvel état de jeu.
+	 */
 	public GameState manageInventory (Character player) {
 		while (true) {
 			menu.showHeader(player, board.getCellTable(), board.getMaxCell());
@@ -147,6 +193,12 @@ public class Game {
 		}
 	}
 
+	/**
+	 * Gère la sélection et l'utilisation d'une potion dans l'inventaire.
+	 *
+	 * @param player Le joueur.
+	 * @return Le nouvel état de jeu.
+	 */
 	public GameState managePotion (Character player) {
 		if (menu.showDefEquips(player)) {
 			int input = menu.requestNb();
@@ -158,12 +210,18 @@ public class Game {
 		return GameState.MOVING;
 	}
 
+	/**
+	 * Retire un joueur mort de la partie et informe l'interface.
+	 *
+	 * @param player Le joueur décédé.
+	 */
 	public void removePlayer (Character player) {
 		player.setHp(0);
 		board.getCell(player.getPos()).removePlayer(player);
 		menuBattle.showPlayerDeath(player);
 	}
 
+	/** Passe le tour au joueur vivant suivant. */
 	public void nextPlayer () {
 		for (int i = 1; i <= maxPlayer; i++) {
 			int id = (currentPlayer + i) % maxPlayer;
@@ -174,6 +232,7 @@ public class Game {
 		}
 	}
 
+	/** Exécute une étape/un tour complet de la partie selon la machine à états. */
 	public void playTurn () {
 		Character player = board.getPlayerById(currentPlayer);
 		if (player == null) {
@@ -237,6 +296,7 @@ public class Game {
 		}
 	}
 
+	/** Initialise une nouvelle partie (création des joueurs, ennemis, équipements). */
 	public void initGame () {
 		setMaxPlayer(menu.requestNbPlayer(maxPlayer));
 		board.initPlayers(maxPlayer, menu);
@@ -246,6 +306,7 @@ public class Game {
 		battleManager = new BattleManager(menu, this);
 	}
 
+	/** Affiche la bannière d'introduction et lance la boucle de jeu principale. */
 	public void startGame () {
 		ConsoleTheme.printBanner();
 		this.initGame();

@@ -5,6 +5,11 @@ import fr.campus.poojava.entity.enemies.Enemy;
 import fr.campus.poojava.game.battle.BattleState;
 import fr.campus.poojava.game.battle.Crit;
 
+/**
+ * Composant de présentation dédié à l'affichage des événements et des cartes de combat.
+ *
+ * @author BSourichanh
+ */
 public class MenuBattle {
 	private final Menu menu = new Menu();
 
@@ -16,6 +21,12 @@ public class MenuBattle {
 		return ConsoleTheme.SYM_ENEMY;
 	}
 
+	/**
+	 * Affiche l'encadré d'engagement de combat.
+	 *
+	 * @param player Le joueur.
+	 * @param enemy  L'ennemi rencontré.
+	 */
 	public void showEncounter (Character player, Enemy enemy) {
 		String enemyIcon = getEnemyIcon(enemy);
 		ConsoleTheme.printBox("⚔️ COMBAT ENGAGÉ ! ⚔️",
@@ -26,6 +37,11 @@ public class MenuBattle {
 		menu.requestInput("Appuyez sur [Entrée] pour engager la bataille.");
 	}
 
+	/**
+	 * Demande la décision tactique du joueur (Attaquer ou Fuir).
+	 *
+	 * @return 1 pour attaquer, 2 pour fuir.
+	 */
 	public int requestInputBattleAction () {
 		System.out.println(ConsoleTheme.BRIGHT_CYAN + "⚔️ Décision tactique :" + ConsoleTheme.RESET);
 		System.out.println("  " + ConsoleTheme.BRIGHT_YELLOW + "[1]" + ConsoleTheme.RESET + " ⚔️ Attaquer");
@@ -33,6 +49,14 @@ public class MenuBattle {
 		return menu.requestNb();
 	}
 
+	/**
+	 * Affiche la carte d'arène de combat comparant les PV et dégâts des deux combattants.
+	 *
+	 * @param player Le joueur.
+	 * @param enemy  L'ennemi.
+	 * @param state  L'état du tour (PLAYER_TURN ou ENEMY_TURN).
+	 * @return La décision du joueur (si PLAYER_TURN) ou -1 (si ENEMY_TURN).
+	 */
 	public int showBattleInfo (Character player, Enemy enemy, BattleState state) {
 		String enemyIcon = getEnemyIcon(enemy);
 
@@ -65,6 +89,13 @@ public class MenuBattle {
 		return -1;
 	}
 
+	/**
+	 * Affiche l'attaque du joueur et le résultat du coup (critique, échec ou normal).
+	 *
+	 * @param player Le joueur.
+	 * @param enemy  L'ennemi.
+	 * @param crit   Le type de coup.
+	 */
 	public void printPlayerDmgTo (Character player, Enemy enemy, Crit crit) {
 		String weapon = "ses mains nues";
 		int dmg = player.getDmg();
@@ -92,6 +123,13 @@ public class MenuBattle {
 		System.out.println();
 	}
 
+	/**
+	 * Affiche la riposte de l'ennemi et les dégâts subis par le joueur.
+	 *
+	 * @param player Le joueur.
+	 * @param enemy  L'ennemi.
+	 * @param crit   Le type de coup.
+	 */
 	public void printEnemyDmgTo (Character player, Enemy enemy, Crit crit) {
 		String enemyIcon = getEnemyIcon(enemy);
 		System.out.println(ConsoleTheme.BRIGHT_RED + enemyIcon + " " + enemy.getName() + " frappe " + player.getName() + " !" + ConsoleTheme.RESET);
@@ -113,6 +151,14 @@ public class MenuBattle {
 		System.out.println("❤️ PV restant de " + player.getName() + " : " + ConsoleTheme.getHealthBar(playerHp, player.getMaxHp(), 8));
 	}
 
+	/**
+	 * Affiche le résultat des dégâts échangés lors d'un tour de combat.
+	 *
+	 * @param player Le joueur.
+	 * @param enemy  L'ennemi.
+	 * @param state  L'état du tour.
+	 * @param crit   Le type de coup.
+	 */
 	public void showDmg (Character player, Enemy enemy, BattleState state, Crit crit) {
 		if (state == BattleState.PLAYER_TURN) {
 			printPlayerDmgTo(player, enemy, crit);
@@ -122,6 +168,11 @@ public class MenuBattle {
 		menu.requestInput("Appuyez sur [Entrée] pour continuer.");
 	}
 
+	/**
+	 * Affiche la victoire si un ennemi est terrassé.
+	 *
+	 * @param enemy L'ennemi vaincu.
+	 */
 	public void showBattleResult (Enemy enemy) {
 		if (enemy.getHp() <= 0) {
 			String enemyIcon = getEnemyIcon(enemy);
@@ -133,6 +184,11 @@ public class MenuBattle {
 		}
 	}
 
+	/**
+	 * Affiche l'encadré de la mort d'un joueur au combat.
+	 *
+	 * @param player Le joueur mort.
+	 */
 	public void showPlayerDeath (Character player) {
 		ConsoleTheme.printBox("💀 ACCIDENT MORTEL 💀",
 				ConsoleTheme.BRIGHT_RED + player.getName() + " le " + player.getType() + " a rendu son dernier souffle..." + ConsoleTheme.RESET
@@ -140,6 +196,13 @@ public class MenuBattle {
 		menu.requestInput("Appuyez sur [Entrée] pour continuer.");
 	}
 
+	/**
+	 * Annonce le début d'un tour de combat (joueur ou ennemi).
+	 *
+	 * @param player Le joueur.
+	 * @param enemy  L'ennemi.
+	 * @param state  L'état du tour.
+	 */
 	public void showBattleTurn (Character player, Enemy enemy, BattleState state) {
 		if (state == BattleState.PLAYER_TURN) {
 			System.out.println(ConsoleTheme.BRIGHT_GREEN + "👉 C'est votre tour, " + player.getName() + " !" + ConsoleTheme.RESET);
@@ -148,6 +211,11 @@ public class MenuBattle {
 		}
 	}
 
+	/**
+	 * Affiche l'encadré d'une fuite réussie.
+	 *
+	 * @param rand Le nombre de cases de recul.
+	 */
 	public void showFlee (int rand) {
 		ConsoleTheme.printBox("🏃 FUITE RÉUSSIE 🏃",
 				ConsoleTheme.BRIGHT_YELLOW + "Vous prenez la fuite !" + ConsoleTheme.RESET,

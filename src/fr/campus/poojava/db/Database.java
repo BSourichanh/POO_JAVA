@@ -7,16 +7,33 @@ import fr.campus.poojava.equipment.offensive.OffensiveEquipment;
 import java.sql.*;
 import java.util.List;
 
+/**
+ * Composant de persistance optionnel MySQL pour la sauvegarde et le chargement des personnages et équipements.
+ * Sécurisé par des variables d'environnement (DB_URL, DB_USER, DB_PASS).
+ *
+ * @author BSourichanh
+ */
 public class Database {
 
 	private static final String URL = System.getenv().getOrDefault("DB_URL", "jdbc:mysql://localhost:3306/game");
 	private static final String USER = System.getenv().getOrDefault("DB_USER", "root");
 	private static final String PASSWORD = System.getenv().getOrDefault("DB_PASS", "");
 
+	/**
+	 * Établit une connexion JDBC avec la base de données MySQL.
+	 *
+	 * @return L'objet Connection ouvert.
+	 * @throws SQLException Si la connexion échoue.
+	 */
 	public static Connection getConnection () throws SQLException {
 		return DriverManager.getConnection(URL, USER, PASSWORD);
 	}
 
+	/**
+	 * Teste la connectivité vers la base de données MySQL.
+	 *
+	 * @return true si la connexion réussit, false sinon.
+	 */
 	public boolean pingSQL () {
 		try (Connection connection = Database.getConnection()) {
 			System.out.println("Connexion réussie !");
@@ -27,6 +44,7 @@ public class Database {
 		return false;
 	}
 
+	/** Récupère et affiche la liste de tous les héros enregistrés en base. */
 	public void getHeroes () {
 		String sql = "SELECT * FROM Characters";
 
@@ -82,6 +100,11 @@ public class Database {
 		}
 	}
 
+	/**
+	 * Supprime un héros de la base par son identifiant unique.
+	 *
+	 * @param id L'identifiant du héros.
+	 */
 	public void removeHero (int id) {
 		String sql = """
 				DELETE FROM Characters
@@ -105,6 +128,11 @@ public class Database {
 		}
 	}
 
+	/**
+	 * Enregistre un personnage et ses équipements associés dans la base de données.
+	 *
+	 * @param player Le personnage à sauvegarder.
+	 */
 	public void createHero (Character player) {
 		String sqlCharacter = """
 				INSERT INTO Characters
@@ -137,6 +165,7 @@ public class Database {
 		}
 	}
 
+	/** Réinitialise et vide l'ensemble des tables de la base de données. */
 	public void clearHeroes () {
 		String[] sqls = {
 				"SET FOREIGN_KEY_CHECKS = 0",
