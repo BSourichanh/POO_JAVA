@@ -57,6 +57,7 @@ public class BattleManager {
 	 * @return Le nouvel état de jeu après le combat.
 	 */
 	public GameState manageBattle (Character player, Cell[] cellTable, int maxCell) {
+		this.state = BattleState.PLAYER_TURN;
 		while (true) {
 			menu.showHeader(player, cellTable, maxCell);
 			if (cellTable[player.getPos()].getEnemies().isEmpty()) {

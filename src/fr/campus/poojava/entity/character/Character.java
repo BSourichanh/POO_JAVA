@@ -151,7 +151,7 @@ public abstract class Character extends Entity {
 	 * @param potion La potion à utiliser.
 	 */
 	public void useDefEquip (DefensiveEquipment potion) {
-		this.lifePoints += potion.getHp();
+		this.lifePoints = Math.min(this.getMaxHp(), this.lifePoints + potion.getHp());
 		removeDefensiveEquipment(potion);
 	}
 
