@@ -211,6 +211,16 @@ public class Game {
 	}
 
 	/**
+	 * Délégué de gestion de combat vers le BattleManager.
+	 *
+	 * @param player Le joueur engagé en combat.
+	 * @return Le nouvel état de jeu.
+	 */
+	public GameState initBattle (Character player) {
+		return battleManager.manageBattle(player, board);
+	}
+
+	/**
 	 * Retire un joueur mort de la partie et informe l'interface.
 	 *
 	 * @param player Le joueur décédé.
@@ -251,37 +261,7 @@ public class Game {
 			case MOVING -> gameState = manageMove(player);
 			case INVENTORY -> gameState = manageInventory(player);
 			case POTION -> gameState = managePotion(player);
-			case IN_BATTLE -> {
-				Cell cell = board.getCell(player.getPos());
-				if (!cell.getEnemies().isEmpty()) {
-					menuBattle.showEncounter(player, cell.getEnemies().get(0));
-				}
-				gameState = battleManager.manageBattle(player, board.getCellTable(), board.getMaxCell());
-				if (gameState == GameState.BATTLE_END) {
-					if (player.getHp() <= 0) {
-						if (board.countAlivePlayers() == 0) {
-							menu.showGameOver();
-							if (menu.requestPlayAgain()) {
-								this.initGame();
-								this.playTurn();
-							} else {
-								gameState = GameState.FINISH;
-							}
-						} else {
-							nextPlayer();
-							gameState = GameState.IDLE;
-						}
-					} else {
-						gameState = GameState.MOVING;
-					}
-				} else if (gameState != GameState.FLEE) {
-					if (player.getMoveAvailable() == 0) {
-						gameState = GameState.END;
-					} else {
-						gameState = GameState.MOVING;
-					}
-				}
-			}
+			case IN_BATTLE -> gameState = initBattle(player);
 			case FLEE -> {
 				menu.showHeader(player, board.getCellTable(), board.getMaxCell());
 				gameState = flee(player);

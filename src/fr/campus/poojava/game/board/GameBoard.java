@@ -9,9 +9,11 @@ import fr.campus.poojava.entity.enemies.Enemy;
 import fr.campus.poojava.entity.enemies.Goblin;
 import fr.campus.poojava.entity.enemies.Sorcerer;
 import fr.campus.poojava.equipment.defensive.DefEquip;
+import fr.campus.poojava.equipment.defensive.DefensiveEquipment;
 import fr.campus.poojava.equipment.defensive.potion.BigPotionHP;
 import fr.campus.poojava.equipment.defensive.potion.PotionHP;
 import fr.campus.poojava.equipment.offensive.OffEquip;
+import fr.campus.poojava.equipment.offensive.OffensiveEquipment;
 import fr.campus.poojava.equipment.offensive.spell.FireBall;
 import fr.campus.poojava.equipment.offensive.spell.ThunderBolt;
 import fr.campus.poojava.equipment.offensive.weapon.Mace;
@@ -100,11 +102,7 @@ public class GameBoard {
 		for (int i = 0; i < MAX_ENEMIES; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
 			if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty()) {
-				switch (randomEnemyType()) {
-					case GOBLIN -> cellTable[cellIndex].addEnemy(new Goblin(cellIndex));
-					case SORCERER -> cellTable[cellIndex].addEnemy(new Sorcerer(cellIndex));
-					case DRAGON -> cellTable[cellIndex].addEnemy(new Dragon(cellIndex));
-				}
+				cellTable[cellIndex].addEnemy(createRandomEnemy(cellIndex));
 			}
 		}
 	}
@@ -114,12 +112,7 @@ public class GameBoard {
 		for (int i = 0; i < MAX_WEAPONS; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
 			if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty()) {
-				switch (randomOffEquipType()) {
-					case SWORD -> cellTable[cellIndex].addOffEquip(new Sword());
-					case MACE -> cellTable[cellIndex].addOffEquip(new Mace());
-					case LIGHTNING -> cellTable[cellIndex].addOffEquip(new ThunderBolt());
-					case FIREBALL -> cellTable[cellIndex].addOffEquip(new FireBall());
-				}
+				cellTable[cellIndex].addOffEquip(createRandomOffEquip());
 			}
 		}
 	}
@@ -129,12 +122,50 @@ public class GameBoard {
 		for (int i = 0; i < MAX_POTIONS; i++) {
 			int cellIndex = random.nextInt(1, cellTable.length);
 			if (cellTable[cellIndex].isEnemiesEmpty() && cellTable[cellIndex].isDefEquipEmpty() && cellTable[cellIndex].isOffEquipEmpty()) {
-				switch (randomDefEquipType()) {
-					case GRANDE_POTION_PV -> cellTable[cellIndex].addPotion(new BigPotionHP());
-					case POTION_PV -> cellTable[cellIndex].addPotion(new PotionHP());
-				}
+				cellTable[cellIndex].addPotion(createRandomDefEquip());
 			}
 		}
+	}
+
+	/**
+	 * Fabrique (Factory) un ennemi aléatoire pour une position donnée.
+	 *
+	 * @param cellIndex La position de la case.
+	 * @return Un nouvel ennemi instancié.
+	 */
+	public Enemy createRandomEnemy (int cellIndex) {
+		return switch (randomEnemyType()) {
+			case GOBLIN -> new Goblin(cellIndex);
+			case SORCERER -> new Sorcerer(cellIndex);
+			case DRAGON -> new Dragon(cellIndex);
+			default -> new Goblin(cellIndex);
+		};
+	}
+
+	/**
+	 * Fabrique (Factory) un équipement offensif aléatoire.
+	 *
+	 * @return Une nouvelle arme ou un nouveau sort instancié.
+	 */
+	public OffensiveEquipment createRandomOffEquip () {
+		return switch (randomOffEquipType()) {
+			case SWORD -> new Sword();
+			case MACE -> new Mace();
+			case LIGHTNING -> new ThunderBolt();
+			case FIREBALL -> new FireBall();
+		};
+	}
+
+	/**
+	 * Fabrique (Factory) un équipement défensif aléatoire.
+	 *
+	 * @return Une nouvelle potion instanciée.
+	 */
+	public DefensiveEquipment createRandomDefEquip () {
+		return switch (randomDefEquipType()) {
+			case GRANDE_POTION_PV -> new BigPotionHP();
+			case POTION_PV -> new PotionHP();
+		};
 	}
 
 	/**

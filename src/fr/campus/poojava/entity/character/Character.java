@@ -42,6 +42,7 @@ public abstract class Character extends Entity {
 		this.name = name;
 		this.id = id;
 		this.lifePoints = initialHp;
+		this.maxLifePoints = initialHp;
 		this.strength = initialStrength;
 		this.pos = 0;
 	}

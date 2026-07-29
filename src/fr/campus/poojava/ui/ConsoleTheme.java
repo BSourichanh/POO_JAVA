@@ -118,23 +118,59 @@ public class ConsoleTheme {
 	}
 
 	/**
-	 * Banner ASCII Art pour le jeu.
+	 * Banner ASCII Art pour le jeu avec calcul dynamique des bordures et alignement exact.
 	 */
 	public static void printBanner () {
-		String banner = BRIGHT_YELLOW + BOLD + """
-				 ╔══════════════════════════════════════════════════════════════════════════╗
-				 ║                                                                          ║
-				 ║    ██████╗  ██████╗  ██████╗     ██╗ █████╗ ██╗   ██╗ █████╗             ║
-				 ║    ██╔══██╗██╔═══██╗██╔═══██╗    ██║██╔══██╗██║   ██║██╔══██╗            ║
-				 ║    ██████╔╝██║   ██║██║   ██║    ██║███████║██║   ██║███████║            ║
-				 ║    ██╔═══╝ ██║   ██║██║   ██║██   ██║██╔══██║╚██╗ ██╔╝██╔══██║            ║
-				 ║    ██║     ╚██████╔╝╚██████╔╝╚█████╔╝██║  ██║ ╚████╔╝ ██║  ██║            ║
-				 ║    ╚═╝      ╚═════╝  ╚═════╝  ╚════╝ ╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝            ║
-				 ║                                                                          ║
-				 ║              ⚔️  DONJONS & DRAGONS - EDITION CONSOLE  🧙                   ║
-				 ╚══════════════════════════════════════════════════════════════════════════╝
-				""" + RESET;
-		System.out.println(banner);
+		String[] content = {
+				"",
+				"   ██████╗  ██████╗  ██████╗     ██╗ █████╗ ██╗   ██╗ █████╗    ",
+				"   ██╔══██╗██╔═══██╗██╔═══██╗    ██║██╔══██╗██║   ██║██╔══██╗   ",
+				"   ██████╔╝██║   ██║██║   ██║    ██║███████║██║   ██║███████║   ",
+				"   ██╔═══╝ ██║   ██║██║   ██║██   ██║██╔══██║╚██╗ ██╔╝██╔══██║   ",
+				"   ██║     ╚██████╔╝╚██████╔╝╚█████╔╝██║  ██║ ╚████╔╝ ██║  ██║   ",
+				"   ╚═╝      ╚═════╝  ╚═════╝  ╚════╝ ╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝   ",
+				"",
+				"             ⚔️  DONJONS & DRAGONS - EDITION CONSOLE  🧙          ",
+				""
+		};
+
+		int maxLen = 0;
+		for (String line : content) {
+			int len = getDisplayWidth(line);
+			if (len > maxLen) {
+				maxLen = len;
+			}
+		}
+		int width = maxLen + 4;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(BRIGHT_YELLOW).append(BOLD);
+
+		// Top border
+		sb.append(" ╔");
+		for (int i = 0; i < width; i++) {
+			sb.append("═");
+		}
+		sb.append("╗\n");
+
+		// Content lines
+		for (String line : content) {
+			int padding = width - getDisplayWidth(line);
+			sb.append(" ║").append(line);
+			for (int i = 0; i < Math.max(0, padding); i++) {
+				sb.append(" ");
+			}
+			sb.append("║\n");
+		}
+
+		// Bottom border
+		sb.append(" ╚");
+		for (int i = 0; i < width; i++) {
+			sb.append("═");
+		}
+		sb.append("╝\n").append(RESET);
+
+		System.out.print(sb.toString());
 	}
 
 	/**
