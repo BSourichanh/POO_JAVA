@@ -15,17 +15,7 @@ target/
 Thumbs.db
 
 # IntelliJ IDEA
-.idea/workspace.xml
-.idea/tasks.xml
-.idea/usage.statistics.xml
-.idea/usage.statistics.csv
-.idea/shelf/
-.idea/dictionaries/
-.idea/caches/
-.idea/index/
-.idea/logs/
-.idea/.tmp
-.idea/generated/
+.idea/
 *.iws
 *.ipr
 
