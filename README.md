@@ -22,19 +22,19 @@ Le jeu intègre un moteur de rendu graphique console développé sur mesure (`Co
 ## 🗺️ Cas d'utilisation (Use Case UML)
 
 ```mermaid
-graph TD
-    Joueur((👤 Joueur))
+flowchart TD
+    Joueur["👤 Joueur"]
 
-    subgraph Jeu ["Donjons & Dragons (POO JAVA)"]
-        UC1[Démarrer la partie / Choisir 1-2 joueurs]
-        UC2[Créer son personnage : Nom & Classe]
-        UC3[Lancer le dé & Se déplacer sur le plateau]
-        UC4[Combattre un ennemi]
-        UC5[Fuir un combat]
-        UC6[Ramasser & Équiper une arme/sort]
-        UC7[Utiliser une potion de soin]
-        UC8[Atteindre la case 63 : Victoire]
-        UC9[Recommencer une partie après Game Over]
+    subgraph Jeu ["Donjons & Dragons - POO JAVA"]
+        UC1["Démarrer la partie / Choisir 1-2 joueurs"]
+        UC2["Créer son personnage : Nom & Classe"]
+        UC3["Lancer le dé & Se déplacer sur le plateau"]
+        UC4["Combattre un ennemi"]
+        UC5["Fuir un combat"]
+        UC6["Ramasser & Équiper une arme / sort"]
+        UC7["Utiliser une potion de soin"]
+        UC8["Atteindre la case 63 : Victoire"]
+        UC9["Recommencer une partie après Game Over"]
     end
 
     Joueur --> UC1
@@ -75,10 +75,10 @@ classDiagram
     class Character {
         <<abstract>>
         #int moveAvailable
-        #List~OffensiveEquipment~ offEquipments
-        #List~DefensiveEquipment~ defensiveEquipments
+        #List offEquipments
+        #List defensiveEquipments
         #OffensiveEquipment currentOffEquip
-        +canEquip(OffensiveEquipment)* boolean
+        +canEquip(OffensiveEquipment) boolean
         +setCurrentOffEquip(OffensiveEquipment) int
         +useDefEquip(DefensiveEquipment) void
     }
@@ -119,6 +119,30 @@ classDiagram
         +getType() OffEquipType
     }
 
+    class Weapon {
+        <<abstract>>
+    }
+
+    class Spell {
+        <<abstract>>
+    }
+
+    class Sword {
+        +Sword()
+    }
+
+    class Mace {
+        +Mace()
+    }
+
+    class FireBall {
+        +FireBall()
+    }
+
+    class ThunderBolt {
+        +ThunderBolt()
+    }
+
     class DefensiveEquipment {
         <<abstract>>
         #String name
@@ -127,9 +151,21 @@ classDiagram
         +getHp() int
     }
 
+    class Potion {
+        <<abstract>>
+    }
+
+    class PotionHP {
+        +PotionHP()
+    }
+
+    class BigPotionHP {
+        +BigPotionHP()
+    }
+
     class Dice {
         <<interface>>
-        +roll()* int
+        +roll() int
     }
 
     class Dice6 {
@@ -160,10 +196,10 @@ classDiagram
     }
 
     class ConsoleTheme {
-        +getDisplayWidth(String)$ int
-        +getHealthBar(int, int, int)$ String
-        +printBanner()$ void
-        +printBox(String, String...)$ void
+        +getDisplayWidth(String) int
+        +getHealthBar(int, int, int) String
+        +printBanner() void
+        +printBox(String, String...) void
     }
 
     Entity <|-- Character
@@ -173,11 +209,21 @@ classDiagram
     Enemy <|-- Goblin
     Enemy <|-- Sorcerer
     Enemy <|-- Dragon
+
     OffensiveEquipment <|-- Weapon
     OffensiveEquipment <|-- Spell
+    Weapon <|-- Sword
+    Weapon <|-- Mace
+    Spell <|-- FireBall
+    Spell <|-- ThunderBolt
+
     DefensiveEquipment <|-- Potion
+    Potion <|-- PotionHP
+    Potion <|-- BigPotionHP
+
     Dice <|.. Dice6
     Dice <|.. Dice20
+
     Game *-- GameBoard
     Game *-- Menu
     Game *-- MenuBattle
