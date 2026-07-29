@@ -1,19 +1,37 @@
 package fr.campus.poojava.entity;
 
 /**
- * Énumération représentant les différents types d'entités présentes dans le jeu (Héros et Ennemis).
+ * Énumération représentant les différents types d'entités présentes dans le jeu (Héros et Ennemis)
+ * avec leur nom d'affichage en français.
  *
  * @author BSourichanh
  */
 public enum EntityType {
 	/** Héros Guerrier */
-	WARRIOR,
+	WARRIOR("Guerrier"),
 	/** Héros Mage */
-	WIZARD,
+	WIZARD("Mage"),
 	/** Ennemi Goblin */
-	GOBLIN,
+	GOBLIN("Goblin"),
 	/** Ennemi Sorcier */
-	SORCERER,
+	SORCERER("Sorcier"),
 	/** Ennemi Dragon */
-	DRAGON
+	DRAGON("Dragon");
+
+	private final String displayName;
+
+	EntityType (String displayName) {
+		this.displayName = displayName;
+	}
+
+	/** @return Le nom d'affichage convivial en français. */
+	public String getDisplayName () {
+		return displayName;
+	}
+
+	/** @return Le nom d'affichage convivial en français. */
+	@Override
+	public String toString () {
+		return displayName;
+	}
 }

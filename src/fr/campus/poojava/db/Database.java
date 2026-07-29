@@ -143,7 +143,7 @@ public class Database {
 		try (Connection con = Database.getConnection();
 		     PreparedStatement psCharacter = con.prepareStatement(sqlCharacter, Statement.RETURN_GENERATED_KEYS)) {
 
-			psCharacter.setString(1, player.getType().toString());
+			psCharacter.setString(1, player.getType().name());
 			psCharacter.setString(2, player.getName());
 			psCharacter.setInt(3, player.getHp());
 			psCharacter.setInt(4, player.getDmg());

@@ -1,5 +1,6 @@
 package fr.campus.poojava.ui;
 
+import fr.campus.poojava.entity.EntityType;
 import fr.campus.poojava.entity.character.Character;
 import fr.campus.poojava.entity.enemies.Enemy;
 import fr.campus.poojava.equipment.defensive.DefensiveEquipment;
@@ -99,7 +100,7 @@ public class BoardRenderer {
 
 		if (!players.isEmpty()) {
 			Character p = players.get(0);
-			String icon = p.getType().toString().toUpperCase().contains("WARRIOR") || p.getType().toString().toLowerCase().contains("guerrier") ? "⚔️" : "🧙";
+			String icon = p.getType() == EntityType.WARRIOR ? "⚔️" : "🧙";
 			String pCode = "J" + (p.getId() + 1);
 			return "[" + ConsoleTheme.BRIGHT_GREEN + icon + pCode + ConsoleTheme.RESET + "]  ";
 		} else if (!enemies.isEmpty()) {
@@ -232,7 +233,7 @@ public class BoardRenderer {
 	 * @param player Le joueur actif.
 	 */
 	public void showCurrentPlayer (Character player) {
-		String classIcon = player.getType().toString().toUpperCase().contains("WARRIOR") || player.getType().toString().toLowerCase().contains("guerrier") ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
+		String classIcon = player.getType() == EntityType.WARRIOR ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
 		String title = classIcon + " TOUR DE " + player.getName().toUpperCase() + " (" + player.getType() + ")";
 
 		List<String> infoLines = new ArrayList<>();

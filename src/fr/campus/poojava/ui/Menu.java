@@ -1,5 +1,6 @@
 package fr.campus.poojava.ui;
 
+import fr.campus.poojava.entity.EntityType;
 import fr.campus.poojava.entity.character.Character;
 import fr.campus.poojava.equipment.defensive.DefensiveEquipment;
 import fr.campus.poojava.equipment.offensive.OffensiveEquipment;
@@ -102,7 +103,7 @@ public class Menu {
 	 * @param player Le joueur courant.
 	 */
 	public void showCurrentPlayerTurn (Character player) {
-		String icon = player.getType().toString().contains("WARRIOR") || player.getType().toString().contains("Guerrier") ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
+		String icon = player.getType() == EntityType.WARRIOR ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
 		System.out.println(ConsoleTheme.BOLD + ConsoleTheme.BRIGHT_GREEN + icon + " C'est le tour de " + player.getName() + " le " + player.getType() + " !" + ConsoleTheme.RESET);
 	}
 
