@@ -1,5 +1,6 @@
 package fr.campus.poojava.ui;
 
+import fr.campus.poojava.entity.EntityType;
 import fr.campus.poojava.entity.character.Character;
 import fr.campus.poojava.entity.enemies.Enemy;
 import fr.campus.poojava.equipment.defensive.DefensiveEquipment;
@@ -9,21 +10,40 @@ import fr.campus.poojava.game.board.Cell;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Composant responsable du rendu visuel de la grille du plateau de jeu et des fiches de statut des héros.
+ *
+ * @author BSourichanh
+ */
 public class BoardRenderer {
 	private static final int TEXT_OFFSET = 3;
 	private int currentId;
-
+	
+	/**
+	 * Affiche une ligne séparatrice horizontale bleue.
+	 */
 	public void showSeparator () {
 		System.out.println(ConsoleTheme.BRIGHT_BLUE + "════════════════════════════════════════════════════════════════════════════════" + ConsoleTheme.RESET);
 	}
-
+	
+	/**
+	 * Imprime un séparateur de cellule si l'identifiant courant est inférieur au nombre d'éléments.
+	 *
+	 * @param nbInCell Nombre total d'éléments dans la case.
+	 */
 	public void printSeparatorData (int nbInCell) {
 		if (currentId < nbInCell) {
 			System.out.print("|");
 			currentId++;
 		}
 	}
-
+	
+	/**
+	 * Affiche les noms des joueurs tronqués sur une case.
+	 *
+	 * @param players  Liste des joueurs.
+	 * @param nbInCell Nombre total d'éléments dans la case.
+	 */
 	public void printPlayers (List<Character> players, int nbInCell) {
 		for (Character tmp : players) {
 			if (tmp.getName().length() < TEXT_OFFSET) {
@@ -34,37 +54,55 @@ public class BoardRenderer {
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
+	/**
+	 * Affiche le type d'ennemi tronqué sur une case.
+	 *
+	 * @param enemies  Liste des ennemis.
+	 * @param nbInCell Nombre total d'éléments dans la case.
+	 */
 	public void printEnemies (List<Enemy> enemies, int nbInCell) {
 		for (Enemy enemy : enemies) {
 			System.out.print(enemy.getType().toString().substring(0, TEXT_OFFSET));
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
+	/**
+	 * Affiche le nom des équipements défensifs tronqué sur une case.
+	 *
+	 * @param defEquip Liste des potions.
+	 * @param nbInCell Nombre d'éléments dans la case.
+	 */
 	public void printDefEquip (List<DefensiveEquipment> defEquip, int nbInCell) {
 		for (DefensiveEquipment defensiveEquipment : defEquip) {
 			System.out.print(defensiveEquipment.getName().substring(0, Math.min(TEXT_OFFSET, defensiveEquipment.getName().length())));
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
+	/**
+	 * Affiche le nom des équipements offensifs tronqué sur une case.
+	 *
+	 * @param offEquip Liste des armes/sorts.
+	 * @param nbInCell Nombre d'éléments dans la case.
+	 */
 	public void printOffEquip (List<OffensiveEquipment> offEquip, int nbInCell) {
 		for (OffensiveEquipment offensiveEquipment : offEquip) {
 			System.out.print(offensiveEquipment.getName().substring(0, Math.min(TEXT_OFFSET, offensiveEquipment.getName().length())));
 			printSeparatorData(nbInCell);
 		}
 	}
-
+	
 	private String getCellIconAnd2LetterContent (Cell cell) {
 		List<Character> players = cell.getPlayers();
 		List<Enemy> enemies = cell.getEnemies();
 		List<DefensiveEquipment> defEquip = cell.getDefEquip();
 		List<OffensiveEquipment> offEquip = cell.getOffEquip();
-
+		
 		if (!players.isEmpty()) {
 			Character p = players.get(0);
-			String icon = p.getType().toString().toUpperCase().contains("WARRIOR") || p.getType().toString().toLowerCase().contains("guerrier") ? "⚔️" : "🧙";
+			String icon = p.getType() == EntityType.WARRIOR ? "⚔️" : "🧙";
 			String pCode = "J" + (p.getId() + 1);
 			return "[" + ConsoleTheme.BRIGHT_GREEN + icon + pCode + ConsoleTheme.RESET + "]  ";
 		} else if (!enemies.isEmpty()) {
@@ -72,7 +110,7 @@ public class BoardRenderer {
 			String enemyIcon = ConsoleTheme.SYM_ENEMY;
 			String enemyName = e.getName().toLowerCase();
 			String eCode = "EN";
-
+			
 			if (enemyName.contains("dragon")) {
 				enemyIcon = ConsoleTheme.SYM_DRAGON;
 				eCode = "DR";
@@ -85,7 +123,7 @@ public class BoardRenderer {
 			} else if (e.getName().length() >= 2) {
 				eCode = e.getName().substring(0, 2).toUpperCase();
 			}
-
+			
 			return "[" + ConsoleTheme.BRIGHT_RED + enemyIcon + eCode + ConsoleTheme.RESET + "]  ";
 		} else if (!defEquip.isEmpty()) {
 			DefensiveEquipment d = defEquip.get(0);
@@ -97,7 +135,7 @@ public class BoardRenderer {
 			String oName = o.getName().toLowerCase();
 			String icon = ConsoleTheme.SYM_WEAPON;
 			String oCode = "AR";
-
+			
 			if (oName.contains("épée") || oName.contains("epee") || oName.contains("sword")) {
 				icon = "🗡️";
 				oCode = "EP";
@@ -113,23 +151,29 @@ public class BoardRenderer {
 			} else if (o.getName().length() >= 2) {
 				oCode = o.getName().substring(0, 2).toUpperCase();
 			}
-
+			
 			return "[" + ConsoleTheme.BRIGHT_MAGENTA + icon + oCode + ConsoleTheme.RESET + "]  ";
 		} else {
 			return "[" + ConsoleTheme.DIM + "    " + ConsoleTheme.RESET + "]  ";
 		}
 	}
-
+	
+	/**
+	 * Affiche la grille du plateau de jeu par rangées de 10 cases (numérotées de 1 à maxCell).
+	 *
+	 * @param cellTable Le tableau des cases du plateau.
+	 * @param maxCell   Le nombre total de cases.
+	 */
 	public void showCellsData (Cell[] cellTable, int maxCell) {
 		System.out.println(ConsoleTheme.BOLD + ConsoleTheme.BRIGHT_WHITE + "🗺️  PLATEAU DE JEU (Case 1 à " + maxCell + ") :" + ConsoleTheme.RESET);
-
+		
 		final int CELL_PER_ROW = 10;
 		for (int row = 0; row < maxCell; row += CELL_PER_ROW) {
 			int end = Math.min(row + CELL_PER_ROW, maxCell);
-
+			
 			StringBuilder lineNum = new StringBuilder();
 			StringBuilder lineContent = new StringBuilder();
-
+			
 			for (int i = row; i < end; i++) {
 				lineNum.append(String.format(ConsoleTheme.DIM + " [%02d]   " + ConsoleTheme.RESET, i + 1));
 				lineContent.append(getCellIconAnd2LetterContent(cellTable[i]));
@@ -139,7 +183,12 @@ public class BoardRenderer {
 			System.out.println();
 		}
 	}
-
+	
+	/**
+	 * Affiche un audit technique détaillé du contenu complet du plateau de jeu (pour débogage).
+	 *
+	 * @param cellsTable Le tableau des cases.
+	 */
 	public void showAllData (Cell[] cellsTable) {
 		System.out.println(ConsoleTheme.BRIGHT_YELLOW + "=== AUDIT COMPLET DU PLATEAU ===" + ConsoleTheme.RESET);
 		for (Cell cell : cellsTable) {
@@ -179,42 +228,60 @@ public class BoardRenderer {
 			}
 		}
 	}
-
+	
+	/**
+	 * Affiche la fiche de statut encadrée du joueur actif.
+	 *
+	 * @param player Le joueur actif.
+	 */
 	public void showCurrentPlayer (Character player) {
-		String classIcon = player.getType().toString().toUpperCase().contains("WARRIOR") || player.getType().toString().toLowerCase().contains("guerrier") ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
+		String classIcon = player.getType() == EntityType.WARRIOR ? ConsoleTheme.SYM_WARRIOR : ConsoleTheme.SYM_WIZARD;
 		String title = classIcon + " TOUR DE " + player.getName().toUpperCase() + " (" + player.getType() + ")";
-
+		
 		List<String> infoLines = new ArrayList<>();
-
-		// Line 1: HP & Dmg
-		String hpBar = ConsoleTheme.getHealthBar(player.getHp(), player.getMaxHp(), 10);
-		infoLines.add(ConsoleTheme.SYM_HEART + " Santé     : " + hpBar + "  |  " + ConsoleTheme.SYM_WEAPON + " Dégâts de base : " + ConsoleTheme.BOLD + player.getDmg() + ConsoleTheme.RESET);
-
-		// Line 2: Equipped item
-		if (player.getCurrentOffEquipment() != null) {
-			infoLines.add(ConsoleTheme.SYM_WEAPON + " Équipé    : " + ConsoleTheme.BRIGHT_YELLOW + player.getCurrentOffEquipment().getName()
-					+ ConsoleTheme.RESET + " (+" + player.getCurrentOffEquipment().getDamage() + " dégâts)");
+		
+		// Line 1: Santé & Position
+		String hpBar = ConsoleTheme.getHealthBar(player.getHp(), player.getMaxHp(), 8);
+		infoLines.add(ConsoleTheme.SYM_HEART + " Santé     : " + hpBar + "  |  📍 Case : " + ConsoleTheme.BRIGHT_YELLOW + (player.getPos() + 1) + "/63" + ConsoleTheme.RESET);
+		
+		// Line 2: Équipement actif & Dégâts de base
+		String equipped = player.getCurrentOffEquipment() != null
+				? ConsoleTheme.BRIGHT_YELLOW + player.getCurrentOffEquipment().getName() + ConsoleTheme.RESET + " (+" + player.getCurrentOffEquipment().getDamage() + " dégâts)"
+				: ConsoleTheme.DIM + "Mains nues" + ConsoleTheme.RESET;
+		infoLines.add(ConsoleTheme.SYM_WEAPON + " Équipé    : " + equipped + "  (Base: " + ConsoleTheme.BOLD + player.getDmg() + ConsoleTheme.RESET + ")");
+		
+		// Line 3: Réserve d'armes/sorts
+		StringBuilder offInv = new StringBuilder(ConsoleTheme.SYM_WEAPON + " Armes/Sorts: ");
+		if (player.getOffensiveEquipment().isEmpty()) {
+			offInv.append(ConsoleTheme.DIM).append("Aucune").append(ConsoleTheme.RESET);
 		} else {
-			infoLines.add(ConsoleTheme.SYM_WEAPON + " Équipé    : " + ConsoleTheme.DIM + "Mains nues" + ConsoleTheme.RESET);
-		}
-
-		// Line 3: Inventory
-		StringBuilder inv = new StringBuilder(ConsoleTheme.SYM_POTION + " Potions   : ");
-		if (player.getDefensiveEquipment().isEmpty()) {
-			inv.append(ConsoleTheme.DIM).append("Aucune").append(ConsoleTheme.RESET);
-		} else {
-			for (DefensiveEquipment pot : player.getDefensiveEquipment()) {
-				inv.append(ConsoleTheme.BRIGHT_CYAN).append("[").append(pot.getName()).append("] ").append(ConsoleTheme.RESET);
+			for (OffensiveEquipment item : player.getOffensiveEquipment()) {
+				offInv.append(ConsoleTheme.BRIGHT_MAGENTA).append("[").append(item.getName()).append("] ").append(ConsoleTheme.RESET);
 			}
 		}
-		infoLines.add(inv.toString());
+		infoLines.add(offInv.toString());
 
-		// Line 4: Position
-		infoLines.add("📍 Position  : Case " + ConsoleTheme.BRIGHT_YELLOW + (player.getPos() + 1) + ConsoleTheme.RESET);
-
+		// Line 4: Potions
+		StringBuilder defInv = new StringBuilder(ConsoleTheme.SYM_POTION + " Potions    : ");
+		if (player.getDefensiveEquipment().isEmpty()) {
+			defInv.append(ConsoleTheme.DIM).append("Aucune").append(ConsoleTheme.RESET);
+		} else {
+			for (DefensiveEquipment pot : player.getDefensiveEquipment()) {
+				defInv.append(ConsoleTheme.BRIGHT_CYAN).append("[").append(pot.getName()).append("] ").append(ConsoleTheme.RESET);
+			}
+		}
+		infoLines.add(defInv.toString());
+		
 		ConsoleTheme.printBox(title, infoLines.toArray(new String[0]));
 	}
-
+	
+	/**
+	 * Affiche l'en-tête complet du tour (séparateur, fiche du joueur, grille du plateau).
+	 *
+	 * @param player    Le joueur actif.
+	 * @param cellTable Le tableau des cases.
+	 * @param maxCell   Le nombre total de cases.
+	 */
 	public void showHeader (Character player, Cell[] cellTable, int maxCell) {
 		this.showSeparator();
 		this.showCurrentPlayer(player);
