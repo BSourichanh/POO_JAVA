@@ -31,16 +31,19 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 
 ### 2. Vue du Plateau & Fiches de Statut
 ```text
-┌─ 👤 STATUS DES JOUEURS ───────────────────────────────────────────────┐
-│ ⚔️ Arthur (Guerrier) | Case : 14/63 | ❤️ [██████████] 10/10 HP | 🗡️ Épée (+5)
-│ 🧙 Merlin (Mage)     | Case : 8/63  | ❤️ [██████░░░░] 6/10 HP  | ✨ Boule de Feu (+7)
-└───────────────────────────────────────────────────────────────────────┘
+┌─ ⚔️ TOUR DE ARTHUR (Guerrier)────────────────────────────────────────────┐
+│ ❤️ Santé     : [████████] 10/10 HP  |  📍 Case : 14/63                   │
+│ 🗡️ Équipé    : Épée (+5 dégâts)  (Base: 5)                              │
+│ 🗡️ Armes/Sorts: [Massue]                                                 │
+│ 🧪 Potions    : [Potion Standard] [Grande Potion]                        │
+└──────────────────────────────────────────────────────────────────────────┘
 
-┌─ 🗺️ PLATEAU DE JEU (63 CASES) ─────────────────────────────────────────┐
-│ [01:  ] [02:🧪PT] [03:🐉DR] [04:  ] [05:🗡️EP] [06:👺GB] [07:  ] [08:🧙J2] │
-│ [09:🔮SO] [10:✨FE] [11:  ] [12:🧪PT] [13:  ] [14:⚔️J1] [15:🔨MA] [16:🐉DR] │
-│ ...                                                                   │
-└───────────────────────────────────────────────────────────────────────┘
+🗺️  PLATEAU DE JEU (Case 1 à 63) :
+ [01]    [02]    [03]    [04]    [05]    [06]    [07]    [08]    [09]    [10]   
+[    ]  [🧪PT]  [🐉DR]  [    ]  [🗡️EP]  [👺GB]  [    ]  [🧙J2]  [🔮SO]  [✨FE] 
+
+ [11]    [12]    [13]    [14]    [15]    [16]    ...
+[    ]  [🧪PT]  [    ]  [⚔️J1]  [🔨MA]  [🐉DR]   ...
 ```
 
 ### 3. Choix d'Action du Joueur
@@ -59,13 +62,13 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 ⚔️ COMBAT ENGAGÉ ! ⚔️
 Arthur le WARRIOR fait face à 🐉 Dragon !
 
-┌─ ⚔️ ARENE DE COMBAT ⚔️ ──────────────────────────────────────────────┐
+┌─ ⚔️ ARENE DE COMBAT ⚔️ ──────────────────────────────────────────────────┐
 │ Arthur (WARRIOR)                                                      │
-│ ❤️ Santé   : [██████████] 10/10 HP                                     │
+│ ❤️ Santé   : [████████] 10/10 HP                                      │
 │ 🗡️ Attaque : 10 dégâts (Épée (+5))                                    │
 │                                                                       │
 │ 🐉 Dragon                                                             │
-│ ❤️ Santé   : [██████████] 15/15 HP                                     │
+│ ❤️ Santé   : [████████] 15/15 HP                                      │
 │ 🗡️ Attaque : 4 dégâts                                                 │
 └───────────────────────────────────────────────────────────────────────┘
 
