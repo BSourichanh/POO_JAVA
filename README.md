@@ -32,10 +32,10 @@ Projet réalisé dans le cadre du cours de Programmation Orientée Objet (POO).
 ### 2. Vue du Plateau & Fiches de Statut
 ```text
 ┌─ ⚔️ TOUR DE ARTHUR (Guerrier)────────────────────────────────────────────┐
-│ ❤️ Santé     : [████████] 10/10 HP  |  📍 Case : 14/63                    │
-│ 🗡️ Équipé    : Épée (+5 dégâts)  (Base: 5)                               │
-│ 🗡️ Armes/Sorts: [Massue]                                                  │
-│ 🧪 Potions    : [Potion Standard] [Grande Potion]                         │
+│ ❤️ Santé     : [████████] 10/10 HP  |  📍 Case : 14/63                   │
+│ 🗡️ Équipé    : Épée (+5 dégâts)  (Base: 5)                             │
+│ 🗡️ Armes/Sorts: [Massue]                                                │
+│ 🧪 Potions    : [Potion Standard] [Grande Potion]                        │
 └──────────────────────────────────────────────────────────────────────────┘
 
 🗺️  PLATEAU DE JEU (Case 1 à 63) :
@@ -65,7 +65,7 @@ Arthur le WARRIOR fait face à 🐉 Dragon !
 ┌─ ⚔️ ARENE DE COMBAT ⚔️ ──────────────────────────────────────────────────┐
 │ Arthur (WARRIOR)                                                      │
 │ ❤️ Santé   : [████████] 10/10 HP                                      │
-│ 🗡️ Attaque : 10 dégâts (Épée (+5))                                    │
+│ 🗡️ Attaque : 10 dégâts (Épée (+5))                                     │
 │                                                                       │
 │ 🐉 Dragon                                                             │
 │ ❤️ Santé   : [████████] 15/15 HP                                      │
