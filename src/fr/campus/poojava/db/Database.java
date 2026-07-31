@@ -103,35 +103,49 @@ public class Database {
 	}
 	
 	/**
-	 * Supprime un héros de la base par son identifiant unique.
+	 * Supprime un héros et ses équipements associés de la base dans une transaction ACID atomique.
 	 *
 	 * @param id L'identifiant du héros.
 	 */
 	public void removeHero (int id) {
-		String sql = """
-				DELETE FROM Characters
-				WHERE id = ?
-				""";
+		String sqlEquipOff = "DELETE FROM OffensiveEquipment WHERE characterId = ?";
+		String sqlEquipDef = "DELETE FROM DefensiveEquipment WHERE characterId = ?";
+		String sqlChar = "DELETE FROM Characters WHERE id = ?";
 		
-		try (Connection con = Database.getConnection();
-		     PreparedStatement ps = con.prepareStatement(sql)) {
-			
-			ps.setInt(1, id);
-			int rows = ps.executeUpdate();
-			
-			if (rows > 0) {
-				System.out.println("Héros supprimé !");
-			} else {
-				System.out.println("Aucun héros trouvé avec cet id.");
+		try (Connection con = Database.getConnection()) {
+			con.setAutoCommit(false);
+			try (PreparedStatement psOff = con.prepareStatement(sqlEquipOff);
+			     PreparedStatement psDef = con.prepareStatement(sqlEquipDef);
+			     PreparedStatement psChar = con.prepareStatement(sqlChar)) {
+				
+				psOff.setInt(1, id);
+				psOff.executeUpdate();
+				
+				psDef.setInt(1, id);
+				psDef.executeUpdate();
+				
+				psChar.setInt(1, id);
+				int rows = psChar.executeUpdate();
+				
+				con.commit();
+				if (rows > 0) {
+					System.out.println("Héros supprimé avec succès (Transaction ACID validée) !");
+				} else {
+					System.out.println("Aucun héros trouvé avec cet id.");
+				}
+			} catch (SQLException e) {
+				con.rollback();
+				System.err.println("Erreur lors de la suppression du héros : Transaction annulée (Rollback).");
+				e.printStackTrace();
 			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Enregistre un personnage et ses équipements associés dans la base de données.
+	 * Enregistre un personnage et l'ensemble de ses équipements dans la base de données
+	 * au sein d'une transaction ACID garantie (Atomique, Cohérente, Isolée, Durable).
 	 *
 	 * @param player Le personnage à sauvegarder.
 	 */
@@ -142,33 +156,41 @@ public class Database {
 				VALUES (?, ?, ?, ?, ?, ?)
 				""";
 		
-		try (Connection con = Database.getConnection();
-		     PreparedStatement psCharacter = con.prepareStatement(sqlCharacter, Statement.RETURN_GENERATED_KEYS)) {
-			
-			psCharacter.setString(1, player.getType().name());
-			psCharacter.setString(2, player.getName());
-			psCharacter.setInt(3, player.getHp());
-			psCharacter.setInt(4, player.getDmg());
-			psCharacter.setInt(5, player.getPos());
-			psCharacter.setInt(6, player.getMoveAvailable());
-			
-			psCharacter.executeUpdate();
-			
-			ResultSet rs = psCharacter.getGeneratedKeys();
-			
-			if (rs.next()) {
-				int characterId = rs.getInt(1);
-				saveOffensiveEquipment(con, characterId, player.getOffensiveEquipment());
-				saveDefensiveEquipment(con, characterId, player.getDefensiveEquipment());
+		try (Connection con = Database.getConnection()) {
+			con.setAutoCommit(false);
+			try (PreparedStatement psCharacter = con.prepareStatement(sqlCharacter, Statement.RETURN_GENERATED_KEYS)) {
+				
+				psCharacter.setString(1, player.getType().name());
+				psCharacter.setString(2, player.getName());
+				psCharacter.setInt(3, player.getHp());
+				psCharacter.setInt(4, player.getDmg());
+				psCharacter.setInt(5, player.getPos());
+				psCharacter.setInt(6, player.getMoveAvailable());
+				
+				psCharacter.executeUpdate();
+				
+				ResultSet rs = psCharacter.getGeneratedKeys();
+				
+				if (rs.next()) {
+					int characterId = rs.getInt(1);
+					saveOffensiveEquipment(con, characterId, player.getOffensiveEquipment());
+					saveDefensiveEquipment(con, characterId, player.getDefensiveEquipment());
+				}
+				
+				con.commit();
+				System.out.println("Héros et inventaire sauvegardés avec succès (Transaction ACID validée) !");
+			} catch (SQLException e) {
+				con.rollback();
+				System.err.println("Erreur lors de la sauvegarde du héros : Transaction annulée (Rollback).");
+				e.printStackTrace();
 			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * Réinitialise et vide l'ensemble des tables de la base de données.
+	 * Réinitialise et vide l'ensemble des tables de la base de données dans une transaction ACID atomique.
 	 */
 	public void clearHeroes () {
 		String[] sqls = {
@@ -179,15 +201,19 @@ public class Database {
 				"SET FOREIGN_KEY_CHECKS = 1"
 		};
 		
-		try (Connection con = Database.getConnection();
-		     Statement stmt = con.createStatement()) {
-			
-			for (String sql : sqls) {
-				stmt.executeUpdate(sql);
+		try (Connection con = Database.getConnection()) {
+			con.setAutoCommit(false);
+			try (Statement stmt = con.createStatement()) {
+				for (String sql : sqls) {
+					stmt.executeUpdate(sql);
+				}
+				con.commit();
+				System.out.println("Base réinitialisée avec succès (Transaction ACID validée) !");
+			} catch (SQLException e) {
+				con.rollback();
+				System.err.println("Erreur lors de la réinitialisation de la base : Transaction annulée (Rollback).");
+				e.printStackTrace();
 			}
-			
-			System.out.println("Base réinitialisée.");
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
