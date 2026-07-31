@@ -346,7 +346,7 @@ java -D"file.encoding=UTF-8" -cp out/production/POO_JAVA fr.campus.poojava.Main
 src/fr/campus/poojava/
 ├── Main.java                          Point d'entrée principal
 ├── db/
-│   └── Database.java                  Persistance MySQL (via variables d'environnement)
+│   └── Database.java                  Persistance MySQL (Pattern DAO & Transactions ACID avec rollback)
 ├── entity/
 │   ├── Entity.java                    Classe abstraite de base (id, name, type, hp, maxHp, dmg, pos)
 │   ├── EntityType.java                Enum des types (WARRIOR, WIZARD, GOBLIN, SORCERER, DRAGON)
@@ -402,10 +402,21 @@ src/fr/campus/poojava/
 
 ---
 
+## 🗄️ Persistance SQL & Transactions A.C.I.D.
+
+Le composant [Database.java](file:///home/user/Documents/Cours/POO_JAVA/src/fr/campus/poojava/db/Database.java) intègre la persistance MySQL via JDBC avec une gestion stricte des **Transactions ACID** :
+
+- **Atomacité (`setAutoCommit(false)`)** : La sauvegarde du personnage et l'ensemble de ses équipements (`OffensiveEquipment`, `DefensiveEquipment`) s'exécute dans un bloc transactionnel unique.
+- **Gestion du Rollback (`con.rollback()`)** : En cas d'erreur lors de l'insertion, toute la transaction est immédiatement annulée pour éviter la corruption de données orphelines.
+- **Validation (`con.commit()`)** : Les données ne sont inscrites définitivement en base de données qu'une fois la totalité de la transaction validée avec succès.
+
+---
+
 ## 🌟 Points Forts du Projet
 
 1. **Rendu Console ANSI avec Alignement Dynamique** : Bordures calculées dynamiquement sans décalage, jauges de santé dégradées.
-2. **Architecture S.O.L.I.D. & Design Patterns** : Factory Method Pattern pour la création du plateau, Dependency Inversion pour les dés et menus de combat.
-3. **Rejouabilité intégrée** : Possibilité de relancer instantanément une partie après une défaite (`requestPlayAgain`).
-4. **Domain Packaging** : Découpe modulaire claire (`game.board`, `game.battle`, `ui`, `entity`).
-5. **Code Source Maintenable (< 300 lignes par fichier)** : Lisibilité et maintenabilité maximales.
+2. **Architecture S.O.L.I.D. & Design Patterns** : Factory Method Pattern pour la création du plateau, State Pattern pour les machines à états, Dependency Inversion pour les dés et menus de combat.
+3. **Persistance SQL Sécurisée & ACID** : Sauvegardes et réinitialisations garanties par transactions SQL (`commit` / `rollback`).
+4. **Rejouabilité intégrée** : Possibilité de relancer instantanément une partie après une défaite (`requestPlayAgain`).
+5. **Domain Packaging & Clean Code** : Découpe modulaire claire (`game.board`, `game.battle`, `ui`, `entity`, `db`) avec des fichiers courts et très lisibles.
+
